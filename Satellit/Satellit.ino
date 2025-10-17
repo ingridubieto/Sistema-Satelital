@@ -17,6 +17,9 @@ SoftwareSerial mySerial(10, 11); // RX, TX
 long nextMillisDHT;
 const long intervalDHT = 10000;
 const long nextMillinsDHT = 10000; // 10 segundos para el sensor de humedad i temperatura DHT
+long nextTimeoutHT = 5000;
+
+bool esperandoTimeout = false;
 
 void setup() {
     //Definció leds
@@ -37,9 +40,14 @@ void loop() {
       float h = dht.readHumidity();
       float t = dht.readTemperature();
 
-    if (isnan(h) || isnan(t))
+    if (isnan(h) || isnan(t)){
       Serial.println("Error al leer el sensor DHT11");
+      esperandoTimeout = false;
+    }
+
     else {
+      nextTimeoutHT = millis() + 5000; // 5 segundos
+      esperandoTimeout = true;
       stateLed = HIGH;
       digitalWrite(led, stateLed);
       mySerial.print(t);
@@ -48,11 +56,14 @@ void loop() {
       Serial.print(":");
       mySerial.println(h);
       Serial.println(h);
-      
+      stateLed = LOW;
+      digitalWrite(led, stateLed);
     } 
-    stateLed = LOW;
-    digitalWrite(led, stateLed);
 
+    if (!esperandoTimeout && (millis() >= nextTimeoutHT)) {
+      mySerial.println ("Fallo");
+      Serial.println("Fallo");
+    }
 
     delay(1000);
 }
