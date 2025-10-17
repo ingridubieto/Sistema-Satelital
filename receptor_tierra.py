@@ -18,43 +18,43 @@ print ("Empezamos")
 
 def lectura_datos():
     global i, leyendo
-    i = 0
     leyendo = True
-    while leyendo:  
-        if mySerial.in_waiting > 0:
-            linea = mySerial.readline().decode('utf-8').rstrip()
-            trozos = linea.split (':')
-            print('La temperatura es:', trozos[0],'ºC')
-            print('La humedad es:', trozos[1],'%')
-                    
-            eje_x.append (i)
-            temperatura = float(trozos[0])
-            temperaturas.append (temperatura)
+    while leyendo: 
+        try: 
+            if mySerial.in_waiting > 0:
+                linea = mySerial.readline().decode('utf-8').rstrip()
+                trozos = linea.split (':')
+                print('La temperatura es:', trozos[0],'ºC')
+                print('La humedad es:', trozos[1],'%')
+                        
+                eje_x.append (i)
+                temperatura = float(trozos[0])
+                temperaturas.append (temperatura)
 
-            plt.plot(eje_x,temperaturas)
-            plt.title(str(i))
+                plt.plot(eje_x,temperaturas, color ='blue')
+                plt.title(str(i))
 
-            i = i + 1
+                i = i + 1
 
-            plt.draw()
-            plt.pause(0.5)
+                plt.draw()
+                plt.pause(0.5)
+        except:
+              print("No se recibe información")
 
 def INICIAR ():
     global leyendo
-    llamada = "Iniciar"
-    mySerial.write(llamada.encode('utf-8'))
     if not leyendo:
         print('Has pulsado el botón INICIAR')
         leyendo = True
         thread = threading.Thread(target=lectura_datos,)
         thread.start()
-
+    
 def PAUSAR ():
-        global leyendo
-        leyendo = False
-        print ('Has pulsado el botón PAUSAR')
-        mensaje = "Pausar"
-        mySerial.write(mensaje.encode('utf-8'))
+                global leyendo
+                leyendo = False
+                print ('Has pulsado el botón PAUSAR')
+                mensaje = "Pausar"
+                mySerial.write(mensaje.encode('utf-8'))
 
 
 window = Tk()
@@ -70,7 +70,7 @@ tituloLabel = Label(window, text = "Mi programa", font=("Courier", 20, "italic")
 tituloLabel.grid(row=0, column=0, columnspan=3, padx=5, pady=5, sticky=N + S + E + W)
 
 
-INICIARButton = Button(window, text="INICIAR", bg='red', fg="white",command=lectura_datos)
+INICIARButton = Button(window, text="INICIAR", bg='red', fg='white', command=lectura_datos)
 INICIARButton.grid(row=2, column=0, columnspan=1, padx=5, pady=5, sticky=N + S + E + W)
 
 PAUSARButton = Button(window, text="PAUSAR", bg='yellow', fg="black",command=PAUSAR)
