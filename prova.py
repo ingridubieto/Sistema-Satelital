@@ -41,6 +41,8 @@ def comunicacion():
 
 def INICIAR ():
     print ('Has pulsado el botón INICIAR')
+    command = comunicacion
+
 def PAUSAR ():
     print ('Has pulsado el botón PAUSAR')
     mensaje = "Parar"
@@ -65,7 +67,7 @@ def REANUDAR ():
     button_funcions_frame.rowconfigure(2, weight=1)
     button_funcions_frame.columnconfigure(0, weight=1)
 
-    button1 = tk.Button(button_funcions_frame, text="INICIAR", command=INICIAR) # FALTA DEFINIR SHOW_DATA (MOSTRAR DADES)
+    button1 = tk.Button(button_funcions_frame, text="INICIAR", command=comunicacion) # FALTA DEFINIR SHOW_DATA (MOSTRAR DADES)
     button1.grid(row=0, column=0, padx=5, pady=5, sticky=tk.N + tk.E + tk.W + tk.S)
 
     button2 = tk.Button(button_funcions_frame, text="INICIAR", command=PAUSAR) # FALTA DEFINIR NOT_SHOW_DATA (NO MOSTRAR DADES)
