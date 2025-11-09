@@ -92,11 +92,11 @@ def show_graf_hum ():
     print ('Graf hum') # Per més endavant
 
 def parar_com():
-    mySerial.write(b"1:\n")
+    mySerial.write(b"1:\n") # 1 vol dir parar l'emissió de dades
     print('Parar com')
 
 def reanudar_com():
-    mySerial.write(b"2:\n")
+    mySerial.write(b"2:\n") # 2 vol dir reanudar l'emissió de dades
     print('Reanudar com')
 
 def valor_com_slider(): 
