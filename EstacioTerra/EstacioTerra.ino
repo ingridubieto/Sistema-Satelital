@@ -1,16 +1,21 @@
 #include <SoftwareSerial.h>
+
 SoftwareSerial mySerial(10, 11); // RX, TX (azul, naranja)
+
 unsigned long nextMillis = 500;
 const int led = 12;
 bool stateLed = LOW;
 const int alarma = 13;
 bool stateAlarma = LOW;
+
 void setup() {
    pinMode (led, OUTPUT);
    pinMode (alarma, OUTPUT);
+
    Serial.begin(9600);
    mySerial.begin(9600);
 }
+
 void loop() {
    if (mySerial.available()) {
       stateLed = HIGH;
@@ -27,5 +32,10 @@ void loop() {
          stateAlarma = LOW;
       }
       digitalWrite (alarma, stateAlarma);
+   }
+   if (Serial.available()) { // Enviar tipo de función que debe realizar el satélite
+      String comando = Serial.readString();
+      comando.trim();
+      mySerial.println(comando);
    }
 }

@@ -34,8 +34,6 @@ def show_graf_temp():
     thread1.start()
     graf_temp()
 
-
-
 def graf_temp ():
     fig, ax = plt.subplots()
     ax.set_xlim(0, 20)     # Mostra inicialment 20 mesures
@@ -91,19 +89,39 @@ def graf_temp ():
         window.after(500, graf_temp)
 
 def show_graf_hum ():
-    print ('Graf hum')
+    print ('Graf hum') # Per més endavant
 
 def parar_com():
+    mySerial.write(b"1:\n")
     print('Parar com')
 
 def reanudar_com():
+    mySerial.write(b"2:\n")
     print('Reanudar com')
+
+def valor_com_slider(): 
+    valor_ = com_slider.get()
+    print('val com' + str(valor_))
+    msg = f"3:{valor_}\n" # 3 vol dir periodicitat determinada # f serveix per indicar que es una f-string (“formatted string literal”)
+    mySerial.write(msg.encode()) # envia el valor de periodicitat --> .encode() transforma cadena de text en bytes
+
+def show_graf_radar():
+    print('Graf radar')
+
+def auto_radar(): # Mode automatic del servo tot sol recorre de 0 a 180, com un radar normal
+    mySerial.write(b"4:\n") # 4 vol dir mode automatic # b serveix per indicar que es una cadena de bytes (no text)
+    print('Mode Automatic')
+
+def valor_radar_slider(): # Mode manual del servo, es dirigeix al valor d'angle que indiques
+    valor_ = radar_slider.get()
+    print('val radar' + str(valor_))
+    msg = f"5:{valor_}\n" # 5 vol dir angle determinat
+    mySerial.write(msg.encode()) # envia el valor de l'angle
 
 def alarm1():
     window.bell()
     messagebox.showwarning(title='Sistema Satelital', message='Alarma de Dades')
     print('Alarm 1')
-
 
 def alarm2():
     messagebox.showwarning(title='Sistema Satelital', message='Alarma de Comunicacions')
@@ -116,17 +134,6 @@ def alarm3():
 def alarm4():
     messagebox.showwarning(title='Sistema Satelital', message='Alarma de Radar')
     print('Alarm 4')
-
-def valor_com_slider(): 
-    valor_ = com_slider.get()
-    print('val com' + str(valor_))
-
-def show_graf_radar():
-    print('Graf radar')
-
-def valor_radar_slider(): 
-    valor_ = radar_slider.get()
-    print('val radar' + str(valor_))
 
 #Configuració finestra interfaç
 window = tk.Tk()
@@ -162,6 +169,7 @@ button_com_frame.columnconfigure(0, weight = 1)
 button_radar_frame = tk.LabelFrame(window, text = 'Radar')
 button_radar_frame.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
 button_radar_frame.rowconfigure(0, weight = 1)
+button_radar_frame.rowconfigure(1, weight = 1)
 button_radar_frame.columnconfigure(0, weight = 1)
 
 #Botons grafiques temp i humitat
@@ -197,6 +205,10 @@ radar_slider = Scale(button_radar_frame, from_ = 0, to = 180, orient = HORIZONTA
 radar_slider.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = 'ew')
 botton_radar_slider = Button(button_radar_frame, text = 'Valor', command = valor_radar_slider)
 botton_radar_slider.grid(row = 2, column = 1, padx = 5, pady = 5, sticky = 'ew')
+
+#Boto grafica radar (Mode automatic)
+button_auto_radar = tk.Button(button_radar_frame, text = "AutoRadar", command = auto_radar)
+button_auto_radar.grid(row = 1, column = 0, columnspan = 2 , padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
 ########## Definició segona columna grafica
 graf_frame = tk.LabelFrame(window, text = 'Gráficas')
