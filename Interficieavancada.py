@@ -120,20 +120,20 @@ def valor_radar_slider(): # Mode manual del servo, es dirigeix al valor d'angle 
 
 def alarm1():
     window.bell()
-    messagebox.showwarning(title='Sistema Satelital', message='Alarma de Dades')
-    print('Alarm 1')
+    messagebox.showwarning(title='Sistema Satelital', message='Alarma de Dades') # Fallo en captar les dades de Temperatura i Humitat
+    print('ERROR SENSOR DHT')
 
 def alarm2():
-    messagebox.showwarning(title='Sistema Satelital', message='Alarma de Comunicacions')
-    print('Alarm 2')
+    messagebox.showwarning(title='Sistema Satelital', message='Alarma de Radar') # Fallo en captar les dades de Distancia
+    print('ERROR RADAR')
 
 def alarm3():
-    messagebox.showwarning(title='Sistema Satelital', message='Alarma de Temperatura')
-    print('Alarm 3')
+    messagebox.showwarning(title='Sistema Satelital', message='Alarma de Comunicacions') # Fallo en la comunicació Satél·lit-Terra
+    print('ERROR COMUNICACIÓ')
 
 def alarm4():
-    messagebox.showwarning(title='Sistema Satelital', message='Alarma de Radar')
-    print('Alarm 4')
+    messagebox.showwarning(title='Sistema Satelital', message='Alarma de Temperatura') # Quan la temperatura excedeix X ºC
+    print('TEMPERATURA ALTA')
 
 #Configuració finestra interfaç
 window = tk.Tk()
