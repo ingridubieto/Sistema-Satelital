@@ -11,12 +11,14 @@ import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import serial
 
-device = 'COM3'
+device = 'COM9'
 baudrate = 9600
 mySerial = serial.Serial(device, baudrate, timeout=1)
 temperatura = None
+humitat = None
+graf_actual = None
 
-def lectura_datos_temperatura():
+def lectura_datos():
     while True:
         try:
             if mySerial.in_waiting > 0:
@@ -24,22 +26,29 @@ def lectura_datos_temperatura():
                 #print(linea)
                 trozos = linea.split(':')
                 global temperatura
+                global humitat
                 temperatura = float(trozos[0])
+                humitat = float(trozos[1])
                 #print(temperatura)
         except:
             print("Error de lectura")
         time.sleep(0.1)
 
-thread1 = threading.Thread(target=lectura_datos_temperatura, daemon=True)
+thread1 = threading.Thread(target=lectura_datos, daemon=True)
 thread1.start()
 
 def show_graf_temp ():
-    global ax, fig, line, temps, temperatures, i, x_max, canvas, canvas_graf
+    global ax, fig, line, temps, temperatures, i, x_max, canvas, canvas_graf, graf_actual
+    graf_actual = "temp"
+
+    if 'canvas_graf' in globals() and canvas_graf.winfo_exists():
+        canvas_graf.grid_forget()
+
     fig, ax = plt.subplots()
     ax.set_xlim(0, 20)     # Mostra inicialment 20 mesures
     ax.set_ylim(0, 100)    # Rang de temperatura
 
-    (line,) = ax.plot([], [], color='blue')
+    (line,) = ax.plot([], [], color='red')
 
     # --- Llistes de dades ---
     temps = []
@@ -53,10 +62,17 @@ def show_graf_temp ():
     canvas_graf.config(width = 600, height = 400)
     canvas_graf.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
+    #if 'canvas_graf' in globals():
+        #canvas_graf.grid_forget()
+
     actualitzar_graf_temp()
 
 def actualitzar_graf_temp():
-    global i, x_max
+    global i, x_max, graf_actual
+
+    if graf_actual != "temp":
+        print("Canvi de graf")
+        return
 
     try:
         if temperatura is not None:
@@ -89,7 +105,70 @@ def actualitzar_graf_temp():
     window.after(500, actualitzar_graf_temp)
 
 def show_graf_hum ():
-    print ('Graf hum') # Per més endavant
+    global ax, fig, line, temps, humitats, i, x_max, canvas, canvas_graf, graf_actual
+    graf_actual = "hum"
+
+    if 'canvas_graf' in globals() and canvas_graf.winfo_exists():
+        canvas_graf.grid_forget()
+
+    fig, ax = plt.subplots()
+    ax.set_xlim(0, 20)     # Mostra inicialment 20 mesures
+    ax.set_ylim(0, 100)    # Rang de temperatura
+
+    (line,) = ax.plot([], [], color='blue')
+
+    # --- Llistes de dades ---
+    temps = []
+    humitats= []
+
+    i = 0
+    x_max = 20  # Mida inicial de l’eix X
+    canvas = FigureCanvasTkAgg(fig, master = graf_frame)
+    canvas.draw()
+    canvas_graf = canvas.get_tk_widget()
+    canvas_graf.config(width = 600, height = 400)
+    canvas_graf.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
+
+    #if 'canvas_graf' in globals():
+        #canvas_graf.grid_forget()
+
+    actualitzar_graf_hum()
+
+def actualitzar_graf_hum():
+    global i, x_max, graf_actual
+
+    if graf_actual != "hum":
+        print("Canvi de graf")
+        return
+
+    try:
+        if humitat is not None:
+            temps.append(i)
+            humitats.append(humitat)
+            i += 1
+
+            # Amplia l'eix
+            if i > x_max:
+                x_max += 1  # incrementa el límit X de 1 en 1
+                ax.set_xlim(0, x_max)
+
+            # Actualitza dades
+            line.set_data(temps, humitats)
+
+            # Escala automàtica de Y segons les dades
+            ax.set_ylim(min(humitats) - 2, max(humitats) + 2)
+
+            # Actualitza el títol
+            ax.set_title(f"Lectura {i}: {humitat:.2f} %")
+            canvas.draw()
+
+
+
+    except Exception as e:
+        print("ERROR HUM", e)
+        pass
+
+    window.after(500, actualitzar_graf_hum)
 
 def parar_com():
     mySerial.write(b"1:\n") # 1 vol dir parar l'emissió de dades
