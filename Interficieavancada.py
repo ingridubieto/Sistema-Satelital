@@ -11,11 +11,13 @@ import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import serial
 
-device = 'COM9'
+device = 'COM3'
 baudrate = 9600
 mySerial = serial.Serial(device, baudrate, timeout=1)
 temperatura = None
 humitat = None
+distancia = None
+angle = None
 graf_actual = None
 
 def lectura_datos():
@@ -23,19 +25,35 @@ def lectura_datos():
         try:
             if mySerial.in_waiting > 0:
                 linea = mySerial.readline().decode('utf-8').strip()
-                #print(linea)
                 trozos = linea.split(':')
-                global temperatura
-                global humitat
-                temperatura = float(trozos[0])
-                humitat = float(trozos[1])
-                #print(temperatura)
+                global comando
+                comando = trozos[0] # Determina el tipo de mensaje que recibe la estacion de tierra
+                if comando == 1:
+                    global temperatura, humitat
+                    temperatura = float(trozos[1]) # 1:T:H --> T es temperatura
+                    humitat = float(trozos[2]) # 1:T:H --> H es humedad
+                elif comando == 2:
+                    global distancia, angle
+                    distancia = float(trozos[1]) # 2:D:A --> D es distancia A es angle
+                    angle = np.deg2rad(float(trozos[2])) # --> Passa l'angle en graus a radians
+                elif comando == 3: # 3: --> ERROR SENSOR DHT
+                    alarma1()
+                elif comando == 4: # 4: --> ERROR RADAR
+                    alarma2()
+                elif comando == 5: # 5: --> ERROR COMUNICACIÓ
+                    alarma3()
+                elif comando == 6: # 6: --> TEMPERATURA ALTA
+                    alarma4()
         except:
             print("Error de lectura")
         time.sleep(0.1)
 
 thread1 = threading.Thread(target=lectura_datos, daemon=True)
 thread1.start()
+
+#--------------------------------------------------
+#GRAFICA TEMPERATURA
+#--------------------------------------------------
 
 def show_graf_temp ():
     global ax, fig, line, temps, temperatures, i, x_max, canvas, canvas_graf, graf_actual
@@ -104,6 +122,10 @@ def actualitzar_graf_temp():
 
     window.after(500, actualitzar_graf_temp)
 
+#--------------------------------------------------
+#GRAFICA HUMITAT
+#--------------------------------------------------
+
 def show_graf_hum ():
     global ax, fig, line, temps, humitats, i, x_max, canvas, canvas_graf, graf_actual
     graf_actual = "hum"
@@ -170,6 +192,71 @@ def actualitzar_graf_hum():
 
     window.after(500, actualitzar_graf_hum)
 
+#--------------------------------------------------
+#GRAFICA RADAR
+#--------------------------------------------------
+
+def show_graf_radar():
+    global ax, fig, angles, distancies, canvas, canvas_graf, graf_actual
+    graf_actual = "radar"
+
+    if 'canvas_graf' in globals() and canvas_graf.winfo_exists():
+        canvas_graf.grid_forget()
+
+    # --- Configuració bàsica ---
+    fig = plt.figure()
+    ax = plt.subplot(projection='polar')
+    ax.set_title("Radar d'Ultrasons", va='bottom')
+
+    angles = []
+    distancies = []
+
+    # --- Dibuixem la línia groga del radar (les mesures) ---
+    ax.plot(angles, distancies, color='y', linewidth=2) #Canviar valors angles distàncies que sera els obtinguts
+
+    # --- Dibuixem objecte
+    ax.plot([0, angle], [0, distancia], color='g', linewidth=2)  # línia verda (expressada com un vector)
+    ax.scatter(angle, distancia, color='g', s=80)  # punt verd
+
+    # --- Configuració del radar ---
+    ax.set_thetamin(0)
+    ax.set_thetamax(180)
+    ax.set_theta_direction(-1)      # direcció horària
+    ax.set_theta_offset(np.pi)      # base horitzontal i a baix
+    ax.set_rmax(50)                 # radi màxim
+    ax.set_rticks([10, 20, 30, 40, 50])  # cercles radials
+
+    canvas.draw()
+
+    actualitzar_graf_radar()
+
+def actualitzar_graf_radar():
+    global i, angle, distancia, graf_actual
+
+    if graf_actual != "radar":
+        print("Canvi de graf")
+        return
+    
+    try:
+        if distancia is not None and angle is not None:
+
+            distancies.append(distancia)
+            angles.append(angle)
+            i += 1
+
+            ax.plot(angles, distancies, color='y', linewidth=2)
+            ax.plot([0, angle], [0, distancia], color='g', linewidth=2)  # línia verda (expressada com un vector)
+            ax.scatter(angle, distancia, color='g', s=80)  # punt verd
+
+            ax.set_title(f"Lectura {i}: {angle:.2f}º {distancia:.2f}cm")
+            canvas.draw()
+
+    except Exception as e:
+        print("ERROR RADAR", e)
+        pass 
+
+    window.after(500, actualitzar_graf_radar)
+
 def parar_com():
     mySerial.write(b"1:\n") # 1 vol dir parar l'emissió de dades
     print('Parar com')
@@ -184,9 +271,6 @@ def valor_com_slider():
     msg = f"3:{valor_}\n" # 3 vol dir periodicitat determinada # f serveix per indicar que es una f-string (“formatted string literal”)
     mySerial.write(msg.encode()) # envia el valor de periodicitat --> .encode() transforma cadena de text en bytes
 
-def show_graf_radar():
-    print('Graf radar')
-
 def auto_radar(): # Mode automatic del servo tot sol recorre de 0 a 180, com un radar normal
     mySerial.write(b"4:\n") # 4 vol dir mode automatic # b serveix per indicar que es una cadena de bytes (no text)
     print('Mode Automatic')
@@ -197,20 +281,27 @@ def valor_radar_slider(): # Mode manual del servo, es dirigeix al valor d'angle 
     msg = f"5:{valor_}\n" # 5 vol dir angle determinat
     mySerial.write(msg.encode()) # envia el valor de l'angle
 
-def alarm1():
+#--------------------------------------------------
+#ALARMES
+#--------------------------------------------------
+
+def alarma1():
     window.bell()
     messagebox.showwarning(title='Sistema Satelital', message='Alarma de Dades') # Fallo en captar les dades de Temperatura i Humitat
     print('ERROR SENSOR DHT')
 
-def alarm2():
+def alarma2():
+    window.bell()
     messagebox.showwarning(title='Sistema Satelital', message='Alarma de Radar') # Fallo en captar les dades de Distancia
     print('ERROR RADAR')
 
-def alarm3():
+def alarma3():
+    window.bell()
     messagebox.showwarning(title='Sistema Satelital', message='Alarma de Comunicacions') # Fallo en la comunicació Satél·lit-Terra
     print('ERROR COMUNICACIÓ')
 
-def alarm4():
+def alarma4():
+    window.bell()
     messagebox.showwarning(title='Sistema Satelital', message='Alarma de Temperatura') # Quan la temperatura excedeix X ºC
     print('TEMPERATURA ALTA')
 
