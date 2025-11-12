@@ -17,11 +17,14 @@ mySerial = serial.Serial(device, baudrate, timeout=1)
 temperatura = None
 humitat = None
 distancia = None
+<<<<<<< HEAD
 angle = None
+=======
+>>>>>>> 8a7a826197cf69fdec45b051171ab988cdbde09a
 graf_actual = None
 
 def lectura_datos():
-    while True:
+    while True: # Aplicar el protocol d'aplicació
         try:
             if mySerial.in_waiting > 0:
                 linea = mySerial.readline().decode('utf-8').strip()
@@ -29,6 +32,7 @@ def lectura_datos():
                 global comando
                 comando = trozos[0] # Determina el tipo de mensaje que recibe la estacion de tierra
                 if comando == 1:
+<<<<<<< HEAD
                     global temperatura, humitat
                     temperatura = float(trozos[1]) # 1:T:H --> T es temperatura
                     humitat = float(trozos[2]) # 1:T:H --> H es humedad
@@ -44,6 +48,15 @@ def lectura_datos():
                     alarma3()
                 elif comando == 6: # 6: --> TEMPERATURA ALTA
                     alarma4()
+=======
+                    global temperatura, humedad
+                    temperatura = float(trozos[1]) # 1:T:H --> T es temperatura
+                    humedad = float(trozos[2]) # 1:T:H --> H es humedad
+                elif comando == 2:
+                    global distancia
+                    distancia = float(trozos[1]) # 2:D --> D es distancia
+
+>>>>>>> 8a7a826197cf69fdec45b051171ab988cdbde09a
         except:
             print("Error de lectura")
         time.sleep(0.1)
@@ -281,10 +294,13 @@ def valor_radar_slider(): # Mode manual del servo, es dirigeix al valor d'angle 
     msg = f"5:{valor_}\n" # 5 vol dir angle determinat
     mySerial.write(msg.encode()) # envia el valor de l'angle
 
+<<<<<<< HEAD
 #--------------------------------------------------
 #ALARMES
 #--------------------------------------------------
 
+=======
+>>>>>>> 8a7a826197cf69fdec45b051171ab988cdbde09a
 def alarma1():
     window.bell()
     messagebox.showwarning(title='Sistema Satelital', message='Alarma de Dades') # Fallo en captar les dades de Temperatura i Humitat
@@ -385,5 +401,19 @@ graf_frame = tk.LabelFrame(window, text = 'Gráficas')
 graf_frame.grid(row = 0, column = 1, rowspan = 3, padx = 5, pady = 5, sticky = "nsew")
 graf_frame.rowconfigure(0, weight = 1)
 graf_frame.columnconfigure(0, weight = 1)
+
+#Crida de Alarmes
+if comando == 1: # 1:T:H --> Enviaent de dades
+    lectura_datos   # cridar a la funció de llegir dades de T i dades d'H
+elif comando == 2:
+    lectura_datos   # cridar a la funció de llegir dades de l'ultrasons
+elif comando == 3: # 3: --> ERROR SENSOR DHT
+    alarma1
+elif comando == 4: # 4: --> ERROR RADAR
+    alarma2
+elif comando == 5: # 5: --> ERROR COMUNICACIÓ
+    alarma3
+elif comando == 6: # 6: --> TEMPERATURA ALTA
+    alarma4
 
 window.mainloop()
