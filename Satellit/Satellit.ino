@@ -16,16 +16,18 @@ SoftwareSerial mySerial(10, 11); // RX, TX
 
 //Definició servo motor
 Servo myservo;
-int pos = 0; //posició inicial del servo
+int pos = 0; // posició inicial del servo
+
+int periodo = 5000; // periodicidad inicial de la emisión de datos son 5 segundos
 
 long nextMillisDHT;
 const long intervalDHT = 10000;
 const long nextMillinsDHT = 10000; // 10 segundos para el sensor de humedad i temperatura DHT
 long nextTimeoutHT = 5000;
-unsigned long previousMillis = 0; //??
 
 bool esperandoTimeout = false;
-bool AUTO = false; //Mode Automatic del servo comença desconectat
+bool AUTO = false; // Modo Automatico del servo, empieza desconectado
+bool DATOS = false; // Estado de la emisión de datos, empieza desconectada
 
 void setup() {
     //Definció leds
@@ -48,49 +50,59 @@ void loop() {
       float h = dht.readHumidity();
       float t = dht.readTemperature();
 
-    if (isnan(h) || isnan(t)){
-      Serial.println("Error al leer el sensor DHT11");
-      esperandoTimeout = false;
-    }
-
-    else {
-      nextTimeoutHT = millis() + 5000; // 5 segundos
-      esperandoTimeout = true;
-      stateLed = HIGH;
-      digitalWrite(led, stateLed);
-      mySerial.print(t);
-      Serial.print(t);
-      mySerial.print(":");
-      Serial.print(":");
-      mySerial.println(h);
-      Serial.println(h);
-      stateLed = LOW;
-      digitalWrite(led, stateLed);
-    } 
-
-    if (!esperandoTimeout && (millis() >= nextTimeoutHT)) {
-      mySerial.println ("Fallo");
-      Serial.println("Fallo");
-    }
-
-    delay(1000);
-
     if (Serial.available() > 0) { 
       String comando = Serial.readStringUntil('\n');
       comando.trim();
       int fin=comando.indexOf(':',0);
       int codigo = comando.substring(0, fin).toInt();
       int inicio = fin+1;
-      if (codigo == 4) { // Modo constante de giro del sensor distancia
+      if (codigo == 1) { // Parar emisión de datos
+        DATOS = false;
+      }
+      else if (codigo == 2) { // Reanudar emisión de datos
+        DATOS = true;
+      }
+      else if (codigo == 3) { // Cambiar periodicidad de datos 
+        fin = comando.indexOf(':',inicio);
+        periodo = comando.substring(inicio, fin).toInt(); // extrae el valor del periodo de datos
+      }
+      else if (codigo == 4) { // Modo constante de giro del sensor distancia
         AUTO = true;
       }
       else if (codigo == 5) { // Modo manual de giro del sensor distancia
         AUTO = false;
-        fin=comando.indexOf(':',inicio);
+        fin = comando.indexOf(':',inicio);
         pos = comando.substring(inicio, fin).toInt(); // extrae el valor de la posición
         myservo.write(pos); // el servo se mueve hacia la posición
       }
     }
+
+    if (DATOS) {
+      if (isnan(h) || isnan(t)){
+        Serial.println("Error al leer el sensor DHT11");
+        esperandoTimeout = false;
+      }
+      else {
+        nextTimeoutHT = millis() + periodo; // 5 segundos inicialmente, pero puede cambiar a gusto del usuario
+        esperandoTimeout = true;
+        stateLed = HIGH;
+        digitalWrite(led, stateLed);
+        mySerial.print(t);
+        Serial.print(t);
+        mySerial.print(":");
+        Serial.print(":");
+        mySerial.println(h);
+        Serial.println(h);
+        stateLed = LOW;
+        digitalWrite(led, stateLed);
+      }
+      if (!esperandoTimeout && (millis() >= nextTimeoutHT)) {
+        mySerial.println ("Fallo");
+        Serial.println("Fallo");
+      }
+      delay(1000);
+    }
+
     if (AUTO) {
       for (pos = 0; pos <= 180; pos += 1) {
         myservo.write(pos);
@@ -102,3 +114,4 @@ void loop() {
       }
     }
   }
+}
