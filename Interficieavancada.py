@@ -11,35 +11,49 @@ import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import serial
 
-device = 'COM3'
+device = 'COM9'
 baudrate = 9600
 mySerial = serial.Serial(device, baudrate, timeout=1)
 temperatura = None
+humitat = None
+distancia = None
+graf_actual = None
 
-def lectura_datos_temperatura():
-    while True:
+def lectura_datos():
+    while True: # Aplicar el protocol d'aplicació
         try:
             if mySerial.in_waiting > 0:
                 linea = mySerial.readline().decode('utf-8').strip()
-                #print(linea)
                 trozos = linea.split(':')
-                global temperatura
-                temperatura = float(trozos[0])
-                #print(temperatura)
+                global comando
+                comando = trozos[0] # Determina el tipo de mensaje que recibe la estacion de tierra
+                if comando == 1:
+                    global temperatura, humedad
+                    temperatura = float(trozos[1]) # 1:T:H --> T es temperatura
+                    humedad = float(trozos[2]) # 1:T:H --> H es humedad
+                elif comando == 2:
+                    global distancia
+                    distancia = float(trozos[1]) # 2:D --> D es distancia
+
         except:
             print("Error de lectura")
         time.sleep(0.1)
 
-thread1 = threading.Thread(target=lectura_datos_temperatura, daemon=True)
+thread1 = threading.Thread(target=lectura_datos, daemon=True)
 thread1.start()
 
 def show_graf_temp ():
-    global ax, fig, line, temps, temperatures, i, x_max, canvas, canvas_graf
+    global ax, fig, line, temps, temperatures, i, x_max, canvas, canvas_graf, graf_actual
+    graf_actual = "temp"
+
+    if 'canvas_graf' in globals() and canvas_graf.winfo_exists():
+        canvas_graf.grid_forget()
+
     fig, ax = plt.subplots()
     ax.set_xlim(0, 20)     # Mostra inicialment 20 mesures
     ax.set_ylim(0, 100)    # Rang de temperatura
 
-    (line,) = ax.plot([], [], color='blue')
+    (line,) = ax.plot([], [], color='red')
 
     # --- Llistes de dades ---
     temps = []
@@ -53,10 +67,17 @@ def show_graf_temp ():
     canvas_graf.config(width = 600, height = 400)
     canvas_graf.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
+    #if 'canvas_graf' in globals():
+        #canvas_graf.grid_forget()
+
     actualitzar_graf_temp()
 
 def actualitzar_graf_temp():
-    global i, x_max
+    global i, x_max, graf_actual
+
+    if graf_actual != "temp":
+        print("Canvi de graf")
+        return
 
     try:
         if temperatura is not None:
@@ -89,7 +110,70 @@ def actualitzar_graf_temp():
     window.after(500, actualitzar_graf_temp)
 
 def show_graf_hum ():
-    print ('Graf hum') # Per més endavant
+    global ax, fig, line, temps, humitats, i, x_max, canvas, canvas_graf, graf_actual
+    graf_actual = "hum"
+
+    if 'canvas_graf' in globals() and canvas_graf.winfo_exists():
+        canvas_graf.grid_forget()
+
+    fig, ax = plt.subplots()
+    ax.set_xlim(0, 20)     # Mostra inicialment 20 mesures
+    ax.set_ylim(0, 100)    # Rang de temperatura
+
+    (line,) = ax.plot([], [], color='blue')
+
+    # --- Llistes de dades ---
+    temps = []
+    humitats= []
+
+    i = 0
+    x_max = 20  # Mida inicial de l’eix X
+    canvas = FigureCanvasTkAgg(fig, master = graf_frame)
+    canvas.draw()
+    canvas_graf = canvas.get_tk_widget()
+    canvas_graf.config(width = 600, height = 400)
+    canvas_graf.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
+
+    #if 'canvas_graf' in globals():
+        #canvas_graf.grid_forget()
+
+    actualitzar_graf_hum()
+
+def actualitzar_graf_hum():
+    global i, x_max, graf_actual
+
+    if graf_actual != "hum":
+        print("Canvi de graf")
+        return
+
+    try:
+        if humitat is not None:
+            temps.append(i)
+            humitats.append(humitat)
+            i += 1
+
+            # Amplia l'eix
+            if i > x_max:
+                x_max += 1  # incrementa el límit X de 1 en 1
+                ax.set_xlim(0, x_max)
+
+            # Actualitza dades
+            line.set_data(temps, humitats)
+
+            # Escala automàtica de Y segons les dades
+            ax.set_ylim(min(humitats) - 2, max(humitats) + 2)
+
+            # Actualitza el títol
+            ax.set_title(f"Lectura {i}: {humitat:.2f} %")
+            canvas.draw()
+
+
+
+    except Exception as e:
+        print("ERROR HUM", e)
+        pass
+
+    window.after(500, actualitzar_graf_hum)
 
 def parar_com():
     mySerial.write(b"1:\n") # 1 vol dir parar l'emissió de dades
@@ -118,20 +202,23 @@ def valor_radar_slider(): # Mode manual del servo, es dirigeix al valor d'angle 
     msg = f"5:{valor_}\n" # 5 vol dir angle determinat
     mySerial.write(msg.encode()) # envia el valor de l'angle
 
-def alarm1():
+def alarma1():
     window.bell()
     messagebox.showwarning(title='Sistema Satelital', message='Alarma de Dades') # Fallo en captar les dades de Temperatura i Humitat
     print('ERROR SENSOR DHT')
 
-def alarm2():
+def alarma2():
+    window.bell()
     messagebox.showwarning(title='Sistema Satelital', message='Alarma de Radar') # Fallo en captar les dades de Distancia
     print('ERROR RADAR')
 
-def alarm3():
+def alarma3():
+    window.bell()
     messagebox.showwarning(title='Sistema Satelital', message='Alarma de Comunicacions') # Fallo en la comunicació Satél·lit-Terra
     print('ERROR COMUNICACIÓ')
 
-def alarm4():
+def alarma4():
+    window.bell()
     messagebox.showwarning(title='Sistema Satelital', message='Alarma de Temperatura') # Quan la temperatura excedeix X ºC
     print('TEMPERATURA ALTA')
 
@@ -215,5 +302,19 @@ graf_frame = tk.LabelFrame(window, text = 'Gráficas')
 graf_frame.grid(row = 0, column = 1, rowspan = 3, padx = 5, pady = 5, sticky = "nsew")
 graf_frame.rowconfigure(0, weight = 1)
 graf_frame.columnconfigure(0, weight = 1)
+
+#Crida de Alarmes
+if comando == 1: # 1:T:H --> Enviaent de dades
+    lectura_datos   # cridar a la funció de llegir dades de T i dades d'H
+elif comando == 2:
+    lectura_datos   # cridar a la funció de llegir dades de l'ultrasons
+elif comando == 3: # 3: --> ERROR SENSOR DHT
+    alarma1
+elif comando == 4: # 4: --> ERROR RADAR
+    alarma2
+elif comando == 5: # 5: --> ERROR COMUNICACIÓ
+    alarma3
+elif comando == 6: # 6: --> TEMPERATURA ALTA
+    alarma4
 
 window.mainloop()
