@@ -27,7 +27,7 @@ const int UltrasonicPin = 5; // pin del sensor ultrasons
 const int MaxDistance = 200; // màxima distància en cm
 
 // Booleans d’estat
-bool AUTO = false; // Modo automàtic del servo, comença desconnectat
+bool AUTO = true; // Modo automàtic del servo, comença desconnectat
 bool DADES_TyH = false; // Estat emissió dades de T i H, comença desconnectat
 bool DADES_DyA = false; // Estat emissió dades de D i A, comença desconectat
 
@@ -70,12 +70,12 @@ void loop() {
     int inicio = fin + 1;
     
     if (codigo == 1) { // Parar emissió de dades
-      DATOS_TyH = false;
-      DATOS_DyA = false;
+      DADES_TyH = false;
+      DADES_DyA = false;
     }
     else if (codigo == 2) { // Reanudar emissió de dades
-      DATOS_TyH = true;
-      DATOS_DyA = true;
+      DADES_TyH = true;
+      DADES_DyA = true;
     }
     else if (codigo == 3) { // Canviar periodicitat de dades 
       periodo = comando.substring(inicio, fin).toInt(); // extrae el valor del periodo de datos
@@ -91,7 +91,7 @@ void loop() {
   }
 
   // LECTURA I ENVIAMENT TEMPERATURA I HUMITAT //
-  if (DATOS_TyH && millis() - nextMillisDHT >= periodo) {
+  if (DADES_TyH && millis() - nextMillisDHT >= periodo) {
     nextMillisDHT = millis();
 
     float H = dht.readHumidity(); // Humitat en %
@@ -101,6 +101,7 @@ void loop() {
       // Error en la lectura del sensor DHT11
       mySerial.println("3:"); // Alarma 3 -> Error T/H
       cont_TEMP_LIMIT = 0;   // Reiniciem el comptador
+      Serial.print("Error");
     } 
     else {
       // Enviament de dades vàlides
@@ -111,23 +112,28 @@ void loop() {
       mySerial.print(":");
       mySerial.println(H); // Humitat
       digitalWrite(led, LOW);
+      Serial.print(1); // Identificador emissió T/H
+      Serial.print(":");
+      Serial.print(T); // Temperatura
+      Serial.print(":");
+      Serial.println(H); // Humitat
 
       // Control d’alarma en cas d'alta temperatura
       if (T >= TEMP_LIMIT) {
         cont_TEMP_LIMIT++;
-        if (cont_TEMP_LIMIT >= LIMIT_CONSECUTIVU) {
+        if (cont_TEMP_LIMIT >= LIMIT_CONSECUTIU) {
           mySerial.println("5:"); // Alarma 5 -> Alta temperatura
           cont_TEMP_LIMIT = 0; // Reiniciem comptador
         }
       } 
       else {
-        contadorTempAlta = 0; // Reiniciem si baixa del límit
+        cont_TEMP_LIMIT = 0; // Reiniciem si baixa del límit
       }
     }
   }
   // LECTURA I ENVIAMENT DISTÀNCIA I ANGLE //
-  if (DATOS_DyA && millis() - nextMillisSENSOR >= periodo) {
-    nextMillisSENSOR = millis();
+  if (DADES_DyA && millis() >= nextMillisSENSOR) {
+    nextMillisSENSOR = millis() + periodo;
 
     float D = sonar.ping_cm(); // Obté la distància (cm)
 
