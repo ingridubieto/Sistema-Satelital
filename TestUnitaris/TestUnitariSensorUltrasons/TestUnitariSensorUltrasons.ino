@@ -1,10 +1,8 @@
 #include <NewPing.h>
-
 long nextMillisSENSOR = 1000;
 const int UltrasonicPin = 5;
 const int MaxDistance = 200;
 const int alarmaSensor = 7;
-
 NewPing sonar(UltrasonicPin, UltrasonicPin, MaxDistance);
 
 int obtenerDistancia() {
