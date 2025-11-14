@@ -93,7 +93,7 @@ void ProcessarCom(String comando) {
       AUTO = false;
       A = comando.substring(inicio, fin).toInt(); // Nova posició del servo
       myservo.write(A);
-    }´
+    }
     else if (codigo == 6) { // Mitjanes de temperatura
       if((millis() >= 10000)&&(millis() >= NextMillisMITJANES)){
         Enviar_Mitjanes();
@@ -159,7 +159,7 @@ void Enviar_DyA (){
 }
 
 void Enviar_Mitjanes(){
-  
+
 }
 
 void MoureServo (){

@@ -26,7 +26,7 @@ void setup() {
   Serial.begin(9600);
   mySerial.begin(9600);
 
-  NextMillisTIMEOUT = millis();
+  NextMillisTIMEOUT = PeriodeTIMEOUT;
 
 }
 
@@ -55,11 +55,13 @@ void ProcessarCom(String comando) {
 //--------------------------------------------------
 
 void loop() {
-  if (mySerial.available()) {//Sat para python   
+  if (mySerial.available()) {//Sat para python
+    //Serial.println("Available");  
     digitalWrite(led, HIGH);
     NextMillisTIMEOUT = millis() + PeriodeTIMEOUT;
 
     String comando = Serial.readString(); //Rebre
+    Serial.print(comando);
     mySerial.println(comando); //Enviar
       
     ProcessarCom(comando);//
@@ -67,7 +69,7 @@ void loop() {
   }
   else{
     if (millis()>= NextMillisTIMEOUT){
-      Serial.println("4:");
+      Serial.println("4:TIMEOUT");
     }
   }
 
