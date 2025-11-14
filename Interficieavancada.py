@@ -11,10 +11,13 @@ import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import serial
 
-device = 'COM3'
+device = 'COM6'
 baudrate = 9600
 mySerial = serial.Serial(device, baudrate, timeout=1)
 temperatura = None
+temp_medias = []
+media_python_activa = False
+media_arduino_activa = False
 humitat = None
 distancia = None
 angle = None
@@ -44,6 +47,13 @@ def lectura_datos():
                     alarma3()
                 elif comando == 6: # 6: --> TEMPERATURA ALTA
                     alarma4()
+                elif comando == 7:
+                    global media_python_activa, media_arduino_activa, media_arduino_temperatura
+                    media_arduino_activa = True
+                    media_python_activa = False
+                    media_arduino_temperatura = float(trozos[1])
+                    temp_medias.append(media_arduino_temperatura)
+
         except:
             print("Error de lectura")
         time.sleep(0.1)
@@ -56,7 +66,7 @@ thread1.start()
 #--------------------------------------------------
 
 def show_graf_temp ():
-    global ax, fig, line, temps, temperatures, i, x_max, canvas, canvas_graf, graf_actual
+    global ax, fig, line, line_media, temps, temperatures, timestamps, i, x_max, canvas, canvas_graf, graf_actual
     graf_actual = "temp"
 
     if 'canvas_graf' in globals() and canvas_graf.winfo_exists():
@@ -66,7 +76,9 @@ def show_graf_temp ():
     ax.set_xlim(0, 20)     # Mostra inicialment 20 mesures
     ax.set_ylim(0, 100)    # Rang de temperatura
 
-    (line,) = ax.plot([], [], color='red')
+    (line,) = ax.plot([], [], color='red', label = "Temperatura")
+
+    (line_media,) = ax.plot([], [], color='k--', label = "Media últimos 10s")
 
     # --- Llistes de dades ---
     temps = []
@@ -74,6 +86,8 @@ def show_graf_temp ():
 
     i = 0
     x_max = 20  # Mida inicial de l’eix X
+    ax.legend()
+
     canvas = FigureCanvasTkAgg(fig, master = graf_frame)
     canvas.draw()
     canvas_graf = canvas.get_tk_widget()
@@ -85,8 +99,17 @@ def show_graf_temp ():
 
     actualitzar_graf_temp()
 
+def calculo_temp_media_python():
+    global temp_medias, media_python_activa, media_arduino_activa
+    media_python_activa = True 
+    media_arduino_activa = False
+    temp_medias = []
+
+def calculo_temp_media_arduino():
+    mySerial.write(b"6:0\n")
+
 def actualitzar_graf_temp():
-    global i, x_max, graf_actual
+    global i, x_max, graf_actual, temp_medias, line_media
 
     if graf_actual != "temp":
         print("Canvi de graf")
@@ -106,6 +129,26 @@ def actualitzar_graf_temp():
             # Actualitza dades
             line.set_data(temps, temperatures)
 
+            #Calcul de mitjana en Python si esta activada
+            if media_python_activa:
+                if len(temperatures) >= 20:  # comença la mitjana a les 10 dades
+                    media_actual = np.mean(temperatures[-20:])  # mitjana mobil dels ultims 20 valors
+                else:
+                    media_actual = np.mean(temperatures)
+                temp_medias.append(media_actual)
+
+            #Calcul de mitjana en Arduino si esta activada
+            if media_arduino_activa:
+                if len(temperatures) >= 20:  # comença la mitjana a les 10 dades
+                    line_media.set_data(temps[:len(temp_medias)], temp_medias)
+
+           #Dibuixar mitjana
+            if 'line_media' in globals() and line_media:
+                    line_media.set_data(temps, temp_medias)
+            else:
+                (line_media,) = ax.plot(temps, temp_medias, color='black', linestyle='--', label='Media')
+                ax.legend() 
+            
             # Escala automàtica de Y segons les dades
             ax.set_ylim(min(temperatures) - 2, max(temperatures) + 2)
 
@@ -281,6 +324,9 @@ def valor_radar_slider(): # Mode manual del servo, es dirigeix al valor d'angle 
     msg = f"5:{valor_}\n" # 5 vol dir angle determinat
     mySerial.write(msg.encode()) # envia el valor de l'angle
 
+def calculo_temp_media_arduino():
+    mySerial.write(b"6:0\n")
+
 #--------------------------------------------------
 #ALARMES
 #--------------------------------------------------
@@ -328,6 +374,18 @@ button_graf_frame.rowconfigure(0, weight = 1)
 button_graf_frame.rowconfigure(1, weight = 1)
 button_graf_frame.columnconfigure(0, weight = 1)
 
+#Botons de càlcul mitjanes Python
+button_cal_py_frame = tk.LabelFrame (window, text = 'Càlcul Mitjanes a Terra')
+button_cal_py_frame.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
+button_cal_py_frame.rowconfigure(0,weight = )
+button_cal_py_frame.columnconfigure(1,weight = )
+
+#Botons de càlcul mitjanes Python
+button_cal_arduino_frame = tk.LabelFrame (window, text = 'Càlcul Mitjanes a Satèl·lit')
+button_cal_arduino_frame.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
+button_cal_arduino_frame.rowconfigure(0,weight = 0.5)
+button_cal_arduino_frame.columnconfigure(1,weight = 0.5)
+
 #Frame comunciacions
 button_com_frame = tk.LabelFrame(window, text = 'Comuncaciones')
 button_com_frame.grid(row = 1, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
@@ -361,7 +419,7 @@ button_reanudar = tk.Button(button_com_frame, text = "Reanudar", command = reanu
 button_reanudar.grid(row = 1, column = 0, columnspan = 2 , padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
 #Slider frequencia enviament
-title_slider = Label(button_com_frame, text = "Frecuecia datos")
+title_slider = Label(button_com_frame, text = "Frecuencia datos")
 title_slider.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = 'ew')
 com_slider = Scale(button_com_frame, from_ = 0, to = 10, orient = HORIZONTAL, width = 1)
 com_slider.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = 'ew')
@@ -380,10 +438,32 @@ botton_radar_slider.grid(row = 2, column = 1, padx = 5, pady = 5, sticky = 'ew')
 button_auto_radar = tk.Button(button_radar_frame, text = "AutoRadar", command = auto_radar)
 button_auto_radar.grid(row = 1, column = 0, columnspan = 2 , padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
+#Boto calcul mitjanes a Python
+button_calculo_media_python = tk.Button(button_com_frame, text ="Realizar cálculo de media en Python", command = calculo_temp_media_python)
+button_calculo_media_python.grid(row = 1, column = 0, columnspan = 2 , padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)                                     #POR DEFINIR
+
+#Boto calcul mitjanes a l'Arduino
+button_calculo_media_arduino = tk.Button(button_com_frame, text ="Realizar cálculo de media en Arduino", command = calculo_temp_media_arduino)
+button_auto_radar.grid(row = 1, column = 0, columnspan = 2 , padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)                            #POR DEFINIR
+
 ########## Definició segona columna grafica
 graf_frame = tk.LabelFrame(window, text = 'Gráficas')
 graf_frame.grid(row = 0, column = 1, rowspan = 3, padx = 5, pady = 5, sticky = "nsew")
 graf_frame.rowconfigure(0, weight = 1)
 graf_frame.columnconfigure(0, weight = 1)
+
+#Crida de Alarmes
+if comando == 1: # 1:T:H --> Enviaent de dades
+    lectura_datos   # cridar a la funció de llegir dades de T i dades d'H
+elif comando == 2:
+    lectura_datos   # cridar a la funció de llegir dades de l'ultrasons
+elif comando == 3: # 3: --> ERROR SENSOR DHT
+    alarma1
+elif comando == 4: # 4: --> ERROR RADAR
+    alarma2
+elif comando == 5: # 5: --> ERROR COMUNICACIÓ
+    alarma3
+elif comando == 6: # 6: --> TEMPERATURA ALTA
+    alarma4
 
 window.mainloop()
