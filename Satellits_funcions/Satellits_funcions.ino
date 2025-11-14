@@ -24,17 +24,24 @@ int direccioServo = 1; // 1 anant "Endavant" -1 anant "Endarrera"
 int PeriodeDHT = 1000; // periodicitat inicial d’enviament de dades (1 segons), pot ser canviada
 int PeriodeRADAR = 1000;
 int PeriodeSERVO = 15;
+int PeriodeMITJANES = 1000;
 long NextMillisDHT;
 long NextMillisRADAR;
 long NextMillisSERVO;
+long NextMillisMITJANES;
 const int UltrasonicPin = 5; // pin del sensor ultrasons
 const int MaxDistance = 200; // màxima distància en cm
 
 // Booleans d’estat Declarat a fora les funcions perque siguin globals
 bool AUTO = true; // Modo automàtic del servo, comença connectat
+<<<<<<< HEAD
 bool Dades_TyH = false; // Estat emissió dades de T i H, comença desconnectat
 bool Dades_DyA = false; // Estat emissió dades de D i A, comença desconectat
 bool Mitjanes_T = false; // On es fa el càlcul de la mitjana.
+=======
+bool Dades_TyH = true; // Estat emissió dades de T i H, comença desconnectat
+bool Dades_DyA = true; // Estat emissió dades de D i A, comença desconectat
+>>>>>>> 2ef52181992715da1912a1e5111921867cd3ff12
 
 // Control d’alarmes 
 const float TEMP_LIMIT = 30.0; // llindar de temperatura  inicial, pot ser canviat
@@ -65,6 +72,7 @@ void setup() {
   NextMillisDHT = millis();
   NextMillisRADAR = millis();
   NextMillisSERVO = millis();
+  NextMillisMITJANES = millis();
 }
 
 //--------------------------------------------------
@@ -95,6 +103,11 @@ void ProcessarCom(String comando) {
       AUTO = false;
       A = comando.substring(inicio, fin).toInt(); // Nova posició del servo
       myservo.write(A);
+    }´
+    else if (codigo == 6) { // Mitjanes de temperatura
+      if((millis() >= 10000)&&(millis() >= NextMillisMITJANES)){
+        Enviar_Mitjanes();
+      }
     }
     else if (codigo == 6) {
       M = comando.substring(inicio, fin).toInt();
@@ -114,7 +127,6 @@ void Enviar_TyH (){
   if (isnan(H) || isnan(T)) {
     // Error en la lectura del sensor DHT11
     mySerial.println("3:"); // Alarma 3 -> Error T/H
-    cont_TEMP_LIMIT = 0;   // Reiniciem el comptador
     Serial.print("Error");
   }
 
@@ -127,13 +139,17 @@ void Enviar_TyH (){
     mySerial.print(":");
     mySerial.println(H); // Humitat
     digitalWrite(led, LOW);
+    Serial.print(1); // Identificador emissió T/H
+    Serial.print(":");
+    Serial.print(T); // Temperatura
+    Serial.print(":");
+    Serial.println(H); // Humitat
   
     // Control d’alarma en cas d'alta temperatura
     if (T >= TEMP_LIMIT) {
       cont_TEMP_LIMIT++;
       if (cont_TEMP_LIMIT >= LIMIT_CONSECUTIU) {
         mySerial.println("5:"); // Alarma 5 -> Alta temperatura
-        cont_TEMP_LIMIT = 0; // Reiniciem comptador
       }
     } 
     else {
@@ -159,6 +175,10 @@ void Enviar_DyA (){
     mySerial.println(A); // Angle
     digitalWrite(led, LOW);
   }
+}
+
+void Enviar_Mitjanes(){
+  
 }
 
 void MoureServo (){
@@ -198,22 +218,26 @@ void loop() {
   if (Serial.available()){
     String comando = Serial.readStringUntil('\n');
     ProcessarCom(comando);
+    Serial.println("Available");
   }
 
   if ((Dades_TyH == true) && (millis() >= NextMillisDHT)){
     NextMillisDHT = millis() + PeriodeDHT;
     Enviar_TyH();
-
+    Serial.println("DHT");
   }
 
   if ((Dades_DyA == true) && (millis() >= NextMillisRADAR)){
     NextMillisRADAR = millis() + PeriodeRADAR;
     Enviar_DyA();
+    Serial.println("Radar");
+
   }
 
   if (millis() >= NextMillisSERVO) {
     NextMillisSERVO = millis() + PeriodeSERVO;
     MoureServo();
+
   }
 
   if ((Mitjanes_T == true) {
