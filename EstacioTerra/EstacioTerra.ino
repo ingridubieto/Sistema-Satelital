@@ -10,6 +10,9 @@ bool stateLed = LOW;
 const int alarma = 13;
 bool stateAlarma = LOW;
 
+bool esperantTimeout = false;
+long NextMillisTIMEOUT;
+int PeriodeTIMEOUT = 5000;
 //int llegirJoystick() {
   //int valor = analogRead(pinJoystick); // 0-1023
   //int angle = map(valor, 0, 1023, 0, 180); // Convertim a graus
@@ -17,12 +20,13 @@ bool stateAlarma = LOW;
 //}
 
 void setup() {
-   pinMode (led, OUTPUT);
-   pinMode (alarma, OUTPUT);
-   pinMode (alarmaSensor, OUTPUT);
+  pinMode (led, OUTPUT);
+  pinMode (alarma, OUTPUT);
 
-   Serial.begin(9600);
-   mySerial.begin(9600);
+  Serial.begin(9600);
+  mySerial.begin(9600);
+
+  NextMillisTIMEOUT = millis();
 
 }
 
@@ -51,16 +55,21 @@ void ProcessarCom(String comando) {
 //--------------------------------------------------
 
 void loop() {
-  if (mySerial.available()) {//Sat para python    
+  if (mySerial.available()) {//Sat para python   
+    digitalWrite(led, HIGH);
+    NextMillisTIMEOUT = millis() + PeriodeTIMEOUT;
+
     String comando = Serial.readString(); //Rebre
     mySerial.println(comando); //Enviar
       
     ProcessarCom(comando);//
+    digitalWrite(led, LOW);
   }
   else{
-    
+    if (millis()>= NextMillisTIMEOUT){
+      Serial.println("4:");
+    }
   }
-
 
   if(Serial.available()){
     //Python para sat
