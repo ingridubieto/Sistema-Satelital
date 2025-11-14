@@ -1,6 +1,4 @@
 #include <SoftwareSerial.h>
-#include <Servo.h>
-#include <NewPing.h>
 
 SoftwareSerial mySerial(10, 11); // RX, TX (blau, taronja)
 
@@ -12,85 +10,61 @@ bool stateLed = LOW;
 const int alarma = 13;
 bool stateAlarma = LOW;
 
-// Definició servo motor
-Servo servo;
-int pinServo = 9;
-
-// Definició sensor Ultrasons
-const int UltrasonicPin = 5;
-const int MaxDistance = 200;
-const int alarmaSensor = 7;
-
-// Inicialització del sensor ultrasons
-NewPing sonar(UltrasonicPin, UltrasonicPin, MaxDistance);
-
-char missatge;
-//int pinJoystick = A0;
-long nextMillisSENSOR = 1000;
-
-
-
 //int llegirJoystick() {
   //int valor = analogRead(pinJoystick); // 0-1023
   //int angle = map(valor, 0, 1023, 0, 180); // Convertim a graus
   //return angle; // Retornem el resultat
 //}
 
-void deteccioError (){
-   String data = mySerial.readString();
-   //Serial.print(data);
-   data.trim();
-   if (data == "Fallo"){
-      stateAlarma = HIGH;
-   }
-   else{
-         stateAlarma = LOW;
-         }
-   digitalWrite(alarma, stateAlarma);
-}
-
-int obtenirDistancia() {
-  int distancia = sonar.ping_cm();
-  return distancia;
-}
-
-void mostrarDistancia(int distancia) {
-  if (distancia == 0){
-    Serial.println("Fuera de rango");
-    digitalWrite(alarmaSensor, HIGH);
-    delay(500);
-    digitalWrite(alarmaSensor, LOW);
-    delay(500);
-  }
-  else{
-    Serial.print(distancia);
-    Serial.println(" cm");
-  }
-}
-
 void setup() {
    pinMode (led, OUTPUT);
    pinMode (alarma, OUTPUT);
    pinMode (alarmaSensor, OUTPUT);
-   servo.attach(pinServo);
 
    Serial.begin(9600);
    mySerial.begin(9600);
 
-   nextMillisSENSOR = millis() + 1000;
 }
 
+//--------------------------------------------------
+// Definició de les funcions
+//--------------------------------------------------
+
+void ProcessarCom(String comando) {
+  comando.trim();
+  int fin = comando.indexOf(':', 0);
+  int codigo = comando.substring(0, fin).toInt();
+  int inicio = fin + 1;
+
+  if (codigo == 3) { // Alarma sensor DHT
+    stateAlarma = HIGH;
+    digitalWrite(alarma, stateAlarma);
+  }
+  else{
+    stateAlarma = LOW;
+    digitalWrite(alarma, stateAlarma);
+  }
+}
+
+//--------------------------------------------------
+// Programa prinicipal
+//--------------------------------------------------
+
 void loop() {
-   if (mySerial.available()) {
-      encendreLeds();
-      deteccioError();
-      int angle = llegirJoystick(); // cridem funció
-      moureServo(angle);            // cridem funció
-      delay(100);
-      if (millis() >= nextMillisSENSOR){
-         int distancia = obtenirDistancia();
-         mostrarDistancia(distancia);
-         nextMillisSENSOR = millis() + 1000;
-      }
-   }
+  if (mySerial.available()) {//Sat para python    
+    String comando = Serial.readString(); //Rebre
+    mySerial.println(comando); //Enviar
+      
+    ProcessarCom(comando);//
+  }
+  else{
+    
+  }
+
+
+  if(Serial.available()){
+    //Python para sat
+    String info = mySerial.readString();
+    Serial.println(info);
+  }
 }
