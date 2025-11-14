@@ -12,23 +12,7 @@ bool stateLed = LOW;
 const int alarma = 13;
 bool stateAlarma = LOW;
 
-// Definició servo motor
-Servo servo;
-int pinServo = 9;
-
-// Definició sensor Ultrasons
-const int UltrasonicPin = 5;
-const int MaxDistance = 200;
-const int alarmaSensor = 7;
-
-// Inicialització del sensor ultrasons
-NewPing sonar(UltrasonicPin, UltrasonicPin, MaxDistance);
-
-char missatge;
 //int pinJoystick = A0;
-long nextMillisSENSOR = 1000;
-
-
 
 //int llegirJoystick() {
   //int valor = analogRead(pinJoystick); // 0-1023
@@ -72,7 +56,6 @@ void setup() {
    pinMode (led, OUTPUT);
    pinMode (alarma, OUTPUT);
    pinMode (alarmaSensor, OUTPUT);
-   servo.attach(pinServo);
 
    Serial.begin(9600);
    mySerial.begin(9600);

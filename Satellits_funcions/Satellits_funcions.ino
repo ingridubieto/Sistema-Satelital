@@ -34,6 +34,7 @@ const int MaxDistance = 200; // màxima distància en cm
 bool AUTO = true; // Modo automàtic del servo, comença connectat
 bool Dades_TyH = false; // Estat emissió dades de T i H, comença desconnectat
 bool Dades_DyA = false; // Estat emissió dades de D i A, comença desconectat
+bool Mitjanes_T = false; // On es fa el càlcul de la mitjana.
 
 // Control d’alarmes 
 const float TEMP_LIMIT = 30.0; // llindar de temperatura  inicial, pot ser canviat
@@ -43,6 +44,10 @@ const int LIMIT_CONSECUTIU = 3; // nombre de cops consecutius que ha de superar 
 // Inicialització del sensor ultrasons
 NewPing sonar(UltrasonicPin, UltrasonicPin, MaxDistance);
 
+// Variables pel càlcul de mitjanes de T
+float suma_T = 0;
+float Mitja = 0;
+int Ts = 0;
 
 void setup() {
 // Definició LED
@@ -90,6 +95,15 @@ void ProcessarCom(String comando) {
       AUTO = false;
       A = comando.substring(inicio, fin).toInt(); // Nova posició del servo
       myservo.write(A);
+    }
+    else if (codigo == 6) {
+      M = comando.substring(inicio, fin).toInt();
+      if (M == 0) { // El càlcul de les mitjanes de T es fa des del satèl·lit
+        Mitjanes_T = true; 
+      }
+    }
+    else if (codigo == 7) {
+      TEMP_LIMIT = comando.substring(inicio, fin).toInt(); // Nou límit de temperatura
     }
 }
 
@@ -167,6 +181,14 @@ void MoureServo (){
   }
 }
 
+void CalcularMitjanes (){
+  while (Ts<=10){
+    suma_T = suma_T + T;
+    Mitja = suma_T / 10;
+    mySerial.println(Mitja);
+    Ts = Ts+1;
+  }
+}
 
 //--------------------------------------------------
 // Programa prinicipal
@@ -192,5 +214,9 @@ void loop() {
   if (millis() >= NextMillisSERVO) {
     NextMillisSERVO = millis() + PeriodeSERVO;
     MoureServo();
+  }
+
+  if ((Mitjanes_T == true) {
+    CalcularMitjanes ();
   }
 }
