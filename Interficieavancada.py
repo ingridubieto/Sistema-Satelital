@@ -30,10 +30,10 @@ def lectura_datos():
                 linea = mySerial.readline().decode('utf-8').strip()
                 trozos = linea.split(':')
                 global comando
-                comando = trozos[0] # Determina el tipo de mensaje que recibe la estacion de tierra
+                comando = int(trozos[0]) # Determina el tipo de mensaje que recibe la estacion de tierra
                 if comando == 1:
                     global temperatura, humitat
-                    temperatura = float(trozos[1]) # 1:T:H --> T es temperatura
+                    temperatura = float(trozos[1]) # 1:T:H --> T es temperatur+a
                     print(temperatura)
                     humitat = float(trozos[2]) # 1:T:H --> H es humedad
                     print(humitat)
@@ -68,7 +68,7 @@ thread1.start()
 #--------------------------------------------------
 
 def show_graf_temp ():
-    global ax, fig, line, line_media, temps, temperatures, timestamps, i, x_max, canvas, canvas_graf, graf_actual
+    global ax, fig, line, temps, temperatures, i, x_max, canvas, canvas_graf, graf_actual
     graf_actual = "temp"
 
     if 'canvas_graf' in globals() and canvas_graf.winfo_exists():
@@ -78,9 +78,7 @@ def show_graf_temp ():
     ax.set_xlim(0, 20)     # Mostra inicialment 20 mesures
     ax.set_ylim(0, 100)    # Rang de temperatura
 
-    (line,) = ax.plot([], [], color='red', label = "Temperatura")
-
-    (line_media,) = ax.plot([], [], color='black', label = "Media ultimos 10s")
+    (line,) = ax.plot([], [], color='red')
 
     # --- Llistes de dades ---
     temps = []
@@ -88,8 +86,6 @@ def show_graf_temp ():
 
     i = 0
     x_max = 20  # Mida inicial de l’eix X
-    ax.legend()
-
     canvas = FigureCanvasTkAgg(fig, master = graf_frame)
     canvas.draw()
     canvas_graf = canvas.get_tk_widget()
@@ -101,20 +97,8 @@ def show_graf_temp ():
 
     actualitzar_graf_temp()
 
-def calculo_temp_media_python():
-    global temp_medias, media_python_activa, media_arduino_activa
-    media_python_activa = True 
-    media_arduino_activa = False
-    temp_medias = []
-    mySerial.write(b"6:1\n")
-
-
-
-def calculo_temp_media_arduino():
-    mySerial.write(b"6:0\n")
-
 def actualitzar_graf_temp():
-    global i, x_max, graf_actual, temp_medias, line_media
+    global i, x_max, graf_actual
 
     if graf_actual != "temp":
         print("Canvi de graf")
@@ -134,26 +118,6 @@ def actualitzar_graf_temp():
             # Actualitza dades
             line.set_data(temps, temperatures)
 
-            #Calcul de mitjana en Python si esta activada
-            if media_python_activa:
-                if len(temperatures) >= 20:  # comença la mitjana a les 10 dades
-                    media_actual = np.mean(temperatures[-20:])  # mitjana mobil dels ultims 20 valors
-                else:
-                    media_actual = np.mean(temperatures)
-                temp_medias.append(media_actual)
-
-            #Calcul de mitjana en Arduino si esta activada
-            if media_arduino_activa:
-                if len(temperatures) >= 20:  # comença la mitjana a les 10 dades
-                    line_media.set_data(temps[:len(temp_medias)], temp_medias)
-
-           #Dibuixar mitjana
-            if 'line_media' in globals() and line_media:
-                    line_media.set_data(temps, temp_medias)
-            else:
-                (line_media,) = ax.plot(temps, temp_medias, color='black', linestyle='--', label='Media')
-                ax.legend() 
-            
             # Escala automàtica de Y segons les dades
             ax.set_ylim(min(temperatures) - 2, max(temperatures) + 2)
 
@@ -169,6 +133,7 @@ def actualitzar_graf_temp():
         pass
 
     window.after(500, actualitzar_graf_temp)
+
 
 #--------------------------------------------------
 #GRAFICA HUMITAT
@@ -337,6 +302,9 @@ def valor_radar_slider(): # Mode manual del servo, es dirigeix al valor d'angle 
 
 def calculo_temp_media_arduino():
     mySerial.write(b"6:0\n")
+
+def calculo_temp_media_python():
+    print("Pendiente")
 
 #--------------------------------------------------
 #ALARMES

@@ -10,19 +10,9 @@ bool stateLed = LOW;
 const int alarma = 13;
 bool stateAlarma = LOW;
 
-<<<<<<< HEAD
-//int pinJoystick = A0;
-
-=======
 bool esperantTimeout = false;
 long NextMillisTIMEOUT;
 int PeriodeTIMEOUT = 5000;
->>>>>>> 2ef52181992715da1912a1e5111921867cd3ff12
-//int llegirJoystick() {
-  //int valor = analogRead(pinJoystick); // 0-1023
-  //int angle = map(valor, 0, 1023, 0, 180); // Convertim a graus
-  //return angle; // Retornem el resultat
-//}
 
 void setup() {
   pinMode (led, OUTPUT);
@@ -32,7 +22,6 @@ void setup() {
   mySerial.begin(9600);
 
   NextMillisTIMEOUT = PeriodeTIMEOUT;
-
 }
 
 //--------------------------------------------------
@@ -54,46 +43,30 @@ void ProcessarCom(String comando) {
     digitalWrite(alarma, stateAlarma);
   }
 }
-
-<<<<<<< HEAD
-void setup() {
-   pinMode (led, OUTPUT);
-   pinMode (alarma, OUTPUT);
-   pinMode (alarmaSensor, OUTPUT);
-
-   Serial.begin(9600);
-   mySerial.begin(9600);
-
-   nextMillisSENSOR = millis() + 1000;
-}
-=======
 //--------------------------------------------------
 // Programa prinicipal
 //--------------------------------------------------
->>>>>>> 2ef52181992715da1912a1e5111921867cd3ff12
 
 void loop() {
   if (mySerial.available()) {//Sat para python
-    //Serial.println("Available");  
     digitalWrite(led, HIGH);
     NextMillisTIMEOUT = millis() + PeriodeTIMEOUT;
 
-    String comando = Serial.readString(); //Rebre
-    Serial.print(comando);
-    mySerial.println(comando); //Enviar
+    String comando = mySerial.readStringUntil('\n'); //Rebre
+    Serial.println(comando); //Enviar
       
     ProcessarCom(comando);//
     digitalWrite(led, LOW);
   }
   else{
     if (millis()>= NextMillisTIMEOUT){
-      Serial.println("4:TIMEOUT");
+      Serial.println("4:");
     }
   }
 
   if(Serial.available()){
     //Python para sat
-    String info = mySerial.readString();
-    Serial.println(info);
+    String info = Serial.readString();
+    mySerial.println(info);
   }
 }

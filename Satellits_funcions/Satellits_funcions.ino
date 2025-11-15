@@ -34,17 +34,13 @@ const int MaxDistance = 200; // màxima distància en cm
 
 // Booleans d’estat Declarat a fora les funcions perque siguin globals
 bool AUTO = true; // Modo automàtic del servo, comença connectat
-<<<<<<< HEAD
-bool Dades_TyH = false; // Estat emissió dades de T i H, comença desconnectat
-bool Dades_DyA = false; // Estat emissió dades de D i A, comença desconectat
 bool Mitjanes_T = false; // On es fa el càlcul de la mitjana.
-=======
-bool Dades_TyH = true; // Estat emissió dades de T i H, comença desconnectat
-bool Dades_DyA = true; // Estat emissió dades de D i A, comença desconectat
->>>>>>> 2ef52181992715da1912a1e5111921867cd3ff12
+
+bool Dades_TyH = true; // Estat emissió dades de T i H, comença connectat
+bool Dades_DyA = true; // Estat emissió dades de D i A, comença connectat
 
 // Control d’alarmes 
-const float TEMP_LIMIT = 30.0; // llindar de temperatura  inicial, pot ser canviat
+float TEMP_LIMIT = 50.0; // llindar de temperatura  inicial, pot ser canviat
 int cont_TEMP_LIMIT = 0; // comptador de superacions consecutives del llindar de temperatura
 const int LIMIT_CONSECUTIU = 3; // nombre de cops consecutius que ha de superar el llindar per enviar una alarma
 
@@ -52,9 +48,14 @@ const int LIMIT_CONSECUTIU = 3; // nombre de cops consecutius que ha de superar 
 NewPing sonar(UltrasonicPin, UltrasonicPin, MaxDistance);
 
 // Variables pel càlcul de mitjanes de T
-float suma_T = 0;
-float Mitja = 0;
-int Ts = 0;
+float Suma_Temp = 0;
+float Mitjana = 0;
+int Contador_Temp = 0;
+
+int M;
+
+float H; // Valor humitat (%)
+float T; // Valor temperatura (ºC)
 
 void setup() {
 // Definició LED
@@ -104,11 +105,6 @@ void ProcessarCom(String comando) {
       A = comando.substring(inicio, fin).toInt(); // Nova posició del servo
       myservo.write(A);
     }
-    else if (codigo == 6) { // Mitjanes de temperatura
-      if((millis() >= 10000)&&(millis() >= NextMillisMITJANES)){
-        Enviar_Mitjanes();
-      }
-    }
     else if (codigo == 6) {
       M = comando.substring(inicio, fin).toInt();
       if (M == 0) { // El càlcul de les mitjanes de T es fa des del satèl·lit
@@ -144,6 +140,13 @@ void Enviar_TyH (){
     Serial.print(T); // Temperatura
     Serial.print(":");
     Serial.println(H); // Humitat
+
+    if(Mitjanes_T){
+      if (Contador_Temp <= 10){
+        Suma_Temp = Suma_Temp + T;
+        Contador_Temp = Contador_Temp + 1;
+      }
+    }
   
     // Control d’alarma en cas d'alta temperatura
     if (T >= TEMP_LIMIT) {
@@ -177,10 +180,6 @@ void Enviar_DyA (){
   }
 }
 
-void Enviar_Mitjanes(){
-
-}
-
 void MoureServo (){
   if (AUTO == true){
     A = A + direccioServo;
@@ -198,15 +197,6 @@ void MoureServo (){
 
   else { // Mode manual, definir A
     myservo.write(A);
-  }
-}
-
-void CalcularMitjanes (){
-  while (Ts<=10){
-    suma_T = suma_T + T;
-    Mitja = suma_T / 10;
-    mySerial.println(Mitja);
-    Ts = Ts+1;
   }
 }
 
@@ -238,9 +228,5 @@ void loop() {
     NextMillisSERVO = millis() + PeriodeSERVO;
     MoureServo();
 
-  }
-
-  if ((Mitjanes_T == true) {
-    CalcularMitjanes ();
   }
 }
