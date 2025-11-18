@@ -11,7 +11,7 @@ import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import serial
 
-device = 'COM3'
+device = 'COM6'
 baudrate = 9600
 mySerial = serial.Serial(device, baudrate, timeout=1)
 temperatura = None
@@ -43,19 +43,12 @@ def lectura_datos():
                     angle = np.deg2rad(float(trozos[2])) # --> Passa l'angle en graus a radians
                 elif comando == 3: # 3: --> ERROR SENSOR DHT
                     alarma1()
-                elif comando == 4: # 4: --> ERROR RADAR
+                elif comando == 4: # 4: --> ERROR COMUNICACIÓ
                     alarma2()
-                elif comando == 5: # 5: --> ERROR COMUNICACIÓ
+                elif comando == 5: # 5: --> ERROR TEMPERATURA ALTA
                     alarma3()
-                elif comando == 6: # 6: --> TEMPERATURA ALTA
+                elif comando == 6: # 6: --> RADAR
                     alarma4()
-                elif comando == 7:
-                    global media_python_activa, media_arduino_activa, media_arduino_temperatura
-                    media_arduino_activa = True
-                    media_python_activa = False
-                    media_arduino_temperatura = float(trozos[1])
-                    temp_medias.append(media_arduino_temperatura)
-
         except:
             print("Error de lectura")
         time.sleep(0.1)
@@ -271,8 +264,9 @@ def actualitzar_graf_radar():
     window.after(500, actualitzar_graf_radar)
 
 def parar_com():
-    mySerial.write(b"1:\n") # 1 vol dir parar l'emissió de dades
+    mySerial.write("1:".encode()) # 1 vol dir parar l'emissió de dades
     print('Parar com')
+    print("1:")
 
 def reanudar_com():
     mySerial.write(b"2:\n") # 2 vol dir reanudar l'emissió de dades
@@ -312,23 +306,23 @@ def calculo_temp_media_python():
 
 def alarma1():
     window.bell()
-    messagebox.showwarning(title='Sistema Satelital', message='Alarma de Dades') # Fallo en captar les dades de Temperatura i Humitat
+    messagebox.showwarning(title='Sistema Satelital', message='Alarma de Dades DHT') # Fallo en captar les dades de Temperatura i Humitat
     print('ERROR SENSOR DHT')
 
 def alarma2():
     window.bell()
-    messagebox.showwarning(title='Sistema Satelital', message='Alarma de Radar') # Fallo en captar les dades de Distancia
-    print('ERROR RADAR')
+    messagebox.showwarning(title='Sistema Satelital', message='Alarma de Comunciació') # Fallo en captar les dades de Distancia
+    print('ERROR COMUNICACIÓ')
 
 def alarma3():
     window.bell()
-    messagebox.showwarning(title='Sistema Satelital', message='Alarma de Comunicacions') # Fallo en la comunicació Satél·lit-Terra
-    print('ERROR COMUNICACIÓ')
+    messagebox.showwarning(title='Sistema Satelital', message='Alarma de Temperatura Alta') # Fallo en la comunicació Satél·lit-Terra
+    print('ERROR TEMPERATURA ALTA')
 
 def alarma4():
     window.bell()
-    messagebox.showwarning(title='Sistema Satelital', message='Alarma de Temperatura') # Quan la temperatura excedeix X ºC
-    print('TEMPERATURA ALTA')
+    messagebox.showwarning(title='Sistema Satelital', message='Alarma de Radar') # Quan la temperatura excedeix X ºC
+    print('ERROR RADAR')
 
 #Configuració finestra interfaç
 window = tk.Tk()
