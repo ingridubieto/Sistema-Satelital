@@ -351,6 +351,9 @@ button_graf_frame = tk.LabelFrame(window, text = 'Gráficas')
 button_graf_frame.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
 button_graf_frame.rowconfigure(0, weight = 1)
 button_graf_frame.rowconfigure(1, weight = 1)
+button_graf_frame.rowconfigure(2, weight = 1)
+button_graf_frame.rowconfigure(3, weight = 1)
+button_graf_frame.rowconfigure(4, weight = 1)
 button_graf_frame.columnconfigure(0, weight = 1)
 button_graf_frame.columnconfigure(1, weight = 1)
 
@@ -360,6 +363,8 @@ button_com_frame = tk.LabelFrame(window, text = 'Comuncaciones')
 button_com_frame.grid(row = 1, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
 button_com_frame.rowconfigure(0, weight = 1)
 button_com_frame.rowconfigure(1, weight = 1)
+button_com_frame.rowconfigure(2, weight = 1)
+button_com_frame.rowconfigure(3, weight = 1)
 button_com_frame.columnconfigure(0, weight = 1)
 
 #Frame alarmes
@@ -367,16 +372,18 @@ button_radar_frame = tk.LabelFrame(window, text = 'Radar')
 button_radar_frame.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
 button_radar_frame.rowconfigure(0, weight = 1)
 button_radar_frame.rowconfigure(1, weight = 1)
+button_radar_frame.rowconfigure(2, weight = 1)
+button_radar_frame.rowconfigure(3, weight = 1)
 button_radar_frame.columnconfigure(0, weight = 1)
 
-#Botons grafiques temp i humitat
+#BOTONS GRAFIQUES TEMPERATURA I HUMITAT
 #Boto graf temp
 button_temp = tk.Button(button_graf_frame, text = "Mostrar temperaturas", command = show_graf_temp)
 button_temp.grid(row = 0, column = 0, columnspan = 2, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
 #Boto graf humitat
 button_hum = tk.Button(button_graf_frame, text = "Mostrar humedad", command = show_graf_hum)
-button_hum.grid(row = 3, column = 0, columnspan = 2, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
+button_hum.grid(row = 4, column = 0, columnspan = 2, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
 #Botons de càlcul mitjanes Sat
 button_cal_arduino = tk.Button (button_graf_frame, text = 'Satèl·lit', command = calculo_temp_media_arduino)
@@ -387,14 +394,14 @@ button_cal_py = tk.Button (button_graf_frame, text = 'Terra', command = calculo_
 button_cal_py.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
 #Slider Temp max
-title_slider = Label(button_graf_frame, text = "Temperatura màxima") #???
-title_slider.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = 'ew')
-graf_slider = Scale(button_graf_frame, from_ = 15, to = 50, orient = HORIZONTAL, width = 1)
-graf_slider.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = 'ew')
+title_slider = Label(button_graf_frame, text = "Temperatura màxima")
+title_slider.grid(row = 2, column = 0, padx = 5, pady = 1, sticky = 'ew') #en una altra fila per no ser tapat pel slider
+graf_slider = Scale(button_graf_frame, from_ = 15, to = 50, orient = HORIZONTAL, width = 10) # width=10 --> tamany de la "rodeta"
+graf_slider.grid(row = 3, column = 0, padx = 5, pady = 1, sticky = 'ew')
 botton_graf_slider = Button(button_graf_frame, text = 'Valor', command = valor_graf_slider)#Important command
-botton_graf_slider.grid(row = 2, column = 1, padx = 5, pady = 5, sticky = 'ew')
+botton_graf_slider.grid(row = 3, column = 1, padx = 5, pady = 5, sticky = 'ew')
 
-#Botons comunicacio
+#BOTONS COMUNICACIO
 #Boto parar
 button_parar = tk.Button(button_com_frame, text = "Parar", command = parar_com)
 button_parar.grid(row = 0, column = 0, columnspan = 2, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
@@ -404,24 +411,29 @@ button_reanudar = tk.Button(button_com_frame, text = "Reanudar", command = reanu
 button_reanudar.grid(row = 1, column = 0, columnspan = 2 , padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
 #Slider frequencia enviament
-title_slider = Label(button_com_frame, text = "Frecuencia datos") #???
-title_slider.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = 'ew')
-com_slider = Scale(button_com_frame, from_ = 0, to = 10, orient = HORIZONTAL, width = 1)
-com_slider.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = 'ew')
+title_slider = Label(button_com_frame, text = "Frecuencia datos")
+title_slider.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = 'ew') #en una altra fila per no ser tapat pel slider
+com_slider = Scale(button_com_frame, from_ = 0, to = 10, orient = HORIZONTAL, width = 10)
+com_slider.grid(row = 3, column = 0, padx = 5, pady = 5, sticky = 'ew')
 botton_com_slider = Button(button_com_frame, text = 'Valor', command = valor_com_slider)
-botton_com_slider.grid(row = 2, column = 1, padx = 5, pady = 5, sticky = 'ew')
+botton_com_slider.grid(row = 3, column = 1, padx = 5, pady = 5, sticky = 'ew')
 
+#BOTONS RADAR
 #Boto grafica radar
 button_radar = tk.Button(button_radar_frame, text = "Mostrar radar", command = show_graf_radar)
 button_radar.grid(row = 0, column = 0, columnspan = 3, padx = 5, pady = 5, sticky = 'nsew')
-radar_slider = Scale(button_radar_frame, from_ = 0, to = 180, orient = HORIZONTAL, width = 1)
-radar_slider.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = 'ew')
-botton_radar_slider = Button(button_radar_frame, text = 'Valor', command = valor_radar_slider)
-botton_radar_slider.grid(row = 2, column = 1, padx = 5, pady = 5, sticky = 'ew')
 
-#Boto grafica radar (Mode automatic)
+#Boto moviment radar (Mode automatic)
 button_auto_radar = tk.Button(button_radar_frame, text = "AutoRadar", command = auto_radar)
 button_auto_radar.grid(row = 1, column = 0, columnspan = 2 , padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
+
+#Slidder moviment radar (Mode manual)
+title_slider = Label(button_radar_frame, text = "Posicion radar")
+title_slider.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = 'ew') #en una altra fila per no ser tapat pel slider
+radar_slider = Scale(button_radar_frame, from_ = 0, to = 180, orient = HORIZONTAL, width = 10)
+radar_slider.grid(row = 3, column = 0, padx = 5, pady = 5, sticky = 'ew')
+botton_radar_slider = Button(button_radar_frame, text = 'Valor', command = valor_radar_slider)
+botton_radar_slider.grid(row = 3, column = 1, padx = 5, pady = 5, sticky = 'ew')
 
 ########## Definició segona columna grafica
 graf_frame = tk.LabelFrame(window, text = 'Gráficas')
