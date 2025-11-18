@@ -264,7 +264,7 @@ def actualitzar_graf_radar():
     window.after(500, actualitzar_graf_radar)
 
 def parar_com():
-    mySerial.write("1:".encode()) # 1 vol dir parar l'emissió de dades
+    mySerial.write(b"1:") # 1 vol dir parar l'emissió de dades
     print('Parar com')
     print("1:")
 
