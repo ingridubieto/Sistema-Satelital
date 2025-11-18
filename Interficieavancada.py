@@ -396,18 +396,15 @@ def alarma2():
     messagebox.showwarning(title='Sistema Satelital', message='Alarma de Comunciació') # Fallo en captar les dades de Distancia
     print('ERROR COMUNICACIÓ')
 
-
 def alarma3():
     window.bell()
     messagebox.showwarning(title='Sistema Satelital', message='Alarma de Temperatura Alta') # Fallo en la comunicació Satél·lit-Terra
     print('ERROR TEMPERATURA ALTA')
 
-
 def alarma4():
     window.bell()
     messagebox.showwarning(title='Sistema Satelital', message='Alarma de Radar') # Quan la temperatura excedeix X ºC
     print('ERROR RADAR')
-
 
 #Configuració finestra interfaç
 window = tk.Tk()
