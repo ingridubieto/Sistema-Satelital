@@ -13,6 +13,7 @@ bool stateAlarma = LOW;
 bool esperantTimeout = false;
 long NextMillisTIMEOUT;
 int PeriodeTIMEOUT = 5000;
+bool Comunicacio = true;
 
 void setup() {
   pinMode (led, OUTPUT);
@@ -38,6 +39,16 @@ void ProcessarCom(String comando) {
     stateAlarma = HIGH;
     digitalWrite(alarma, stateAlarma);
   }
+
+  else if (codigo == 1) { //1: Parar comunicacio
+    Comunicacio = false;
+  }
+
+  else if (codigo == 2) { //2: Reanudar comunicacio
+    Comunicacio = true;
+    NextMillisTIMEOUT = millis() + PeriodeTIMEOUT;
+
+  }
   else{
     stateAlarma = LOW;
     digitalWrite(alarma, stateAlarma);
@@ -59,14 +70,15 @@ void loop() {
     digitalWrite(led, LOW);
   }
   else{
-    if (millis()>= NextMillisTIMEOUT){
+    if (Comunicacio == true && millis()>= NextMillisTIMEOUT){
       Serial.println("4:");
     }
   }
 
   if(Serial.available()){
     //Python para sat
-    String info = Serial.readString();
+    String info = Serial.readStringUntil('\n');
+    ProcessarCom(info);
     mySerial.println(info);
   }
 }
