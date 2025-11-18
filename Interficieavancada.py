@@ -14,6 +14,7 @@ import serial
 device = 'COM3'
 baudrate = 9600
 mySerial = serial.Serial(device, baudrate, timeout=1)
+
 temperatura = None
 temp_medias = []
 media_python_activa = False
@@ -22,6 +23,7 @@ humitat = None
 distancia = None
 angle = None
 graf_actual = None
+i = 0
 
 def lectura_datos():
     while True: # Aplicar el protocol d'aplicació
@@ -49,7 +51,7 @@ def lectura_datos():
                     alarma3()
                 elif comando == 6: # 6: --> TEMPERATURA ALTA
                     alarma4()
-                elif comando == 7:
+                elif comando == 7: # / --> MITJANES
                     global media_python_activa, media_arduino_activa, media_arduino_temperatura
                     media_arduino_activa = True
                     media_python_activa = False
@@ -210,7 +212,7 @@ def actualitzar_graf_hum():
 #--------------------------------------------------
 
 def show_graf_radar():
-    global ax, fig, angles, distancies, canvas, canvas_graf, graf_actual
+    global i, ax, fig, angles, distancies, canvas, canvas_graf, graf_actual
     graf_actual = "radar"
 
     if 'canvas_graf' in globals() and canvas_graf.winfo_exists():
@@ -231,6 +233,8 @@ def show_graf_radar():
     ax.plot([0, angle], [0, distancia], color='g', linewidth=2)  # línia verda (expressada com un vector)
     ax.scatter(angle, distancia, color='g', s=80)  # punt verd
 
+    ax.clear()
+
     # --- Configuració del radar ---
     ax.set_thetamin(0)
     ax.set_thetamax(180)
@@ -239,7 +243,11 @@ def show_graf_radar():
     ax.set_rmax(50)                 # radi màxim
     ax.set_rticks([10, 20, 30, 40, 50])  # cercles radials
 
+    canvas = FigureCanvasTkAgg(fig, master=graf_frame)
     canvas.draw()
+    canvas_graf = canvas.get_tk_widget()
+    canvas_graf.config(width=600, height=400)
+    canvas_graf.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
 
     actualitzar_graf_radar()
 

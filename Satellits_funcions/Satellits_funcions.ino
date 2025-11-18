@@ -81,6 +81,8 @@ void setup() {
 //--------------------------------------------------
 
 void ProcessarCom(String comando) {
+    Serial.print("Terra:");
+    Serial.println(comando);
     comando.trim();
     int fin = comando.indexOf(':', 0);
     int codigo = comando.substring(0, fin).toInt();
@@ -123,7 +125,7 @@ void Enviar_TyH (){
   if (isnan(H) || isnan(T)) {
     // Error en la lectura del sensor DHT11
     mySerial.println("3:"); // Alarma 3 -> Error T/H
-    Serial.print("Error");
+    Serial.println("3:");
   }
 
   else {
@@ -153,6 +155,7 @@ void Enviar_TyH (){
       cont_TEMP_LIMIT++;
       if (cont_TEMP_LIMIT >= LIMIT_CONSECUTIU) {
         mySerial.println("5:"); // Alarma 5 -> Alta temperatura
+        Serial.println("5:");
       }
     } 
     else {
@@ -168,6 +171,7 @@ void Enviar_DyA (){
   if (D <= 0 || isnan(D)) {
     // Error en la lectura de l'ultrasons
     mySerial.println("6:"); // Alarma 6 -> Error D/A
+    Serial.println("6:");
   } 
   else {
     digitalWrite(led, HIGH);
@@ -177,6 +181,11 @@ void Enviar_DyA (){
     mySerial.print(":");
     mySerial.println(A); // Angle
     digitalWrite(led, LOW);
+    Serial.print(2); // Identificador emissió D/A
+    Serial.print(":");
+    Serial.print(D); // Distància
+    Serial.print(":");
+    Serial.println(A); // Angle
   }
 }
 
@@ -205,28 +214,29 @@ void MoureServo (){
 //--------------------------------------------------
 
 void loop() {
-  if (Serial.available()){
-    String comando = Serial.readStringUntil('\n');
+  if (mySerial.available()){
+    String comando = mySerial.readStringUntil('\n');
     ProcessarCom(comando);
-    Serial.println("Available");
+    //Serial.println("Available");
   }
 
   if ((Dades_TyH == true) && (millis() >= NextMillisDHT)){
     NextMillisDHT = millis() + PeriodeDHT;
     Enviar_TyH();
-    Serial.println("DHT");
+    //Serial.println("DHT");
   }
 
   if ((Dades_DyA == true) && (millis() >= NextMillisRADAR)){
     NextMillisRADAR = millis() + PeriodeRADAR;
     Enviar_DyA();
-    Serial.println("Radar");
+    //Serial.println("Radar");
 
   }
 
   if (millis() >= NextMillisSERVO) {
     NextMillisSERVO = millis() + PeriodeSERVO;
     MoureServo();
+    //Serial.println("Servo");
 
   }
 }
