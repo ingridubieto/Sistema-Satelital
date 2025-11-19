@@ -5,6 +5,7 @@ from tkinter import messagebox
 import time
 import threading
 #from queue import Queue
+from collections import deque
 
 
 import matplotlib.pyplot as plt
@@ -17,7 +18,7 @@ device = 'COM3'
 baudrate = 9600
 mySerial = serial.Serial(device, baudrate, timeout=1)
 temperatura = None
-temp_medias = []
+mitjana_temperatura = None
 media_python_activa = False
 media_arduino_activa = False
 humitat = None
@@ -72,7 +73,7 @@ thread1.start()
 
 
 def show_graf_temp ():
-    global ax, fig, line, temps, temperatures, i, x_max, canvas, canvas_graf, graf_actual
+    global ax, fig, line_temperatura, line_mitjana_temperatura, temps, temperatures, i, x_max, canvas, canvas_graf, graf_actual, mitjana_temperatura
     graf_actual = "temp"
 
 
@@ -85,12 +86,14 @@ def show_graf_temp ():
     ax.set_ylim(0, 100)    # Rang de temperatura
 
 
-    (line,) = ax.plot([], [], color='red')
+    (line_temperatura,) = ax.plot([], [], color='red')
+    (line_mitjana_temperatura,) = ax.plot([], [], color='blue', alpha = 0.5)
 
 
     # --- Llistes de dades ---
     temps = []
     temperatures = []
+    mitjana_temperatura = []
 
 
     i = 0
@@ -123,6 +126,11 @@ def actualitzar_graf_temp():
                 temperatures.append(temperatura)
                 i += 1
 
+                if mitjana_temp_python_activa:  
+                    cua_mitjanes_temperatura = deque(lenmax = 10) #Cua de les ultimes 10 temperatures
+                    cua_mitjanes_temperatura.append(temperatura)
+                    if len(cua_mitjanes_temperatura) == 10:
+                        mitjana_temperatura = sum(cua_mitjanes_temperatura) / len(cua_mitjanes_temperatura) #Mitjana de les ultimes 10 tempoeratures
 
                 # Amplia l'eix
                 if i > x_max:
@@ -131,7 +139,9 @@ def actualitzar_graf_temp():
 
 
                 # Actualitza dades
-                line.set_data(temps, temperatures)
+                line_temperatura.set_data(temps, temperatures)
+                if mitjana_temp_python_activa:  #Actualitza les dades de les mitjanes de temperatura només si està activat el botó
+                    line_mitjana_temperatura.set_data(temps, mitjana_temperatura)
 
 
                 # Escala automàtica de Y segons les dades
@@ -373,12 +383,24 @@ def valor_radar_slider(): # Mode manual del servo, es dirigeix al valor d'angle 
 
 
 def calculo_temp_media_arduino():
-    mySerial.write(b"6:0\n")
+    global mitjana_python_activa, mitjana_arduino_activa
+    mitjana_python_activa = False
+    mitjana_arduino_activa = True
+    if mitjana_arduino_activa:
+        mySerial.write(b"6:0")
 
 
 def calculo_temp_media_python():
-    print("Pendiente")
+    global mitjana_python_activa, mitjana_arduino_activa, cua_mitjanes_temperatura
+    cua_mitjanes_temperatura.clear() #Reinicia la llista de les mitjanes de temperatura
+    mitjana_python_activa = True
+    mitjana_arduino_activa = False
 
+
+def parar_mitjanes(): #Parar tots els calculs de mitjanes
+    global mitjana_python_activa, mitjana_arduino_activa
+    mitjana_arduino_activa = False
+    mitjana_python_activa = False
 
 #--------------------------------------------------
 #ALARMES
