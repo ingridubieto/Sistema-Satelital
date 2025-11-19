@@ -113,7 +113,7 @@ def show_graf_temp ():
 
 
 def actualitzar_graf_temp():
-    global i, x_max, graf_actual
+    global i, x_max, graf_actual, cua_mitjanes_temperatura, mitjana_temperatura
 
 
     if graf_actual != "temp":
