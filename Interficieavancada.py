@@ -126,7 +126,7 @@ def actualitzar_graf_temp():
                 temperatures.append(temperatura)
                 i += 1
 
-                if mitjana_temp_python_activa:  
+                if mitjana_temp_python_activa:  #Calcul de la mitjana de les últimes 10 temperatures
                     cua_mitjanes_temperatura = deque(lenmax = 10) #Cua de les ultimes 10 temperatures
                     cua_mitjanes_temperatura.append(temperatura)
                     if len(cua_mitjanes_temperatura) == 10:
