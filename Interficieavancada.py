@@ -5,6 +5,7 @@ from tkinter import messagebox
 import time
 import threading
 #from queue import Queue
+from collections import deque
 
 
 import matplotlib.pyplot as plt
@@ -17,9 +18,10 @@ device = 'COM3'
 baudrate = 9600
 mySerial = serial.Serial(device, baudrate, timeout=1)
 temperatura = None
-temp_medias = []
-media_python_activa = False
-media_arduino_activa = False
+mitjana_temperatura = None
+mitjana_temp_python_activa = False
+mitjana_temp_arduino_activa = False
+cua_mitjanes_temperatura = deque(maxlen = 10)
 humitat = None
 distancia = None
 angle = None
@@ -72,7 +74,7 @@ thread1.start()
 
 
 def show_graf_temp ():
-    global ax, fig, line, temps, temperatures, i, x_max, canvas, canvas_graf, graf_actual
+    global ax, fig, line_temperatura, line_mitjana_temperatura, temps, temperatures, i, x_max, canvas, canvas_graf, graf_actual, mitjana_temperatures
     graf_actual = "temp"
 
 
@@ -85,12 +87,14 @@ def show_graf_temp ():
     ax.set_ylim(0, 100)    # Rang de temperatura
 
 
-    (line,) = ax.plot([], [], color='red')
+    (line_temperatura,) = ax.plot([], [], color='red')
+    (line_mitjana_temperatura,) = ax.plot([], [], color='blue', alpha = 0.5)
 
 
     # --- Llistes de dades ---
     temps = []
     temperatures = []
+    mitjana_temperatures = []
 
 
     i = 0
@@ -110,7 +114,7 @@ def show_graf_temp ():
 
 
 def actualitzar_graf_temp():
-    global i, x_max, graf_actual
+    global i, x_max, graf_actual, cua_mitjanes_temperatura, mitjana_temperatura, mitjana_temp_python_activa
 
 
     if graf_actual != "temp":
@@ -123,6 +127,15 @@ def actualitzar_graf_temp():
                 temperatures.append(temperatura)
                 i += 1
 
+                if mitjana_temp_python_activa:
+                    cua_mitjanes_temperatura = deque(maxlen = 10)
+                    cua_mitjanes_temperatura.append(temperatura)
+                    mitjana_temperatura = sum(cua_mitjanes_temperatura) / len(cua_mitjanes_temperatura)
+                    mitjana_temperatures.append(mitjana_temperatura)
+                else:
+                    mitjana_temperatures.append(None)
+
+
 
                 # Amplia l'eix
                 if i > x_max:
@@ -131,7 +144,9 @@ def actualitzar_graf_temp():
 
 
                 # Actualitza dades
-                line.set_data(temps, temperatures)
+                line_temperatura.set_data(temps, temperatures)
+                if mitjana_temp_python_activa:
+                    line_temperatura.set_data(temps, mitjana_temperatures)
 
 
                 # Escala automàtica de Y segons les dades
@@ -372,13 +387,16 @@ def valor_radar_slider(): # Mode manual del servo, es dirigeix al valor d'angle 
     mySerial.write(msg.encode()) # envia el valor de l'angle
 
 
-def calculo_temp_media_arduino():
+def calcul_temp_mitjana_arduino():
+
     mySerial.write(b"6:0\n")
 
 
-def calculo_temp_media_python():
-    print("Pendiente")
-
+def calcul_temp_mitjana_python():
+    global mitjana_temp_python_activa, mitjana_temp_arduino_activa, cua_mitjanes_temperatura
+    cua_mitjanes_temperatura.clear()
+    mitjana_temp_arduino_activa = False
+    mitjana_temp_python_activa = True
 
 #--------------------------------------------------
 #ALARMES
@@ -471,12 +489,12 @@ button_hum.grid(row = 4, column = 0, columnspan = 2, padx = 5, pady = 5, sticky 
 
 
 #Botons de càlcul mitjanes Sat
-button_cal_arduino = tk.Button (button_graf_frame, text = 'Satèl·lit', command = calculo_temp_media_arduino)
+button_cal_arduino = tk.Button (button_graf_frame, text = 'Satèl·lit', command = calcul_temp_mitjana_arduino)
 button_cal_arduino.grid(row = 1, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
 
 #Botons de càlcul mitjanes Python
-button_cal_py = tk.Button (button_graf_frame, text = 'Terra', command = calculo_temp_media_python)
+button_cal_py = tk.Button (button_graf_frame, text = 'Terra', command = calcul_temp_mitjana_python)
 button_cal_py.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
 
