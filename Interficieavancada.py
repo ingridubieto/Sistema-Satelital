@@ -398,6 +398,11 @@ def calcul_temp_mitjana_python():
     mitjana_temp_arduino_activa = False
     mitjana_temp_python_activa = True
 
+def parar_mitjanes(): #Parar tots els calculs de mitjanes
+    global mitjana_python_activa, mitjana_arduino_activa
+    mitjana_arduino_activa = False
+    mitjana_python_activa = False
+
 #--------------------------------------------------
 #ALARMES
 #--------------------------------------------------
