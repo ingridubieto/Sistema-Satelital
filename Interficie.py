@@ -30,8 +30,38 @@ i = 0
 Comunicacio = True
 lectures_angles = {}
 
+#--------------------------------------------------
+#Checksum
+#--------------------------------------------------
 
+'''Implementa una función en Python que reciba por el puerto serie el mensaje con su
+checksum, en el formato del apartado anterior y verifique que el checksum es
+correcto. La función debe leer una línea del puerto serie y devolver una tupla de dos
+elementos: el mensaje y un valor booleano que indica si el checksum es correcto. En
+el caso de que el mensaje sea correcto el mensaje no debe incluir la barra ni el
+checksum'''
 
+def Checksum(paraula):
+    tros = paraula.split("|")
+    missatge = tros[0]
+    num = int(tros[1])
+    suma = 0
+    for i in range(len(missatge)):
+        suma = suma + ord(missatge[i])
+    resultat = suma % 256
+
+    if resultat != num:
+        bolea = False
+    else:
+        bolea = True
+
+    tupla = missatge, bolea
+    
+    return tupla
+
+#--------------------------------------------------
+#Lectura dades
+#--------------------------------------------------
 
 def lectura_datos():
     global Comunicacio
