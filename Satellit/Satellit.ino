@@ -81,6 +81,20 @@ void setup() {
 // Definició de les funcions
 //--------------------------------------------------
 
+int Checksum(char paraula[]){
+    int suma = 0;
+    for (int i = 0; paraula[i] != '\0'; i++){
+        suma = suma + paraula[i];
+    }
+    int resultat = suma % 256;
+    return resultat;
+
+}
+
+char Missatge(char paraula[], int resultat){
+    printf("%s | %d",paraula, resultat);
+}
+
 void ProcessarCom(String comando) {
     Serial.print("Terra:");
     Serial.println(comando);
