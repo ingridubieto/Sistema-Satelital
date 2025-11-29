@@ -20,7 +20,9 @@ Projecte de l'assignatura de Ciències de la Computació. Implementació del pro
 
 
 
+
  _**Estat del projecte:** Versió 3_
+
 
 
 
