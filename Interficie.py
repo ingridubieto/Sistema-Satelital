@@ -232,7 +232,7 @@ def show_graf_hum ():
     canvas.draw()
     canvas_graf = canvas.get_tk_widget()
     canvas_graf.config(width = 600, height = 400)
-    canvas_graf.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
+    canvas_graf.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
     #if 'canvas_graf' in globals():
         #canvas_graf.grid_forget()
@@ -320,7 +320,7 @@ def show_graf_radar():
     canvas = FigureCanvasTkAgg(fig, master=graf_frame)
     canvas_graf = canvas.get_tk_widget()
     canvas_graf.config(width=600, height=400)
-    canvas_graf.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
+    canvas_graf.grid(row=1, column=0, padx=5, pady=5, sticky="nsew")
     canvas.draw()
 
     actualitzar_graf_radar()
@@ -368,12 +368,22 @@ def actualitzar_graf_radar():
 
     window.after(500, actualitzar_graf_radar)
 
+#--------------------------------------------------
+# GRÀFICA POSICIÓ
+#--------------------------------------------------
+
+def show_graf_pos1():
+    print("Gràfic Òrbita + Terra")
+
+def show_graf_pos2():
+    print("Gràfic Òrbtia GMAT")
+
 
 def parar_com():
     global Comunicacio
     mySerial.write(b"1:\n") # 1 vol dir parar l'emissió de dades
     Comunicacio = False
-    print("1:")
+    print("Parar 1:")
 
 
 def reanudar_com():
@@ -381,28 +391,36 @@ def reanudar_com():
     mySerial.write(b"2:\n") # 2 vol dir reanudar l'emissió de dades
     Comunicacio = True
     #time.sleep(1)
+    print("Reanudar 2:")
 
 
-    print('Reanudar com')
-
-
-def valor_com_slider():
-    valor_ = com_slider.get()
-    print('val com' + str(valor_))
-    msg = f"3:{valor_}\n" # 3 vol dir periodicitat determinada # f serveix per indicar que es una f-string (“formatted string literal”)
+def valor_period_com_slider():
+    valor_period_ = period_com_slider.get()
+    print('val com' + str(valor_period_))
+    msg = f"3:{valor_period_}\n" # 3 vol dir periodicitat determinada # f serveix per indicar que es una f-string (“formatted string literal”)
     mySerial.write(msg.encode()) # envia el valor de periodicitat --> .encode() transforma cadena de text en bytes
 
 
-def valor_graf_slider():
-    valor_ = graf_slider.get()
-    print('val graf' + str(valor_))
-    msg = f"7:{valor_}\n" # 7 vol dir periodicitat determinada # f serveix per indicar que es una f-string (“formatted string literal”)
+def valor_temp_max_slider():
+    valor_temp_max_ = temp_max_slider.get()
+    print('val graf temp' + str(valor_temp_max_))
+    msg = f"7:{valor_temp_max_}\n" # 7 vol dir periodicitat determinada # f serveix per indicar que es una f-string (“formatted string literal”)
+    mySerial.write(msg.encode()) # envia el valor de periodicitat --> .encode() transforma cadena de text en bytes
+
+def valor_hum_max_slider():
+    valor_hum_max_ = hum_max_slider.get()
+    print('val graf hum' + str(valor_hum_max_))
+    msg = f"7:{valor_hum_max_}\n" # 7 vol dir periodicitat determinada # f serveix per indicar que es una f-string (“formatted string literal”)
     mySerial.write(msg.encode()) # envia el valor de periodicitat --> .encode() transforma cadena de text en bytes
 
 
 def auto_radar(): # Mode automatic del servo tot sol recorre de 0 a 180, com un radar normal
     mySerial.write(b"4:\n") # 4 vol dir mode automatic # b serveix per indicar que es una cadena de bytes (no text)
     print('Mode Automatic')
+
+def joystick_radar():
+    mySerial.write(b"4:\n") # 4 vol dir mode automatic # b serveix per indicar que es una cadena de bytes (no text)
+    print('Mode Joystick')
 
 
 def valor_radar_slider(): # Mode manual del servo, es dirigeix al valor d'angle que indiques
@@ -413,7 +431,6 @@ def valor_radar_slider(): # Mode manual del servo, es dirigeix al valor d'angle 
 
 
 def calcul_temp_mitjana_arduino():
-
     mySerial.write(b"6:0\n")
 
 
@@ -428,16 +445,15 @@ def parar_mitjanes(): #Parar tots els calculs de mitjanes
     mitjana_arduino_activa = False
     mitjana_python_activa = False
 
+
 #--------------------------------------------------
 #ALARMES
 #--------------------------------------------------
-
 
 def alarma1():
     window.bell()
     messagebox.showwarning(title='Sistema Satelital', message='Alarma de Dades DHT') # Fallo en captar les dades de Temperatura i Humitat
     print('ERROR SENSOR DHT')
-
 
 def alarma2():
     window.bell()
@@ -454,18 +470,18 @@ def alarma4():
     messagebox.showwarning(title='Sistema Satelital', message='Alarma de Radar') # Quan la temperatura excedeix X ºC
     print('ERROR RADAR')
 
+
 #Configuració finestra interfaç
 window = tk.Tk()
 window.geometry("800x400")
 window.title("Sistema Satelital")
-
 
 #Matriu distribució
 # 3 files del mateix pes
 window.rowconfigure(0, weight=1)
 window.rowconfigure(1, weight=1)
 window.rowconfigure(2, weight=1)
-
+window.rowconfigure(3, weight=1)
 
 # 2 columnes de pes diferent
 window.columnconfigure(0, weight=1)
@@ -473,115 +489,173 @@ window.columnconfigure(1, weight=10)
 
 
 ########## Definició primera columna botons
-#Frame de botons grafiques
-button_graf_frame = tk.LabelFrame(window, text = 'Gráficas')
-button_graf_frame.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
-button_graf_frame.rowconfigure(0, weight = 1)
-button_graf_frame.rowconfigure(1, weight = 1)
-button_graf_frame.rowconfigure(2, weight = 1)
-button_graf_frame.rowconfigure(3, weight = 1)
-button_graf_frame.rowconfigure(4, weight = 1)
-button_graf_frame.columnconfigure(0, weight = 1)
-button_graf_frame.columnconfigure(1, weight = 1)
-
-
-
-
 #Frame comunciacions
-button_com_frame = tk.LabelFrame(window, text = 'Comuncaciones')
-button_com_frame.grid(row = 1, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
+button_com_frame = tk.LabelFrame(window, text = 'Comuncacions')
+button_com_frame.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
 button_com_frame.rowconfigure(0, weight = 1)
 button_com_frame.rowconfigure(1, weight = 1)
 button_com_frame.rowconfigure(2, weight = 1)
-button_com_frame.rowconfigure(3, weight = 1)
 button_com_frame.columnconfigure(0, weight = 1)
 
+#SubFrame de comunicacions --> Frame periodicitat
+button_period_com_frame = tk.LabelFrame(button_com_frame, text = 'Periodicitat')
+button_period_com_frame.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
+button_period_com_frame.rowconfigure(0, weight = 1)
+button_period_com_frame.columnconfigure(0, weight = 1)
 
-#Frame alarmes
+
+#Frame de DHT
+button_DHT_frame = tk.LabelFrame(window, text = 'DHT')
+button_DHT_frame.grid(row = 1, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
+button_DHT_frame.rowconfigure(0, weight = 1)
+button_DHT_frame.rowconfigure(1, weight = 1)
+button_DHT_frame.rowconfigure(2, weight = 1)
+button_DHT_frame.rowconfigure(3, weight = 2)
+button_DHT_frame.columnconfigure(0, weight = 1)
+
+#SubFrame de DHT --> Frame càlcul mitjanes
+button_mitj_DHT_frame = tk.LabelFrame(button_DHT_frame, text = 'Càlcul mitjanes')
+button_mitj_DHT_frame.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
+button_mitj_DHT_frame.rowconfigure(0, weight = 1)
+button_mitj_DHT_frame.columnconfigure(0, weight = 1)
+button_mitj_DHT_frame.columnconfigure(1, weight = 1)
+
+#SubFrame de DHT --> Frame llindars màxims d'alerta
+button_max_DHT_frame = tk.LabelFrame(button_DHT_frame, text = "Llindars màxims d'alerta")
+button_max_DHT_frame.grid(row = 3, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
+button_max_DHT_frame.rowconfigure(0, weight = 1)
+button_max_DHT_frame.rowconfigure(1, weight = 1)
+button_max_DHT_frame.columnconfigure(0, weight = 1)
+
+
+#Frame de radar
 button_radar_frame = tk.LabelFrame(window, text = 'Radar')
 button_radar_frame.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
 button_radar_frame.rowconfigure(0, weight = 1)
 button_radar_frame.rowconfigure(1, weight = 1)
-button_radar_frame.rowconfigure(2, weight = 1)
-button_radar_frame.rowconfigure(3, weight = 1)
 button_radar_frame.columnconfigure(0, weight = 1)
 
-
-#BOTONS GRAFIQUES TEMPERATURA I HUMITAT
-#Boto graf temp
-button_temp = tk.Button(button_graf_frame, text = "Mostrar temperaturas", command = show_graf_temp)
-button_temp.grid(row = 0, column = 0, columnspan = 2, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
-
-
-#Boto graf humitat
-button_hum = tk.Button(button_graf_frame, text = "Mostrar humedad", command = show_graf_hum)
-button_hum.grid(row = 4, column = 0, columnspan = 2, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
+#SubFrame de radar --> Frame mode servomotor
+button_mode_radar_frame = tk.LabelFrame(button_radar_frame, text = 'Mode')
+button_mode_radar_frame.grid(row = 1, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
+button_mode_radar_frame.rowconfigure(0, weight = 1)
+button_mode_radar_frame.rowconfigure(1, weight = 1)
+button_mode_radar_frame.columnconfigure(0, weight = 1)
+button_mode_radar_frame.columnconfigure(1, weight = 1)
 
 
-#Botons de càlcul mitjanes Sat
-button_cal_arduino = tk.Button (button_graf_frame, text = 'Satèl·lit', command = calcul_temp_mitjana_arduino)
-button_cal_arduino.grid(row = 1, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
+#Frame de posició
+button_pos_frame = tk.LabelFrame(window, text = 'Posició')
+button_pos_frame.grid(row = 3, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
+button_pos_frame.rowconfigure(0, weight = 1)
+button_pos_frame.columnconfigure(0, weight = 1)
+button_pos_frame.columnconfigure(1, weight = 1)
 
-
-#Botons de càlcul mitjanes Python
-button_cal_py = tk.Button (button_graf_frame, text = 'Terra', command = calcul_temp_mitjana_python)
-button_cal_py.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
-
-
-#Slider Temp max
-title_slider = Label(button_graf_frame, text = "Temperatura màxima")
-title_slider.grid(row = 2, column = 0, padx = 5, pady = 1, sticky = 'ew') #en una altra fila per no ser tapat pel slider
-graf_slider = Scale(button_graf_frame, from_ = 15, to = 50, orient = HORIZONTAL, width = 10) # width=10 --> tamany de la "rodeta"
-graf_slider.grid(row = 3, column = 0, padx = 5, pady = 1, sticky = 'ew')
-botton_graf_slider = Button(button_graf_frame, text = 'Valor', command = valor_graf_slider)#Important command
-botton_graf_slider.grid(row = 3, column = 1, padx = 5, pady = 5, sticky = 'ew')
-
-
-#BOTONS COMUNICACIO
+#BOTONS COMUNICACIÓ
 #Boto parar
 button_parar = tk.Button(button_com_frame, text = "Parar", command = parar_com)
 button_parar.grid(row = 0, column = 0, columnspan = 2, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
-
 
 #Boto reanudar
 button_reanudar = tk.Button(button_com_frame, text = "Reanudar", command = reanudar_com)
 button_reanudar.grid(row = 1, column = 0, columnspan = 2 , padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
-
 #Slider frequencia enviament
-title_slider = Label(button_com_frame, text = "Frecuencia datos")
-title_slider.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = 'ew') #en una altra fila per no ser tapat pel slider
-com_slider = Scale(button_com_frame, from_ = 0, to = 10, orient = HORIZONTAL, width = 10)
-com_slider.grid(row = 3, column = 0, padx = 5, pady = 5, sticky = 'ew')
-botton_com_slider = Button(button_com_frame, text = 'Valor', command = valor_com_slider)
-botton_com_slider.grid(row = 3, column = 1, padx = 5, pady = 5, sticky = 'ew')
+period_com_slider = Scale(button_period_com_frame, from_ = 0, to = 10, orient = HORIZONTAL, width = 10)
+period_com_slider.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = 'ew')
+botton_period_com_slider = Button(button_period_com_frame, text = 'Valor', command = valor_period_com_slider)
+botton_period_com_slider.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = 'ew')
+
+
+#BOTONS GRAFIQUES TEMPERATURA I HUMITAT
+#Boto graf temp
+button_temp = tk.Button(button_DHT_frame, text = "Mostrar gràfica temperatura", command = show_graf_temp)
+button_temp.grid(row = 0, column = 0, columnspan = 2, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
+
+#Boto graf humitat
+button_hum = tk.Button(button_DHT_frame, text = "Mostrar gràfica humitat", command = show_graf_hum)
+button_hum.grid(row = 1, column = 0, columnspan = 2, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
+
+#Botons de càlcul mitjanes Sat
+button_cal_arduino = tk.Button (button_mitj_DHT_frame, text = 'Satèl·lit', command = calcul_temp_mitjana_arduino)
+button_cal_arduino.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
+
+#Botons de càlcul mitjanes Python
+button_cal_py = tk.Button (button_mitj_DHT_frame, text = 'Terra', command = calcul_temp_mitjana_python)
+button_cal_py.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
+
+#Slider Temperatura màxima
+temp_max_slider = Scale(button_max_DHT_frame, from_ = 15, to = 50, orient = HORIZONTAL, width = 10) # width=10 --> tamany de la "rodeta"
+temp_max_slider.grid(row = 0, column = 0, padx = 5, pady = 1, sticky = 'ew')
+botton_graf_slider = Button(button_max_DHT_frame, text = 'Valor de Temp', command = valor_temp_max_slider)#Important command
+botton_graf_slider.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = 'ew')
+
+#Slider Humitat màxima
+hum_max_slider = Scale(button_max_DHT_frame, from_ = 40, to = 80, orient = HORIZONTAL, width = 10) # width=10 --> tamany de la "rodeta"
+hum_max_slider.grid(row = 1, column = 0, padx = 5, pady = 1, sticky = 'ew')
+botton_graf_slider = Button(button_max_DHT_frame, text = 'Valor de Hum', command = valor_hum_max_slider)#Important command
+botton_graf_slider.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = 'ew')
 
 
 #BOTONS RADAR
 #Boto grafica radar
-button_radar = tk.Button(button_radar_frame, text = "Mostrar radar", command = show_graf_radar)
-button_radar.grid(row = 0, column = 0, columnspan = 3, padx = 5, pady = 5, sticky = 'nsew')
-
+button_radar = tk.Button(button_radar_frame, text = "Mostrar gràfica radar", command = show_graf_radar)
+button_radar.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = 'nsew')
 
 #Boto moviment radar (Mode automatic)
-button_auto_radar = tk.Button(button_radar_frame, text = "AutoRadar", command = auto_radar)
-button_auto_radar.grid(row = 1, column = 0, columnspan = 2 , padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
+button_auto_radar = tk.Button(button_mode_radar_frame, text = "Automàtic", command = auto_radar)
+button_auto_radar.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
+#Boto moviment radar (Mode joystick)
+button_joystick_radar = tk.Button(button_mode_radar_frame, text = "Joystick", command = joystick_radar)
+button_joystick_radar.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
 #Slidder moviment radar (Mode manual)
-title_slider = Label(button_radar_frame, text = "Posicion radar")
-title_slider.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = 'ew') #en una altra fila per no ser tapat pel slider
-radar_slider = Scale(button_radar_frame, from_ = 0, to = 180, orient = HORIZONTAL, width = 10)
-radar_slider.grid(row = 3, column = 0, padx = 5, pady = 5, sticky = 'ew')
-botton_radar_slider = Button(button_radar_frame, text = 'Valor', command = valor_radar_slider)
-botton_radar_slider.grid(row = 3, column = 1, padx = 5, pady = 5, sticky = 'ew')
+radar_slider = Scale(button_mode_radar_frame, from_ = 0, to = 180, orient = HORIZONTAL, width = 10)
+radar_slider.grid(row = 1, column = 0, padx = 5, pady = 5, sticky = 'ew')
+botton_radar_slider = Button(button_mode_radar_frame, text = 'Valor', command = valor_radar_slider)
+botton_radar_slider.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = 'ew')
 
 
-########## Definició segona columna grafica
-graf_frame = tk.LabelFrame(window, text = 'Gráficas')
-graf_frame.grid(row = 0, column = 1, rowspan = 3, padx = 5, pady = 5, sticky = "nsew")
+##BOTONS POSICIÓ
+#Boto gràfica òrbita + Terra
+button_pos1 = tk.Button(button_pos_frame, text = "Òrbita en 3D", command = show_graf_pos1)
+button_pos1.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = 'nsew')
+
+#Boto gràfica òrbita (GMAT)
+button_pos2 = tk.Button(button_pos_frame, text = "Òrbita en 2D", command = show_graf_pos2)
+button_pos2.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = 'nsew')
+
+
+########## Definició segona columna gràfiques
+graf_frame = tk.LabelFrame(window, text = 'Gràfiques')
+graf_frame.grid(row = 0, column = 1, rowspan = 4, padx = 5, pady = 5, sticky = "nsew")
 graf_frame.rowconfigure(0, weight = 1)
+graf_frame.rowconfigure(1, weight = 1)
 graf_frame.columnconfigure(0, weight = 1)
+graf_frame.columnconfigure(1, weight = 1)
+
+#SubFrame de gràfiques --> Frame sensor DHT
+graf_DHT_frame = tk.LabelFrame(graf_frame, text = 'Sensor DHT')
+graf_DHT_frame.grid(row = 0, column = 0, columnspan =2, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
+graf_DHT_frame.rowconfigure(0, weight = 1)
+graf_DHT_frame.columnconfigure(0, weight = 1)
+
+#SubFrame de gràfiques --> Frame radar
+graf_radar_frame = tk.LabelFrame(graf_frame, text = 'Radar')
+graf_radar_frame.grid(row = 1, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
+graf_radar_frame.rowconfigure(0, weight = 1)
+graf_radar_frame.rowconfigure(1, weight = 1)
+graf_radar_frame.columnconfigure(0, weight = 1)
+graf_radar_frame.columnconfigure(1, weight = 1)
+
+#SubFrame de gràfiques --> Frame posició
+graf_pos_frame = tk.LabelFrame(graf_frame, text = 'Posició')
+graf_pos_frame.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
+graf_pos_frame.rowconfigure(0, weight = 1)
+graf_pos_frame.rowconfigure(1, weight = 1)
+graf_pos_frame.columnconfigure(0, weight = 1)
+graf_pos_frame.columnconfigure(1, weight = 1)
 
 
 window.mainloop()
