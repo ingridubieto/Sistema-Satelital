@@ -32,67 +32,67 @@ _**Reanudar la Transmissió**_ de dades --> 2:
     
 _**Periodicitat**_ de les dades enviades --> 3:P
     
-On P és el període d'enviament de les dades
+  On P és el període d'enviament de les dades
     
 _**Mode constant**_ de gir del sensor de distància --> 4:
 
-El servor motor recòrre des de l'àngle 0 al 180, simulant el moviment d'un radar
+  El servor motor recòrre des de l'àngle 0 al 180, simulant el moviment d'un radar
 
 _**Mode manual**_ de gir del sensor de distància --> 5:A 
 
-On A és l'àngle introduit per l'usuari
+  On A és l'àngle introduit per l'usuari
 
-El servo motor es dirigeix a la posició desitjada per observar la distància en aquest àngle
+  El servo motor es dirigeix a la posició desitjada per observar la distància en aquest àngle
 
-Placa on es fa el _**Càlcul de les mitjanes**_
+Placa on es fa el _**Càlcul de les mitjanes;**_
 
 L'usuari pot triar on fer el càlcul de les mitjanes
 
-  Si es fa el càlcul des del mateix **satèl·lit** --> 6:0
+    Si es fa el càlcul des del mateix **satèl·lit** --> 6:0
   
-  Si es fa el càlcul des de **Python** --> 6:1
+    Si es fa el càlcul des de **Python** --> 6:1
   
 Definició d'un _**Valor màxim de temperatura**_ --> 7:T'
 
-On T' és el valor llindar que fa que salti l'alarma d'alta temperatura
+  On T' és el valor llindar que fa que salti l'alarma d'alta temperatura
 
 Definició d'un _**Valor màxim de distància**_ --> 8:D'
 
-On D' és el valor llindar que fa que salti l'alarma de perill de xoc del satèl·lit amb un objecte
+  On D' és el valor llindar que fa que salti l'alarma de perill de xoc del satèl·lit amb un objecte
 
 ## Missatges destinats a l'interfície de l'estació de terra;
 
 _**Enviament de dades de Temperatura i Humitat**_  --> 1:T:H
 
-On T és la temperatura que obté el sensor DHT
+  On T és la temperatura que obté el sensor DHT
 
-On H és l'humitat que obté el sensor DHT
+  On H és l'humitat que obté el sensor DHT
 
 _**Enviament de dades de Distància i Àngle**_ --> 2:D:A
 
-On D és la distància que obté el sensor d'ultrasons
+  On D és la distància que obté el sensor d'ultrasons
 
-On A és l'angle en el que es troba el servo motor
+  On A és l'angle en el que es troba el servo motor
 
 _**ERROR dades DHT**_ --> 3:
 
-En el cas que el sensor DHT obtingui un valor NaN de temperatures o humitats, salta una alarma
+  En el cas que el sensor DHT obtingui un valor NaN de temperatures o humitats, salta una alarma
 
 _**ERROR de comunicació entre arduinos**_ --> 4:
 
-En el cas que la comunicació via cable o kit LoRa falli, és a dir, que l'estació de terra no rebi ningún missatge del satèl·lit, salta una alarma
+  En el cas que la comunicació via cable o kit LoRa falli, és a dir, que l'estació de terra no rebi ningún missatge del satèl·lit, salta una alarma
 
 _**ERROR de temperatura alta**_ --> 5:
 
-En el cas que el sensor DHT obtingui un valor superior al llindar de temperatura establert per l'usuari, salta una alarma
+  En el cas que el sensor DHT obtingui un valor superior al llindar de temperatura establert per l'usuari, salta una alarma
 
 _**ERROR de radar**_ --> 6:
 
-En el cas que el sensor d'ultrasons rebi un valor de distància NaN, salta una alarma
+  En el cas que el sensor d'ultrasons rebi un valor de distància NaN, salta una alarma
 
 _**ERROR de perill de xoc**_ --> 7:
 
-En el cas que el sensor d'ultrasons rebi un valor menor al llindar de distància establert per l'usuari, salta una alarma. També voldrà dir que el satèl·lit esta en perill de col·lisió
+  En el cas que el sensor d'ultrasons rebi un valor menor al llindar de distància establert per l'usuari, salta una alarma. També voldrà dir que el satèl·lit esta en perill de col·lisió
 
 
 (INSERTAR FOTO DE GRUP 11)
