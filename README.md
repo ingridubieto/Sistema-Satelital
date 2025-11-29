@@ -72,3 +72,4 @@ En el cas que el sensor d'ultrasons rebi un valor menor al llindar de distància
 
 
 (INSERTAR FOTO DE GRUP 11)
+![IMATGE DE GRUP 11](assets/nomdelaimatge)
