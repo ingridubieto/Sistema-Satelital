@@ -2,19 +2,19 @@
 
 Projecte de l'assignatura de Ciències de la Computació. Implementació del prototip d'un sistema satel·lital compost pel satèl·lit i l'estació de terra.
 
-### Enllaç al vídeo de la Versió 1: https://youtu.be/uBuVtdbzSjU
+### Vídeo de la [Versió 1](https://youtu.be/uBuVtdbzSjU)
 
   (Que s'aconsegueix fer a la versió 1)
 
-### Enllaç al vídeo de la Versió 2: https://youtu.be/e1XV5jPOSLc
+### Vídeo de la [Versió 2](https://youtu.be/e1XV5jPOSLc)
 
   (Que s'aconsegueix fer a la versió 2)
 
-### Enllaç al vídeo de la Versió 3: 
+### Vídeo de la [Versió 3]()
 
   (Que s'aconsegueix fer a la versió 3)
 
-### Enllaç al vídeo de la Versió 4:
+### Vídeo de la [Versió 4]()
 
   (Que s'aconsegueix fer a la versió 4)
 
