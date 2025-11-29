@@ -60,7 +60,7 @@ Definició d'un _**Valor màxim de distància**_ --> 8:D'
 
 · On D' és el valor llindar que fa que salti l'alarma de perill de xoc del satèl·lit amb un objecte
 
-## Missatges destinats a l'interfície de l'estació de terra;
+### Missatges destinats a l'interfície de l'estació de terra;
 
 _**Enviament de dades de Temperatura i Humitat**_  --> 1:T:H
 
