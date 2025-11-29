@@ -19,7 +19,7 @@ Projecte de l'assignatura de Ciències de la Computació. Implementació del pro
   (Que s'aconsegueix fer a la versió 4)
 
 
-###  _Estat del projecte: Versió 3_
+ _**Estat del projecte:** Versió 3_
 
 
 ## Explicació del **Protocol d'Aplicació** del sistema satel·lital:
