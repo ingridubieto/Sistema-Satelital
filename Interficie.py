@@ -1,7 +1,8 @@
 import tkinter as tk
+from datetime import datetime
 from tkinter import *
 from tkinter import messagebox
-#from PIL import Image#,ImageTK
+from PIL import Image, ImageTk
 import time
 import threading
 #from queue import Queue
@@ -29,6 +30,8 @@ graf_actual = None
 i = 0
 Comunicacio = True
 lectures_angles = {}
+
+FICHERO = "eventos.txt"
 
 #--------------------------------------------------
 #Checksum
@@ -470,10 +473,42 @@ def alarma4():
     messagebox.showwarning(title='Sistema Satelital', message='Alarma de Radar') # Quan la temperatura excedeix X ºC
     print('ERROR RADAR')
 
+#--------------------------------------------------
+#FICHERO
+#--------------------------------------------------
+
+def escribir_evento(tipo, descripcion):
+    fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open(FICHERO, "a") as f:
+        f.write(f"{fecha} | {tipo} | {descripcion}\n")
+
+def guardar_observacion():
+    texto = entrada_obs.get()
+    if texto.strip():
+        escribir_evento("OBSERVACION", texto)
+        entrada_obs.delete(0, tk.END)
+
+def filtrar_eventos():
+    tipo = var_tipo.get()
+    fecha = entrada_fecha.get().strip()
+    salida.deleta("1.0", tk.END)
+
+    try:
+        with open(FICHERO) as f:
+            for linea in f:
+                fecha_ev, tipo_ev, desc = [p.strip() for p in linea.split("|")]
+
+                coincide_tipo = (tipo == "TODOS" or tipo_ev == tipo)
+                coincide_fecha = (fecha in fecha_ev) if fecha else True
+
+                if coincide_tipo and coincide_fecha:
+                    salida.insert(tk.END, linea)
+    except FileNotFoundError:
+        salida.insert(tk.END, "No hi ha events registrats.\n")
 
 #Configuració finestra interfaç
 window = tk.Tk()
-window.geometry("800x400")
+window.geometry("1000x400")
 window.title("Sistema Satelital")
 
 #Matriu distribució
@@ -486,6 +521,7 @@ window.rowconfigure(3, weight=1)
 # 2 columnes de pes diferent
 window.columnconfigure(0, weight=1)
 window.columnconfigure(1, weight=10)
+window.columnconfigure(2, weight=1)
 
 
 ########## Definició primera columna botons
@@ -551,6 +587,7 @@ button_pos_frame.rowconfigure(0, weight = 1)
 button_pos_frame.columnconfigure(0, weight = 1)
 button_pos_frame.columnconfigure(1, weight = 1)
 
+
 #BOTONS COMUNICACIÓ
 #Boto parar
 button_parar = tk.Button(button_com_frame, text = "Parar", command = parar_com)
@@ -577,11 +614,11 @@ button_hum = tk.Button(button_DHT_frame, text = "Mostrar gràfica humitat", comm
 button_hum.grid(row = 1, column = 0, columnspan = 2, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
 #Botons de càlcul mitjanes Sat
-button_cal_arduino = tk.Button (button_mitj_DHT_frame, text = 'Satèl·lit', command = calcul_temp_mitjana_arduino)
+button_cal_arduino = tk.Button(button_mitj_DHT_frame, text = 'Satèl·lit', command = calcul_temp_mitjana_arduino)
 button_cal_arduino.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
 #Botons de càlcul mitjanes Python
-button_cal_py = tk.Button (button_mitj_DHT_frame, text = 'Terra', command = calcul_temp_mitjana_python)
+button_cal_py = tk.Button(button_mitj_DHT_frame, text = 'Terra', command = calcul_temp_mitjana_python)
 button_cal_py.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
 #Slider Temperatura màxima
@@ -620,11 +657,11 @@ botton_radar_slider.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = 'ew')
 ##BOTONS POSICIÓ
 #Boto gràfica òrbita + Terra
 button_pos1 = tk.Button(button_pos_frame, text = "Òrbita en 3D", command = show_graf_pos1)
-button_pos1.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = 'nsew')
+button_pos1.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
 #Boto gràfica òrbita (GMAT)
 button_pos2 = tk.Button(button_pos_frame, text = "Òrbita en 2D", command = show_graf_pos2)
-button_pos2.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = 'nsew')
+button_pos2.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
 
 ########## Definició segona columna gràfiques
@@ -656,6 +693,96 @@ graf_pos_frame.rowconfigure(0, weight = 1)
 graf_pos_frame.rowconfigure(1, weight = 1)
 graf_pos_frame.columnconfigure(0, weight = 1)
 graf_pos_frame.columnconfigure(1, weight = 1)
+
+
+########### Definició tercera columna esdeveniments
+#Frame de registre d'esdeveniments
+button_esdv_frame = tk.LabelFrame(window, text = "Registre d'esdeveniments")
+button_esdv_frame.grid(row = 0, column = 2, rowspan = 2, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
+button_esdv_frame.rowconfigure(0, weight = 1)
+button_esdv_frame.rowconfigure(1, weight = 1)
+button_esdv_frame.rowconfigure(2, weight = 1)
+button_esdv_frame.columnconfigure(0, weight = 1)
+
+#SubFrame de registre d'esdeveniments --> Frame d'observació
+button_esdv_obs_frame = tk.LabelFrame(button_esdv_frame, text = "Afegir observació")
+button_esdv_obs_frame.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
+button_esdv_obs_frame.rowconfigure(0, weight = 1)
+button_esdv_obs_frame.rowconfigure(1, weight = 1)
+button_esdv_obs_frame.rowconfigure(2, weight = 1)
+button_esdv_obs_frame.columnconfigure(0, weight = 1)
+
+#SubFrame de registre d'esdeveniments --> Frame filtre
+button_esdv_filt_frame = tk.LabelFrame(button_esdv_frame, text = "Filtrar observació")
+button_esdv_filt_frame.grid(row = 1, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
+button_esdv_filt_frame.rowconfigure(0, weight = 1)
+button_esdv_filt_frame.columnconfigure(0, weight = 1)
+
+#SubFrame de registre d'esdeveniments --> Frame filtre
+button_esdv_res_frame = tk.LabelFrame(button_esdv_frame, text = "Resultats del filtre")
+button_esdv_res_frame.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
+button_esdv_res_frame.rowconfigure(0, weight = 1)
+button_esdv_res_frame.columnconfigure(0, weight = 1)
+
+
+#Frame de crèdits del satèl·lit
+button_cred_frame = tk.LabelFrame(window, text = "MIL-090925")
+button_cred_frame.grid(row = 2, column = 2, rowspan = 2, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
+button_cred_frame.rowconfigure(0, weight = 1)
+button_cred_frame.columnconfigure(0, weight = 1)
+
+
+##BOTONS AFEGIR OBSERVACIONS
+#Entrada de text d'observacions
+label_obs = tk.Label(button_esdv_obs_frame, text = "Observació:", anchor = "w")
+label_obs.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = "w") # anchor="w" i sticky="w", és per posar el label a l'esquerra i no centrat (west)
+entrada_obs = tk.Entry(button_esdv_obs_frame, width = 50)
+entrada_obs.grid(row = 1, column = 0, padx = 5, pady = 5, sticky = "ew")
+
+#Boto guardar observació introduïda
+button_guardar = tk.Button(button_esdv_obs_frame, text = "Guardar observació", anchor = "e" ,command = guardar_observacion)
+button_guardar.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = "e") # anchor="e" i sticky="e", és per posar el label a la dreta i no centrat (east)
+
+
+##BOTONS FILTRAR OBSERVACIONS
+#Desplegable tipus d'esdeveniment
+label_tipus = tk.Label(button_esdv_filt_frame, text="Tipus d'esdeveniment:")
+label_tipus.grid(row=0, column=0, padx=5, pady=5, sticky="w")
+var_tipo = tk.StringVar()
+var_tipo.set("TODOS") # opcio inicial del desplegable
+opcions_tipus = ["TODOS", "ALARMA", "COMANDO", "OBSERVACION"] # opcions del desplegable
+menu_tipo = tk.OptionMenu(button_esdv_filt_frame, var_tipo, *opcions_tipus)
+menu_tipo.grid(row=0, column=1, sticky="w", padx=5, pady=5)
+
+#Entrada de text de la data
+label_date = tk.Label(button_esdv_filt_frame, text = "Filtrar per data (YYYY-MM-DD):", anchor = "w")
+label_date.grid(row = 1, column = 0, padx = 5, pady = 5, sticky = "w") # anchor="w" i sticky="w", és per posar el label a l'esquerra i no centrat (west)
+entrada_date = tk.Entry(button_esdv_filt_frame, width = 30)
+entrada_date.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = "ew")
+
+#Boto aplicar filtres
+button_filt = tk.Button(button_esdv_filt_frame, text = "Aplicar filtres", anchor = "e" ,command = filtrar_eventos)
+button_filt.grid(row = 2, column = 1, padx = 5, pady = 5, sticky = "e") # anchor="e" i sticky="e", és per posar el label a la dreta i no centrat (east)
+
+
+##ESPAI DE RESULTATS DEL FILTRE
+salida = tk.Text(button_esdv_res_frame, width=30, height=10)
+salida.grid(row=0, column=0, padx=5, pady=5, sticky = "nsew")
+
+#Scroll per l'espai del resultats del filtre
+scroll = tk.Scrollbar(button_esdv_res_frame, orient="vertical")
+scroll.grid(row=0, column=1, sticky="ns")
+
+scroll.config(command=salida.yview)
+
+
+##ESPAI DE CRÈDITS DEL SATÈL·LIT
+#Imatge del nostre Satèl·lit
+img = Image.open("MIL-090925.jpg")
+img = img.resize((400, 250))
+img_tk = ImageTk.PhotoImage(img)
+label = tk.Label(button_cred_frame, image=img_tk, anchor = "w")
+label.grid(row = 0, column = 0, sticky = "nsew")
 
 
 window.mainloop()
