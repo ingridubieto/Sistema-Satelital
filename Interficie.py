@@ -15,7 +15,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import serial
 
 
-device = 'COM11'
+device = 'COM9'
 baudrate = 9600
 mySerial = serial.Serial(device, baudrate, timeout=1)
 temperatura = None
@@ -31,7 +31,7 @@ i = 0
 Comunicacio = True
 lectures_angles = {}
 
-FICHERO = "eventos.txt"
+FITXER = "esdeveniments.txt"
 
 #--------------------------------------------------
 #Checksum
@@ -492,12 +492,12 @@ def alarma4():
     print('ERROR RADAR')
 
 #--------------------------------------------------
-#FICHERO
+#FITXER
 #--------------------------------------------------
 
 def escribir_evento(tipo, descripcion):
     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    with open(FICHERO, "a") as f:
+    with open(FITXER, "a") as f:
         f.write(f"{fecha} | {tipo} | {descripcion}\n")
 
 def guardar_observacion():
@@ -506,23 +506,32 @@ def guardar_observacion():
         escribir_evento("OBSERVACION", texto)
         entrada_obs.delete(0, tk.END)
 
-def filtrar_eventos():
-    tipo = var_tipo.get()
-    fecha = entrada_fecha.get().strip()
-    salida.deleta("1.0", tk.END)
+def filtrar_esdeveniments():
+    tipo = str(var_tipo.get())
+    fecha = str(entrada_date.get().strip())
+
+    fitxer_entrada = None
+    fitxer_sortida = None
 
     try:
-        with open(FICHERO) as f:
-            for linea in f:
-                fecha_ev, tipo_ev, desc = [p.strip() for p in linea.split("|")]
+        fitxer_entrada = open(FITXER, 'r')
+        fitxer_sortida = open('filtres.txt', 'w')
+        for linea in fitxer_entrada.readlines():
+            trossos = linea.split('|')
+            data_hora = trossos[0]
+            data = data_hora.split(' ')[0]
+            event = trossos[1]
 
-                coincide_tipo = (tipo == "TODOS" or tipo_ev == tipo)
-                coincide_fecha = (fecha in fecha_ev) if fecha else True
+            if fecha == data or tipo == event or tipo == "TODOS":
+                fitxer_sortida.write(linea)
 
-                if coincide_tipo and coincide_fecha:
-                    salida.insert(tk.END, linea)
     except FileNotFoundError:
-        salida.insert(tk.END, "No hi ha events registrats.\n")
+        print("No hi ha events registrats.")
+    finally:
+        if fitxer_entrada is not None:
+            fitxer_entrada.close()
+        if fitxer_sortida is not None:
+            fitxer_sortida.close()
 
 #Configuració finestra interfaç
 window = tk.Tk()
@@ -820,7 +829,7 @@ entrada_date = tk.Entry(button_esdv_filt_frame, width = 30)
 entrada_date.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = "ew")
 
 #Boto aplicar filtres
-button_filt = tk.Button(button_esdv_filt_frame, text = "Aplicar filtres", anchor = "e" ,command = filtrar_eventos)
+button_filt = tk.Button(button_esdv_filt_frame, text = "Aplicar filtres", anchor = "e" ,command = filtrar_esdeveniments)
 button_filt.grid(row = 2, column = 1, padx = 5, pady = 5, sticky = "e") # anchor="e" i sticky="e", és per posar el label a la dreta i no centrat (east)
 
 
@@ -835,13 +844,13 @@ scroll.grid(row=0, column=1, sticky="ns")
 scroll.config(command=salida.yview)
 
 
-##ESPAI DE CRÈDITS DEL SATÈL·LIT
+'''##ESPAI DE CRÈDITS DEL SATÈL·LIT
 #Imatge del nostre Satèl·lit
 img = Image.open("MIL-090925.jpg")
 img = img.resize((400, 250))
 img_tk = ImageTk.PhotoImage(img)
 label = tk.Label(button_cred_frame, image=img_tk, anchor = "w")
-label.grid(row = 0, column = 0, sticky = "nsew")
+label.grid(row = 0, column = 0, sticky = "nsew")'''
 
 
 window.mainloop()
