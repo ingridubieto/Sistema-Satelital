@@ -81,28 +81,47 @@ void setup() {
 // Definició de les funcions
 //--------------------------------------------------
 
-int Checksum(char paraula[]){
-    int suma = 0;
-    for (int i = 0; paraula[i] != '\0'; i++){
-        suma = suma + paraula[i];
-    }
-    int resultat = suma % 256;
-    return resultat;
+int Checksum(String missatge){
+  const char* paraula = missatge.c_str();
+  int suma = 0;
+  for (int i = 0; paraula[i] != '\0'; i++){
+      suma = suma + paraula[i];
+  }
+  int resultat = suma % 256;
+  return resultat;
 
 }
 
-char Missatge(char paraula[], int resultat){
-    printf("%s | %d",paraula, resultat);
+bool CompararChecksum(String missatge){
+  missatge.trim();
+  int pos = missatge.indexOf('|', 0); //Index de la posició de la barra
+  int ChecksumEnviat = missatge.substring(pos + 1).toInt();
+  String paraula = missatge.substring(0, pos);
+  if (ChecksumEnviat == Checksum(paraula)){
+    Serial.println("Bo");
+    return true;
+  }
+  else{
+    Serial.println("Missatge per descartar");
+    return false;
+  }
+}
+
+String AfegirChecksum(String paraula){
+  String missatge = paraula + "|" + String(Checksum(paraula));
+  return missatge;
 }
 
 void ProcessarCom(String comando) {
-    Serial.print("Terra:");
-    Serial.println(comando);
+  Serial.print("Terra:");
+  Serial.println(comando);
+
+  if (CompararChecksum(comando) == true){
     comando.trim();
     int fin = comando.indexOf(':', 0);
     int codigo = comando.substring(0, fin).toInt();
     int inicio = fin + 1;
-    
+
     if (codigo == 1) { // Parar emissió de dades
       Dades_TyH = false;
       Dades_DyA = false;
@@ -131,6 +150,7 @@ void ProcessarCom(String comando) {
     else if (codigo == 7) {
       TEMP_LIMIT = comando.substring(inicio, fin).toInt(); // Nou límit de temperatura
     }
+  } 
 }
 
 void Enviar_TyH (){
@@ -139,24 +159,18 @@ void Enviar_TyH (){
 
   if (isnan(H) || isnan(T)) {
     // Error en la lectura del sensor DHT11
-    mySerial.println("3:"); // Alarma 3 -> Error T/H
-    Serial.println("3:");
+    String missatge = AfegirChecksum("3:"); // Alarma 3 -> Error T/H
+    mySerial.println(missatge);
+    Serial.println(missatge);
   }
 
   else {
     // Enviament de dades vàlides
     digitalWrite(led, HIGH);
-    mySerial.print(1); // Identificador emissió T/H
-    mySerial.print(":");
-    mySerial.print(T); // Temperatura
-    mySerial.print(":");
-    mySerial.println(H); // Humitat
+    String missatge = AfegirChecksum("1:" + String(T) + ":" + String(H)); //Fomrat missatge 1:Temperatura:Humitat|Checksum
+    mySerial.println(missatge);
+    Serial.println(missatge);
     digitalWrite(led, LOW);
-    Serial.print(1); // Identificador emissió T/H
-    Serial.print(":");
-    Serial.print(T); // Temperatura
-    Serial.print(":");
-    Serial.println(H); // Humitat
 
     if(Mitjanes_T){
       if (Contador_Temp <= 10){
@@ -169,8 +183,9 @@ void Enviar_TyH (){
     if (T >= TEMP_LIMIT) {
       cont_TEMP_LIMIT++;
       if (cont_TEMP_LIMIT >= LIMIT_CONSECUTIU) {
-        mySerial.println("5:"); // Alarma 5 -> Alta temperatura
-        Serial.println("5:");
+        String missatge = AfegirChecksum("5:"); // Alarma 5 -> Alta temperatura
+        mySerial.println(missatge);
+        Serial.println(missatge);
       }
     } 
     else {
@@ -185,22 +200,17 @@ void Enviar_DyA (){
 
   if (D <= 0 || isnan(D)) {
     // Error en la lectura de l'ultrasons
-    mySerial.println("6:"); // Alarma 6 -> Error D/A
-    Serial.println("6:");
+    String missatge = AfegirChecksum("6:"); // Alarma 6 -> Error D/A
+    mySerial.println(missatge);
+    Serial.println(missatge);
   } 
   else {
+    // Enviamnet dades correctes D/A
     digitalWrite(led, HIGH);
-    mySerial.print(2); // Identificador emissió D/A
-    mySerial.print(":");
-    mySerial.print(D); // Distància
-    mySerial.print(":");
-    mySerial.println(A); // Angle
+    String missatge = AfegirChecksum("2:" + String(D) + ":" + String(A)); //Format missatge 2:Distancia:Angle|Checksum
+    mySerial.println(missatge);
+    Serial.println(missatge);
     digitalWrite(led, LOW);
-    Serial.print(2); // Identificador emissió D/A
-    Serial.print(":");
-    Serial.print(D); // Distància
-    Serial.print(":");
-    Serial.println(A); // Angle
   }
 }
 

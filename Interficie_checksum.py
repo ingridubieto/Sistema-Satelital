@@ -95,8 +95,10 @@ def lectura_datos():
                             alarma3()
                         elif comando == 6: # 6: --> RADAR
                             alarma4()
+                    else:
+                        print("Missatge descartat")
             except:
-                print("Error de lectura")
+                print("No hi ha dades")
             time.sleep(0.1)
 
 
