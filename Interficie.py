@@ -105,6 +105,9 @@ def lectura_datos():
                             alarma3()
                         elif comando == 6: # 6: --> RADAR
                             alarma4()
+                        elif comando == 10: #10: --> MITJANA DE TEMPERATURES
+                        global mitjana_temperatura_satel·lit
+                        mitjana_temperatura_satel·lit = float(trozos[1])
             except:
                 print("Error de lectura")
             time.sleep(0.1)
@@ -193,7 +196,7 @@ def actualitzar_graf_temp():
                 # Actualitza dades
                 line_temperatura.set_data(temps, temperatures)
                 if mitjana_temp_python_activa:
-                    line_temperatura.set_data(temps, mitjana_temperatures)
+                    line_mitjana_temperatura.set_data(temps, mitjana_temperatures)
 
 
                 # Escala automàtica de Y segons les dades
