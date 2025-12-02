@@ -49,9 +49,12 @@ const int LIMIT_CONSECUTIU = 3; // nombre de cops consecutius que ha de superar 
 NewPing sonar(UltrasonicPin, UltrasonicPin, MaxDistance);
 
 // Variables pel càlcul de mitjanes de T
+#define WINDOW 10
+double buffer[WINDOW] = {0};
+int Longitud_buffer = 0;
+float Temp_Mitjana = 0;
+int Index_Mitjana_Temp = 0;
 float Suma_Temp = 0;
-float Mitjana = 0;
-int Contador_Temp = 0;
 
 int M;
 
@@ -173,9 +176,20 @@ void Enviar_TyH (){
     digitalWrite(led, LOW);
 
     if(Mitjanes_T){
-      if (Contador_Temp <= 10){
-        Suma_Temp = Suma_Temp + T;
-        Contador_Temp = Contador_Temp + 1;
+      Suma_Temp = Suma_Temp - buffer[Index_Mitjana_Temp]; //Restar la temperatura que hi havia en X posicio
+      buffer[Index_Mitjana_Temp] = T; //Insertar la nova temperatura
+      Suma_Temp = Suma_Temp + T; //Sumar la nova temperatura
+      Index_Mitjana_Temp = (Index_Mitjana_Temp + 1) % WINDOW; //Avançar la posicio
+
+      if (Longitud_buffer < WINDOW){
+        Longitud_buffer++;
+      }
+
+      if (Longitud_buffer == WINDOW){
+        Temp_Mitjana = Suma_Temp / Longitud_buffer; //Calcul mitjana
+        String missatge = AfegirChecksum("10:" + String(Temp_Mitjana));
+        mySerial.println(missatge);
+        Serial.println(missatge);
       }
     }
   
