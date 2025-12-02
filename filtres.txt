@@ -1,0 +1,83 @@
+2025-12-02 18:40:24 | COMANDO | Parar Emissio de dades
+2025-12-02 18:41:43 | COMANDO | Parar Emissio de dades
+2025-12-02 18:42:20 | COMANDO | Parar Emissio de dades
+2025-12-02 18:42:27 | COMANDO | Parar Emissio de dades
+2025-12-02 18:42:29 | COMANDO | Parar Emissio de dades
+2025-12-02 18:42:31 | COMANDO | Parar Emissio de dades
+2025-12-02 18:48:26 | COMANDO | Parar Emissio de dades
+2025-12-02 18:48:29 | COMANDO | Parar Emissio de dades
+2025-12-02 18:48:36 | COMANDO | Parar Emissio de dades
+2025-12-02 18:48:44 | COMANDO | Parar Emissio de dades
+2025-12-02 19:01:26 | COMANDO | Parar Emissio de dades
+2025-12-02 19:01:54 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-02 19:01:56 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-02 19:01:57 | COMANDO | Canvi Llindar de Temperatura Maxima
+2025-12-02 19:02:14 | COMANDO | Parar Emissio de dades
+2025-12-02 19:03:19 | COMANDO | Canvi Llindar de Temperatura Maxima
+2025-12-02 19:03:22 | COMANDO | Canvi Llindar de Temperatura Maxima
+2025-12-02 19:03:31 | COMANDO | Mode Manual del Radar
+2025-12-02 19:04:16 | COMANDO | Parar Emissio de dades
+2025-12-02 19:06:37 | COMANDO | Parar Emissio de dades
+2025-12-02 19:10:36 | COMANDO | Parar Emissio de dades
+2025-12-02 19:10:40 | COMANDO | Parar Emissio de dades
+2025-12-02 19:35:46 | COMANDO | Parar Emissio de dades
+2025-12-02 19:35:52 | COMANDO | Reanudar Emissio de dades
+2025-12-02 19:36:08 | COMANDO | Parar Emissio de dades
+2025-12-02 19:36:13 | COMANDO | Reanudar Emissio de dades
+2025-12-02 19:36:20 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-02 19:36:25 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-02 19:36:29 | COMANDO | Canvi Llindar de Temperatura Maxima
+2025-12-02 19:36:35 | ALARMA | Temperatura Alta
+2025-12-02 19:36:38 | ALARMA | Temperatura Alta
+2025-12-02 19:36:42 | ALARMA | Temperatura Alta
+2025-12-02 19:36:44 | ALARMA | Temperatura Alta
+2025-12-02 20:13:28 | COMANDO | Parar Emissio de dades
+2025-12-02 20:13:38 | COMANDO | Reanudar Emissio de dades
+2025-12-02 20:13:43 | COMANDO | Reanudar Emissio de dades
+2025-12-02 20:13:47 | COMANDO | Parar Emissio de dades
+2025-12-02 20:13:51 | COMANDO | Parar Emissio de dades
+2025-12-02 20:13:57 | COMANDO | Reanudar Emissio de dades
+2025-12-02 20:14:21 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-02 20:14:33 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-02 20:16:23 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-02 20:18:22 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-02 20:19:40 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-02 20:19:41 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-02 20:19:44 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-02 20:20:04 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-02 20:20:12 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-02 20:20:13 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-02 20:22:00 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-02 20:22:09 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-02 20:22:37 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-02 20:30:00 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-02 20:30:00 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-02 20:30:07 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-02 20:30:07 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-02 20:30:10 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-02 20:32:34 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-02 20:32:38 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-02 20:32:42 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-02 20:32:46 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-02 20:32:52 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-02 20:32:53 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-02 20:33:01 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-02 20:33:04 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-02 20:33:09 | COMANDO | Canvi Llindar de Temperatura Maxima
+2025-12-02 20:33:15 | ALARMA | Temperatura Alta
+2025-12-02 20:33:16 | ALARMA | Temperatura Alta
+2025-12-02 20:33:17 | ALARMA | Temperatura Alta
+2025-12-02 20:33:19 | ALARMA | Temperatura Alta
+2025-12-02 20:33:21 | ALARMA | Temperatura Alta
+2025-12-02 20:33:32 | COMANDO | Canvi Llindar d'Humitat Maxima
+2025-12-02 20:33:38 | ALARMA | Temperatura Alta
+2025-12-02 20:33:43 | ALARMA | Temperatura Alta
+2025-12-02 20:33:45 | ALARMA | Temperatura Alta
+2025-12-02 20:34:21 | COMANDO | Mode Automatic del Radar
+2025-12-02 20:34:22 | COMANDO | Mode Joystick del Radar
+2025-12-02 20:34:45 | OBSERVACION | Prova
+2025-12-02 20:35:04 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-02 20:35:05 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-02 20:35:06 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-02 20:35:06 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-02 20:35:09 | ALARMA | No es capta Distancia ni Angle correctament

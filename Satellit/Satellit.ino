@@ -121,6 +121,9 @@ void ProcessarCom(String comando) {
 
   if (CompararChecksum(comando) == true){
     comando.trim();
+    int pos = comando.indexOf('|', 0); //Index de la posició de la barra
+    comando = comando.substring(0,pos);
+
     int fin = comando.indexOf(':', 0);
     int codigo = comando.substring(0, fin).toInt();
     int inicio = fin + 1;
