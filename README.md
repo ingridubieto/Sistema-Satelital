@@ -8,7 +8,7 @@ Projecte de l'assignatura de Ciències de la Computació. Implementació del pro
 ### Vídeo de la [Versió 2](https://youtu.be/e1XV5jPOSLc)  
 (Que s'aconsegueix fer a la versió 2)
 
-### Vídeo de la [Versió 3]()  
+### Vídeo de la [Versió 3](https://youtu.be/HDT-QbDbMX0)  
 (Que s'aconsegueix fer a la versió 3)
 
 ### Vídeo de la [Versió 4]()  
