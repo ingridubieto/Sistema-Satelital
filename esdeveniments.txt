@@ -89,3 +89,101 @@
 2025-12-02 22:16:00 | ALARMA | No es capta Distancia ni Angle correctament
 2025-12-02 22:16:11 | COMANDO | Parar Emissio de dades
 2025-12-02 22:16:14 | COMANDO | Reanudar Emissio de dades
+2025-12-09 17:52:14 | COMANDO | Parar Emissio de dades
+2025-12-09 17:52:18 | COMANDO | Reanudar Emissio de dades
+2025-12-09 17:52:24 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-09 17:52:47 | COMANDO | Mode Automatic del Radar
+2025-12-09 17:52:48 | COMANDO | Mode Joystick del Radar
+2025-12-09 17:52:48 | COMANDO | Mode Manual del Radar
+2025-12-09 17:52:49 | COMANDO | Canvi Llindar d'Humitat Maxima
+2025-12-09 17:52:50 | COMANDO | Canvi Llindar de Temperatura Maxima
+2025-12-09 17:52:51 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-09 17:52:51 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-09 17:53:00 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-09 17:53:01 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-09 18:01:19 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-09 18:01:22 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-09 18:01:25 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-09 18:01:38 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-09 18:01:39 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-09 18:02:36 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-09 18:03:29 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-09 18:03:48 | COMANDO | Canvi Llindar de Temperatura Maxima
+2025-12-09 18:03:56 | COMANDO | Canvi Llindar d'Humitat Maxima
+2025-12-09 18:21:52 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:22:07 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:22:08 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:22:08 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:22:11 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:22:12 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:22:38 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:22:40 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:22:40 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:22:41 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:22:41 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:22:47 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:22:48 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:22:49 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:22:51 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:22:53 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:22:57 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:24:57 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:24:58 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:24:59 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:25:00 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:25:00 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:25:01 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:25:02 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:25:02 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:25:03 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:25:04 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:25:04 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 18:25:05 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-09 19:29:24 | COMANDO | Parar Emissio de dades
+2025-12-09 19:29:31 | COMANDO | Reanudar Emissio de dades
+2025-12-09 19:29:41 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-09 19:29:52 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-09 19:34:40 | COMANDO | Canvi Llindar d'Humitat Maxima
+2025-12-09 19:34:54 | COMANDO | Canvi Llindar de Temperatura Maxima
+2025-12-09 19:35:00 | ALARMA | Temperatura Alta
+2025-12-09 19:35:01 | ALARMA | Temperatura Alta
+2025-12-09 19:35:02 | ALARMA | Temperatura Alta
+2025-12-09 19:35:04 | ALARMA | Temperatura Alta
+2025-12-09 19:35:05 | ALARMA | Temperatura Alta
+2025-12-09 19:35:06 | ALARMA | Temperatura Alta
+2025-12-09 19:35:07 | ALARMA | Temperatura Alta
+2025-12-09 19:35:09 | ALARMA | Temperatura Alta
+2025-12-09 19:36:45 | COMANDO | Canvi Llindar d'Humitat Maxima
+2025-12-09 19:36:50 | ALARMA | Humitat Alta
+2025-12-09 19:36:52 | ALARMA | Humitat Alta
+2025-12-09 19:36:54 | ALARMA | Humitat Alta
+2025-12-09 19:36:56 | ALARMA | Humitat Alta
+2025-12-09 19:38:15 | COMANDO | Mode Automatic del Radar
+2025-12-09 19:38:21 | COMANDO | Mode Joystick del Radar
+2025-12-09 19:38:25 | COMANDO | Mode Manual del Radar
+2025-12-09 19:39:01 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-09 19:39:04 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-09 19:39:11 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-09 19:39:21 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-09 19:39:24 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-09 19:39:26 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-09 19:39:31 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-09 19:39:32 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-09 19:39:44 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-09 19:39:56 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-09 19:39:58 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-09 19:40:04 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-09 19:40:07 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-09 19:41:04 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-09 19:46:56 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-09 19:47:05 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-09 19:47:08 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-09 19:51:07 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-09 19:51:17 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-09 19:54:01 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-09 19:55:58 | COMANDO | Canvi Llindar de Temperatura Maxima
+2025-12-09 19:56:19 | ALARMA | Temperatura Alta
+2025-12-09 19:56:22 | ALARMA | Temperatura Alta
+2025-12-09 20:13:10 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-09 20:30:25 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-09 20:30:56 | COMANDO | Canvi Llindar de Temperatura Maxima

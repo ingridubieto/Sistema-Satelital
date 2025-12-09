@@ -18,7 +18,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import serial
 
 
-device = 'COM3'
+device = 'COM11'
 baudrate = 9600
 mySerial = serial.Serial(device, baudrate, timeout=1)
 temperatura = None
@@ -111,7 +111,7 @@ def lectura_datos():
                             alarma3()
                         elif comando == 8: # 8: --> ERROR HUMITAT ALTA
                             alarma4()
-                        elif comando == 9: #10: --> ERROR DADES RADAR
+                        elif comando == 9: #9: --> ERROR DADES RADAR
                             alarma5()
                         elif comando == 10: #10: --> ERROR PERILL DE XOC
                             alarma6()
@@ -491,7 +491,7 @@ def reanudar_com():
 
 
 def valor_period_com_slider():
-    valor_period_ = period_com_slider.get()
+    valor_period_ = int(period_com_slider.get())*1000
     print('val com' + str(valor_period_))
     msg = f"3:{valor_period_}|{Checksum("3:" + str(valor_period_))}" # 3 vol dir periodicitat determinada # f serveix per indicar que es una f-string (“formatted string literal”)
     mySerial.write(msg.encode()) # envia el valor de periodicitat --> .encode() transforma cadena de text en bytes
@@ -919,12 +919,12 @@ scroll.config(command=salida.yview)
 
 
 ##ESPAI DE CRÈDITS DEL SATÈL·LIT
-#Imatge del nostre Satèl·lit
+'''#Imatge del nostre Satèl·lit
 img = Image.open("MIL-090925.jpg")
 img = img.resize((400, 250))
 img_tk = ImageTk.PhotoImage(img)
 
 label = tk.Label(button_cred_frame, image=img_tk, anchor = "w")
-label.grid(row = 0, column = 0, sticky = "nsew")
+label.grid(row = 0, column = 0, sticky = "nsew")'''
 
 window.mainloop()
