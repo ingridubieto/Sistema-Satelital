@@ -185,10 +185,7 @@ void ProcessarCom(String comando) {
       PeriodeRADAR = comando.substring(inicio, pos).toInt(); // extrae el valor del periodo de datos
     }
     else if (codigo == ComandoT_MitjanesSat) {
-      M = comando.substring(inicio, pos).toInt();
-      if (M == 0) { // El càlcul de les mitjanes de T es fa des del satèl·lit
-        Mitjanes_T = true; 
-      }
+      Mitjanes_T = true; 
     }
     else if (codigo == ComandoT_MaxTemp) {
       TEMP_LIMIT = comando.substring(inicio, pos).toInt(); // Nou límit de temperatura
