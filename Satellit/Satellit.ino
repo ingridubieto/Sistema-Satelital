@@ -10,6 +10,7 @@
 
 String Comando_TyH = "1:";
 String Comando_mTymH = "2:";
+//CREAR COMANDO PARA CANCELAR EL CALCULO DE mTymH
 String Comando_DyA = "3:";
 String Comando_txyz = "4:";
 String Comando_ErrorCom = "5:";
@@ -24,6 +25,7 @@ String Comando_Fotos = "11:";
 
 int ComandoT_Parar = 1;
 int ComandoT_Reanudar = 2;
+//INCORPORAR COMANDO PARA CANCELAR EL CALCULO DE mTymH
 int ComandoT_Period = 3;
 int ComandoT_MitjanesSat = 4;
 int ComandoT_MaxTemp = 5;
