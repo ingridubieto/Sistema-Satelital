@@ -173,6 +173,8 @@ def actualitzar_graf_temp():
                     cua_mitjanes_temperatura.append(temperatura)
                     mitjana_temperatura = sum(cua_mitjanes_temperatura) / len(cua_mitjanes_temperatura)
                     mitjana_temperatures.append(mitjana_temperatura)
+                elif mitjana_temp_arduino_activa:
+                    mitjana_temperatures.append(mitjana_temperatura_satel·lit)
                 else:
                     mitjana_temperatures.append(None)
 
@@ -249,6 +251,8 @@ def actualitzar_graf_hum():
                     cua_mitjanes_humitat.append(humitat)
                     mitjana_humitat = sum(cua_mitjanes_humitat) / len(cua_mitjanes_humitat)
                     mitjana_humitats.append(mitjana_humitat)
+                elif mitjana_hum_arduino_activa:
+                    mitjana_humitats.append(mitjana_humitat_satel·lit)
                 else:
                     mitjana_humitats.append(None)
 
@@ -510,6 +514,11 @@ def calcul_mitjanes_python():
     
 
 def calcul_mitjanes_arduino():
+    global mitjana_temp_python_activa, mitjana_temp_arduino_activa, mitjana_hum_python_activa, mitjana_hum_arduino_activa
+    mitjana_temp_arduino_activa = True
+    mitjana_temp_python_activa = False
+    mitjana_hum_python_activa = False
+    mitjana_hum_arduino_activa = True
     msg = f"4:|{Checksum("4:")}" # 4 vol dir calcular les mitjanes de temperatura i humitat des del satèl·lit
     mySerial.write(msg.encode())
     escribir_evento("COMANDO", "Calcular Mitjanes des del satel.lit")
