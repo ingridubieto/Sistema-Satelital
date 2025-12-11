@@ -84,15 +84,23 @@ const int LIMIT_CONSECUTIU = 3; // nombre de cops consecutius que ha de superar 
 // Inicialització del sensor ultrasons
 NewPing sonar(UltrasonicPin, UltrasonicPin, MaxDistance);
 
-// Variables pel càlcul de mitjanes de T
+// Variables pel càlcul de mitjanes
 #define WINDOW 10
-double buffer[WINDOW] = {0};
-int Longitud_buffer = 0;
-float Temp_Mitjana = 0;
-int Index_Mitjana_Temp = 0;
-float Suma_Temp = 0;
+int Mitjanes;
 
-int M;
+// Mitjana Temperatura
+double bufferT[WINDOW] = {0};
+double sumaT = 0.0;
+int indexT = 0;
+int countT = 0;
+float Mitjana_Temperatura;
+
+// Mitjana Humitat
+double bufferH[WINDOW] = {0};
+double sumaH = 0.0;
+int indexH = 0;
+int countH = 0;
+float Mitjana_Humitat;
 
 float H; // Valor humitat (%)
 float T; // Valor temperatura (ºC)
@@ -221,24 +229,6 @@ void Enviar_TyH (){
     mySerial.println(missatge);
     Serial.println(missatge);
     digitalWrite(led, LOW);
-
-    if(Mitjanes_T){
-      Suma_Temp = Suma_Temp - buffer[Index_Mitjana_Temp]; //Restar la temperatura que hi havia en X posicio
-      buffer[Index_Mitjana_Temp] = T; //Insertar la nova temperatura
-      Suma_Temp = Suma_Temp + T; //Sumar la nova temperatura
-      Index_Mitjana_Temp = (Index_Mitjana_Temp + 1) % WINDOW; //Avançar la posicio
-
-      if (Longitud_buffer < WINDOW){
-        Longitud_buffer++;
-      }
-
-      if (Longitud_buffer == WINDOW){ //Clarament s'ha de corregir per tambe enviar humitat iq eu funcioni
-        Temp_Mitjana = Suma_Temp / Longitud_buffer; //Calcul mitjana
-        String missatge = AfegirChecksum(Comando_mTymH + String(Temp_Mitjana));
-        mySerial.println(missatge);
-        Serial.println(missatge);
-      }
-    }
   
     // Control d’alarma en cas d'alta temperatura
     if (T >= TEMP_LIMIT) {
@@ -270,8 +260,25 @@ void Enviar_TyH (){
 
 }
 
-void Enviar_mTymH (){
-  // Comando 2: Comando_mTymH
+double actualitzar_Mitjana(double nou_valor, double buffer[], double &suma, int &indexPos, int &contador){
+  suma -= buffer[indexPos];
+  buffer[indexPos] = nou_valor;
+  suma += nou_valor;
+
+  indexPos = (indexPos + 1) % WINDOW; //Mira la següent posicio circularment amb 10 elements
+
+  if (contador < WINDOW) {
+    contador++;
+  }
+  return suma / contador;
+}
+
+void Enviar_mTymH(){
+  Mitjana_Temperatura = actualitzar_Mitjana(T, bufferT, sumaT, indexT, countT);
+  Mitjana_Humitat = actualitzar_Mitjana(H, bufferH, sumaH, indexH, countH);
+  String missatge = AfegirChecksum(Comando_mTymH + String(Mitjana_Temperatura) + ":" + String(Mitjana_Humitat)); //Format missatge 2:Mitjana_Temperatura:Mitjana_Humitat|Checksum
+  mySerial.println(missatge);
+  Serial.println(missatge);
 }
 
 void Enviar_DyA (){ //Comando 3:D:A //Error radar 9:
@@ -332,6 +339,9 @@ void loop() {
   if ((Dades_TyH == true) && (millis() >= NextMillisDHT)){
     NextMillisDHT = millis() + PeriodeDHT;
     Enviar_TyH();
+    if (Mitjanes == true){
+      Enviar_mTymH();
+    }
     //Serial.println("DHT");
   }
 
