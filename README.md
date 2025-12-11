@@ -3,15 +3,15 @@
 Projecte de l'assignatura de Ciències de la Computació. Implementació del prototip d'un sistema satel·lital compost pel satèl·lit i l'estació de terra.
 
 ### Vídeo de la [Versió 1](https://youtu.be/uBuVtdbzSjU)  
-En la primera versió d'aquest projete es va aconseguir el següent:
-· L'emissió de dades entre els dos arduinos
-· La detecció d'errors en captar les dades del sensor DHT
-· Implementació d'un LED que s'encén cada vegada que l'arduino satèl·lit envia dades vàlides
-· La detecció de un fallo en la comunicació entre els arduinos, és a dir, si s'esta més de 5 segons sense haver-hi intercanvi de dades entre les dues plaques salta una alarma
-· Implementació d'un LED que s'encén cada vegada que l'arduino de l'estació de terra rep dades vàlides
-· Definició de la funció per processar les dades que arriben del satèl·lit
-· Definició de les ordres de iniciar, parar i reanudar les dades que rebem
-· Creació d'una interfície amb botons i una gràfica que recull les dades de temperatura rebudes
+En la primera versió d'aquest projete es va aconseguir el següent:   
+· L'emissió de dades entre els dos arduinos   
+· La detecció d'errors en captar les dades del sensor DHT   
+· Implementació d'un LED que s'encén cada vegada que l'arduino satèl·lit envia dades vàlides   
+· La detecció de un fallo en la comunicació entre els arduinos, és a dir, si s'esta més de 5 segons sense haver-hi intercanvi de dades entre les dues plaques salta una alarma   
+· Implementació d'un LED que s'encén cada vegada que l'arduino de l'estació de terra rep dades vàlides   
+· Definició de la funció per processar les dades que arriben del satèl·lit   
+· Definició de les ordres de iniciar, parar i reanudar les dades que rebem   
+· Creació d'una interfície amb botons i una gràfica que recull les dades de temperatura rebudes   
 
 ### Vídeo de la [Versió 2](https://youtu.be/e1XV5jPOSLc)  
 En la segona versió d'aquest projecte es va aconseguir el següent:
