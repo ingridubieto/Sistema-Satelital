@@ -510,6 +510,7 @@ def calcul_mitjanes_python():
     mitjana_temp_python_activa = True
     mitjana_hum_python_activa = True
     mitjana_hum_arduino_activa = False
+    #ENVIAR MENSAJE DE CANCELACION DE MEDIAS EN EL SATELITE
     escribir_evento("COMANDO", "Canvi Mitjanes des de la interficie")
     
 
@@ -528,6 +529,7 @@ def parar_mitjanes(): #Parar tots els calculs de mitjanes
     global mitjana_python_activa, mitjana_arduino_activa
     mitjana_arduino_activa = False
     mitjana_python_activa = False
+    #ENVIAR MENSAJE DE CANCELACION DE MEDIAS EN EL SATELITE
     escribir_evento("COMANDO", "Parar Emissio de mitjanes")
 
 
