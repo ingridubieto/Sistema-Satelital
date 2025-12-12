@@ -18,16 +18,16 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import serial
 
 
-device = 'COM11'
+device = 'COM8'
 baudrate = 9600
 mySerial = serial.Serial(device, baudrate, timeout=1)
 temperatura = None
 mitjana_temperatura = None
+mitjana_temperatura_satel·lit = None
+mitjana_humitat_satel·lit = None
 mitjana_humitat = None
-mitjana_temp_python_activa = False
-mitjana_temp_arduino_activa = False
-mitjana_hum_python_activa = False
-mitjana_hum_arduino_activa = False
+mitjana_python_activa = False
+mitjana_arduino_activa = False
 cua_mitjanes_temperatura = deque(maxlen = 10)
 cua_mitjanes_humitat = deque(maxlen = 10)
 humitat = None
@@ -156,7 +156,7 @@ def show_graf_temp ():
 
 
 def actualitzar_graf_temp():
-    global i, x_max, graf_actual, cua_mitjanes_temperatura, mitjana_temperatura, mitjana_temp_python_activa
+    global i, x_max, graf_actual, cua_mitjanes_temperatura, mitjana_temperatura
 
     if graf_actual != "temp":
         print("Canvi de graf")
@@ -168,15 +168,8 @@ def actualitzar_graf_temp():
                 temperatures.append(temperatura)
                 i += 1
 
-                if mitjana_temp_python_activa:
-                    cua_mitjanes_temperatura = deque(maxlen = 10)
-                    cua_mitjanes_temperatura.append(temperatura)
-                    mitjana_temperatura = sum(cua_mitjanes_temperatura) / len(cua_mitjanes_temperatura)
-                    mitjana_temperatures.append(mitjana_temperatura)
-                elif mitjana_temp_arduino_activa:
-                    mitjana_temperatures.append(mitjana_temperatura_satel·lit)
-                else:
-                    mitjana_temperatures.append(None)
+                calcular_mitjana(temperatura, cua_mitjanes_temperatura, mitjana_python_activa, mitjana_arduino_activa, mitjana_temperatura_satel·lit, mitjana_temperatures)
+
 
                 # Amplia l'eix
                 if i > x_max:
@@ -185,7 +178,7 @@ def actualitzar_graf_temp():
 
                 # Actualitza dades
                 line_temperatura.set_data(temps, temperatures)
-                if mitjana_temp_python_activa:
+                if mitjana_python_activa or mitjana_arduino_activa:
                     line_mitjana_temperatura.set_data(temps, mitjana_temperatures)
 
                 # Escala automàtica de Y segons les dades
@@ -234,7 +227,7 @@ def show_graf_hum():
 
 def actualitzar_graf_hum():
     global i, x_max, graf_actual, cua_mitjanes_humitat
-    global mitjana_humitats, mitjana_humitat, mitjana_hum_python_activa
+    global mitjana_humitats, mitjana_humitat
 
     if graf_actual != "hum":
         return
@@ -247,15 +240,7 @@ def actualitzar_graf_hum():
                 i += 1
 
                 # MITJANA EN PYTHON (CORREGIDA)
-                if mitjana_hum_python_activa:
-                    cua_mitjanes_humitat.append(humitat)
-                    mitjana_humitat = sum(cua_mitjanes_humitat) / len(cua_mitjanes_humitat)
-                    mitjana_humitats.append(mitjana_humitat)
-                elif mitjana_hum_arduino_activa:
-                    mitjana_humitats.append(mitjana_humitat_satel·lit)
-                else:
-                    mitjana_humitats.append(None)
-
+                calcular_mitjana(humitat, cua_mitjanes_humitat, mitjana_python_activa, mitjana_arduino_activa, mitjana_humitat_satel·lit, mitjana_humitats)
                 # Ampliació de l’eix X
                 if i > x_max:
                     x_max += 1
@@ -263,7 +248,8 @@ def actualitzar_graf_hum():
 
                 # Actualització de dades
                 line_humitat.set_data(temps, humitats)
-                line_mitjana_humitat.set_data(temps, mitjana_humitats)
+                if mitjana_python_activa or mitjana_arduino_activa:
+                    line_mitjana_humitat.set_data(temps, mitjana_humitats)
 
                 # Escala Y
                 ax.set_ylim(min(humitats) - 2, max(humitats) + 2)
@@ -277,6 +263,16 @@ def actualitzar_graf_hum():
             print("ERROR", e)
 
     window.after(500, actualitzar_graf_hum)
+
+def calcular_mitjana(valor_actual, cua_python, mitjana_python_activa, mitjana_arduino_activa, mitjana_arduino, llista_resultats):
+    if mitjana_python_activa:
+        cua_python.append(valor_actual)
+        mitjana = sum(cua_python) / len(cua_python)
+        llista_resultats.append(mitjana)
+    elif mitjana_arduino_activa:
+        llista_resultats.append(mitjana_arduino)
+    else:
+        llista_resultats.append(None)
 
 #--------------------------------------------------
 # GRAFICA RADAR
@@ -503,26 +499,28 @@ def valor_period_com_slider():
 
 
 def calcul_mitjanes_python():
-    global mitjana_temp_python_activa, mitjana_temp_arduino_activa, cua_mitjanes_temperatura, cua_mitjanes_humitat, mitjana_hum_python_activa, mitjana_hum_arduino_activa
-    cua_mitjanes_temperatura.clear()
-    cua_mitjanes_humitat.clear()
-    mitjana_temp_arduino_activa = False
-    mitjana_temp_python_activa = True
-    mitjana_hum_python_activa = True
-    mitjana_hum_arduino_activa = False
-    #ENVIAR MENSAJE DE CANCELACION DE MEDIAS EN EL SATELITE
-    escribir_evento("COMANDO", "Canvi Mitjanes des de la interficie")
+    global mitjana_python_activa, mitjana_arduino_activa, cua_mitjanes_temperatura, cua_mitjanes_humitat
+    if mitjana_python_activa:
+        mitjana_python_activa = False
+    elif mitjana_python_activa == False:
+        cua_mitjanes_temperatura.clear()
+        cua_mitjanes_humitat.clear()
+        mitjana_python_activa = True
+        mitjana_arduino_activa = False
+        #ENVIAR MENSAJE DE CANCELACION DE MEDIAS EN EL SATELITE
+        escribir_evento("COMANDO", "Canvi Mitjanes des de la interficie")
     
 
 def calcul_mitjanes_arduino():
-    global mitjana_temp_python_activa, mitjana_temp_arduino_activa, mitjana_hum_python_activa, mitjana_hum_arduino_activa
-    mitjana_temp_arduino_activa = True
-    mitjana_temp_python_activa = False
-    mitjana_hum_python_activa = False
-    mitjana_hum_arduino_activa = True
-    msg = f"4:|{Checksum("4:")}" # 4 vol dir calcular les mitjanes de temperatura i humitat des del satèl·lit
-    mySerial.write(msg.encode())
-    escribir_evento("COMANDO", "Calcular Mitjanes des del satel.lit")
+    global mitjana_python_activa, mitjana_arduino_activa
+    if mitjana_arduino_activa:
+        mitjana_arduino_activa = False
+    elif mitjana_arduino_activa == False:
+        mitjana_arduino_activa = True
+        mitjana_python_activa = False
+        msg = f"4:|{Checksum("4:")}" # 4 vol dir calcular les mitjanes de temperatura i humitat des del satèl·lit
+        mySerial.write(msg.encode())
+        escribir_evento("COMANDO", "Calcular Mitjanes des del satel.lit")
 
 
 def parar_mitjanes(): #Parar tots els calculs de mitjanes
