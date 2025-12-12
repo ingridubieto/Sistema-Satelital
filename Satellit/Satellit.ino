@@ -211,8 +211,8 @@ void ProcessarCom(String comando) {
 }
 
 void Enviar_TyH (){
-  float H = dht.readHumidity(); // Valor humitat (%)
-  float T = dht.readTemperature(); // Valor temperatura (ºC)
+  H = dht.readHumidity(); // Valor humitat (%)
+  T = dht.readTemperature(); // Valor temperatura (ºC)
 
   if (isnan(H) || isnan(T)) {
     // Error en la lectura del sensor DHT11
@@ -338,7 +338,7 @@ void loop() {
   if ((Dades_TyH == true) && (millis() >= NextMillisDHT)){
     NextMillisDHT = millis() + PeriodeDHT;
     Enviar_TyH();
-    if (Mitjanes == true){
+    if (Mitjanes_T == true){
       Enviar_mTymH();
     }
     //Serial.println("DHT");
