@@ -41,7 +41,7 @@ _**Periodicitat**_ de les dades enviades --> 3:P
 Placa on es fa el _**Càlcul de les mitjanes;**_  
 L'usuari pot triar on fer el càlcul de les mitjanes  
 · Si es fa el càlcul des del mateix **satèl·lit** --> 4:0  
-· Si es fa el càlcul des de **Python** --> Simplement s'activa una funció definida al python
+· Si es fa el càlcul des de **Python** --> Simplement s'activa una funció definida al python   
 Per Parar el càlcul de mitjanes s'envia --> 4:1 (i al mateix temps es deshabilita el càlcul a python)
 
 Definició d'un _**Valor màxim de temperatura**_ --> 5:T'  
