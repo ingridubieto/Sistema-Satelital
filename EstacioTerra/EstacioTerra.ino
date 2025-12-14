@@ -15,6 +15,12 @@ long NextMillisTIMEOUT;
 int PeriodeTIMEOUT = 5000;
 bool Comunicacio = true;
 
+// Definicio Joystick
+bool MANUAL = false;
+unsigned long NextMillisJoystick = 20;
+const int PeriodeJoystick = 50; // ms entre envíos
+const int joyX = A0;
+
 void setup() {
   pinMode (led, OUTPUT);
   pinMode (alarma, OUTPUT);
@@ -28,6 +34,10 @@ void setup() {
 //--------------------------------------------------
 // Definició de les funcions
 //--------------------------------------------------
+
+String AfegirChecksum(String paraula){
+  return paraula + "|" + String(Checksum(paraula));
+}
 
 void ProcessarCom(String comando) {
   comando.trim();
@@ -49,10 +59,32 @@ void ProcessarCom(String comando) {
     NextMillisTIMEOUT = millis() + PeriodeTIMEOUT;
 
   }
+
+  else if (codigo == 8) { //8: Joystick manual
+    MANUAL = true;
+  }
+  else if (codigo == 7) { //7: Moviment AUTO del servo
+    MANUAL = false;
+  }
+    
   else{
     stateAlarma = LOW;
     digitalWrite(alarma, stateAlarma);
   }
+}
+
+int LlegirJoystick() {
+  int valorJoy = analogRead(joyX);
+  int angle = map(valorJoy, 0, 1023, 0, 180);
+  return angle;
+}
+
+void EnviarJoystick() {
+  int angle = LlegirJoystick();
+  String missatge = AfegirChecksum("8:" + String(angle)); // ComandoT_ServoJoy = 8
+  mySerial.println(missatge);
+  Serial.print("Envio Joystick: "); 
+  Serial.println(missatge);
 }
 //--------------------------------------------------
 // Programa prinicipal
@@ -84,5 +116,10 @@ void loop() {
     mySerial.println(info);
     Serial.print("Envio:");
     Serial.println(info);
+  }
+  
+  if (MANUAL == true && millis() >= NextMillisJoystick) { //Envia valor de Joystick manual
+    NextMillisJoystick = millis() + PeriodeJoystick;
+    EnviarJoystick();
   }
 }
