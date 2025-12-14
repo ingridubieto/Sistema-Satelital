@@ -71,6 +71,18 @@ bool Mitjanes = false; // On es fa el càlcul de la mitjana.
 
 bool Dades_TyH = true; // Estat emissió dades de T i H, comença connectat
 bool Dades_DyA = true; // Estat emissió dades de D i A, comença connectat
+bool Dades_txyz = true; // Estat emissió dades de temps, x, y, z, comença connectat
+
+// ===== VARIABLES DE L’ÒRBITA =====
+const double G = 6.67430e-11;
+const double M = 5.97219e24;
+const double R_EARTH = 6371000;
+const double ALTITUDE = 400000;
+const double EARTH_ROTATION_RATE = 7.2921159e-5;
+const unsigned long MILLIS_BETWEEN_UPDATES_POS = 1000;
+const double TIME_COMPRESSION = 90.0;
+double real_orbital_period;
+double r;
 
 // Control d’alarmes 
 //Alarma temp alta
@@ -121,6 +133,10 @@ void setup() {
   NextMillisRADAR = millis();
   NextMillisSERVO = millis();
   NextMillisMITJANES = millis();
+  NextMillisPOS = millis();
+
+  r = R_EARTH + ALTITUDE;
+  real_orbital_period = 2 * PI * sqrt(pow(r, 3) / (G * M));
 }
 
 //--------------------------------------------------
@@ -301,9 +317,19 @@ void Enviar_DyA (){ //Comando 3:D:A //Error radar 9:
   }
 }
 
-void Enviar_txyz (){
-  //Comando 4:t:x:y:z dades de posició del satel·lit
-  //Comando_txyz
+void Enviar_txyz () { // Comando 4:t:x:y:z dades de posició del satèl·lit
+  unsigned long millis_now = millis();
+  double t = (millis_now / 1000.0) * TIME_COMPRESSION;
+  double angle = 2 * PI * (t / real_orbital_period);
+
+  // Posició orbital
+  double x = r * cos(angle);
+  double y = r * sin(angle);
+  double z = 0;  
+
+  String missatge = AfegirChecksum(Comando_txyz + String(t) + ":" + String(x)+ ":" + String(y)+ ":" + String(z)); //Format missatge 4:t:x:y:z|Checksum
+  mySerial.println(missatge);
+  Serial.println(missatge);
 }
 
 void MoureServo (){
@@ -350,13 +376,17 @@ void loop() {
     NextMillisRADAR = millis() + PeriodeRADAR;
     Enviar_DyA();
     //Serial.println("Radar");
+  }
 
+  if ((Dades_txyz == true) && (millis() >= NextMillisPOS)){
+    NextMillisPOS = millis() + PeriodePOS;
+    Enviar_txyz();
+    //Serial.println("Posició");
   }
 
   if (millis() >= NextMillisSERVO) {
     NextMillisSERVO = millis() + PeriodeSERVO;
     MoureServo();
     //Serial.println("Servo");
-
   }
 }
