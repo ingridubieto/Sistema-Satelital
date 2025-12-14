@@ -11,12 +11,14 @@ import sys
 import re
 import matplotlib
 import os
+from matplotlib.figure import Figure
+import matplotlib.image as mpimg
+import math
 
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import serial
-
 
 device = 'COM11'
 baudrate = 9600
@@ -37,6 +39,16 @@ graf_actual = None
 i = 0
 Comunicacio = True
 lectures_angles = {}
+x_data = []
+y_data = []
+z_data = []
+fig_map = None
+ax_map = None
+sat_point = None
+sat_trail = None
+lat_list = []
+lon_list = []
+ax = None
 
 FITXER = "esdeveniments.txt"
 
@@ -102,6 +114,13 @@ def lectura_datos():
                             x = float(trozos[2])
                             y = float(trozos[3])
                             z = float(trozos[4])
+                            # Actualitzem dades per la gràfica 3D
+                            x_data.append(x)
+                            y_data.append(y)
+                            z_data.append(z)
+                            # Ordenem Tkinter que actualitzi la gràfica (SEGUR i THREAD-SAFE)
+                            window.after(10, update_plot)
+                            window.after(10, update_plot_map)
 
                         elif comando == 5: # 5: --> ERROR COMUNICACIÓ
                             alarma1()
@@ -362,113 +381,135 @@ def actualitzar_graf_radar():
 # GRÀFICA POSICIÓ
 #--------------------------------------------------
 
+def ecef_to_latlon(x, y, z):
+    R = math.sqrt(x*x + y*y + z*z)
+    lat = math.degrees(math.asin(z / R))
+    lon = math.degrees(math.atan2(y, x))
+    return lat, lon
+
 def show_graf_pos1():
-    global ax, fig, canvas, canvas_graf, graf_actual
-    global earth_slice
-    print("Gràfic Òrbita CentrePolar")
+    global fig_map, ax_map, canvas_map, sat_point, sat_trail
+    global lat_list, lon_list, graf_actual
 
-    matplotlib.use('TkAgg')
+    graf_actual = "map"
 
-    regex = re.compile(r"Position: \(X: ([\d\.-]+) m, Y: ([\d\.-]+) m, Z: ([\d\.-]+) m\)")
+    # Si hi ha una altra gràfica activa, destruir-la
+    for widget in graf_pos_frame.winfo_children():
+        widget.destroy()
 
-    x_vals = []
-    y_vals = []
+    # Inicialitzar dades
+    lat_list = []
+    lon_list = []
 
-    R_EARTH = 6371000  # m
+    # Crear figura
+    fig_map = Figure(figsize=(7, 5), dpi=100)
+    ax_map = fig_map.add_subplot(111)
 
-    # --- CONFIGURACIÓ FIGURA ---
-    fig, ax = plt.subplots()
-    canvas = FigureCanvasTkAgg(fig, master=graf_pos_frame)
-    canvas_graf = canvas.get_tk_widget()
-    canvas_graf.config(width=600, height=400)
-    canvas_graf.grid(row=0, column=0, padx=5, pady=5, sticky=tk.N + tk.E + tk.W + tk.S)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    img_path_map = os.path.join(script_dir, "Assets", "world_map.jpg")  # 'Assets' amb majúscula
 
-    orbit_plot, = ax.plot([], [], 'bo-', label='Satellite Orbit', markersize=2)
-    last_point_plot = ax.scatter([], [], color='red', s=50, label='Last Point')
+    # Importar imatge del mapa
+    img = mpimg.imread(img_path_map)
+    ax_map.imshow(img, extent=[-180, 180, -90, 90])
 
-    earth_circle = plt.Circle((0, 0), R_EARTH, color='orange', fill=False, label='Earth Surface')
-    ax.add_artist(earth_circle)
+    # Estètica
+    ax_map.set_title("Òrbita del satèl·lit")
+    ax_map.set_xlabel("Longitud (°)")
+    ax_map.set_ylabel("Latitud (°)")
+    ax_map.set_xlim(-180, 180)
+    ax_map.set_ylim(-90, 90)
 
-    ax.set_xlim(-7e6, 7e6)
-    ax.set_ylim(-7e6, 7e6)
-    ax.set_aspect('equal', 'box')
-    ax.set_xlabel('X (meters)')
-    ax.set_ylabel('Y (meters)')
-    ax.set_title('Satellite Equatorial Orbit (View from North Pole)')
-    ax.grid(True)
-    ax.legend()
+    # Línia i punt
+    sat_trail, = ax_map.plot([], [], color="yellow", linewidth=2)
+    sat_point = ax_map.scatter([], [], color="red", s=40)
 
-    window_closed = False
+    # Integració amb Tkinter
+    canvas_map = FigureCanvasTkAgg(fig_map, master=graf_pos_frame)
+    canvas_map.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+    canvas_map.draw()
 
-    def on_close(event):
-        nonlocal window_closed
-        print("Window closed")
-        plt.close(fig)
-        window_closed = True
+def update_plot_map():
+    global sat_point, sat_trail, lat_list, lon_list
+    if graf_actual != "map":
+        return
+    
+    # Convertir ECEF → lat/lon
+    lat, lon = ecef_to_latlon(x, y, z)
+    
+    # Afegir a l'historial
+    lat_list.append(lat)
+    lon_list.append(lon)
+    
+    # Quan travesses el final del mapa → reiniciar traç i torna a l'inici (simulant una volta a la Terra)
+    if len(lon_list) > 2:
+        if abs(lon_list[-1] - lon_list[-2]) > 100: # salt brusc = canvi de meridià
+            lat_list.clear()
+            lon_list.clear() 
+            lat_list.append(lat) 
+            lon_list.append(lon) 
+            
+        sat_trail.set_data(lon_list, lat_list) 
+        sat_point.set_offsets([[lon, lat]]) 
+        canvas_map.draw()
+    
+R_EARTH = 6371000
 
-    fig.canvas.mpl_connect('close_event', on_close)
+u = np.linspace(0, 2*np.pi, 40)
+v = np.linspace(0, np.pi, 20)
 
-    def draw_earth_slice(z):
-        slice_radius = (R_EARTH**2 - z**2)**0.5 if abs(z) <= R_EARTH else 0
-        return plt.Circle((0, 0), slice_radius, color='orange', fill=False, linestyle='--')
+earth_x = R_EARTH * np.outer(np.cos(u), np.sin(v))
+earth_y = R_EARTH * np.outer(np.sin(u), np.sin(v))
+earth_z = R_EARTH * np.outer(np.ones_like(u), np.cos(v))
 
-    # Inicialitzar secció de la Terra
-    earth_slice = draw_earth_slice(0)
-    ax.add_artist(earth_slice)
 
-    def update_plot():
-        global earth_slice
-
-        if window_closed:
-            return
-
-        if mySerial.in_waiting > 0:
-            line = mySerial.readline().decode('utf-8').rstrip()
-            match = regex.search(line)
-
-            if match:
-                x = float(match.group(1))
-                y = float(match.group(2))
-                z = float(match.group(3))
-
-                print(f"X: {x}, Y: {y}, Z: {z}")
-
-                x_vals.append(x)
-                y_vals.append(y)
-
-                # Actualitzar línia i últim punt
-                orbit_plot.set_data(x_vals, y_vals)
-                last_point_plot.set_offsets([[x, y]])
-
-                # Actualitzar secció de la Terra
-                earth_slice.remove()
-                earth_slice = draw_earth_slice(z)
-                ax.add_artist(earth_slice)
-
-                # Auto-redimensionar
-                xlim = ax.get_xlim()
-                ylim = ax.get_ylim()
-
-                if abs(x) > max(abs(xlim[0]), abs(xlim[1])) or abs(y) > max(abs(ylim[0]), abs(ylim[1])):
-                    new_lim = max(abs(x), abs(y)) * 1.1
-                    ax.set_xlim(-new_lim, new_lim)
-                    ax.set_ylim(-new_lim, new_lim)
-
-                canvas.draw()
-
-        # Repeteix cada 50ms sense blocar Tkinter
-        window.after(50, update_plot)
-
-    # Començar actualització contínua
-    update_plot()
-
+# Globals addicionals
+orbit_line = None
+sat_point_3d = None
 
 def show_graf_pos2():
-    print("Gràfic Òrbtia GMAT")
+    global fig, ax, canvas, orbit_line, sat_point_3d
 
+    graf_actual = "3d"
 
-def show_graf_pos3():
-    print("Gràfic Òrbita + Terra")
+    # Si hi ha una altra gràfica activa, destruir-la
+    for widget in graf_pos_frame.winfo_children():
+        widget.destroy()
+
+    fig = Figure(figsize=(7,6), dpi=100)
+    ax = fig.add_subplot(111, projection='3d')
+
+    canvas = FigureCanvasTkAgg(fig, master=graf_pos_frame)
+    canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
+    # Terra (UNA SOLA VEGADA)
+    ax.plot_wireframe(earth_x, earth_y, earth_z, color='gold', linewidth=0.5, alpha=1)
+
+    ax.set_xlabel("X (m)")
+    ax.set_ylabel("Y (m)")
+    ax.set_zlabel("Z (m)")
+    ax.set_title("Òrbita del satèl·lit (3D)")
+    ax.set_box_aspect([1,1,1])
+
+    # Línia i punt inicials buits
+    orbit_line, = ax.plot([], [], [], color='blue')
+    sat_point_3d = ax.scatter([], [], [], color='red', s=40)
+
+    canvas.draw()
+
+def update_plot():
+    global ax, orbit_line, sat_point_3d
+
+    if ax is None or len(x_data) < 2:
+        return
+
+    # Actualitzar la línia de trajectòria
+    orbit_line.set_data(x_data, y_data)
+    orbit_line.set_3d_properties(z_data)
+
+    # Actualitzar el punt vermell només a l'última posició
+    sat_point_3d._offsets3d = ([x_data[-1]], [y_data[-1]], [z_data[-1]])
+
+    canvas.draw_idle()
 
 
 def parar_com():
@@ -565,6 +606,13 @@ def valor_radar_slider(): # Mode manual del servo, es dirigeix al valor d'angle 
     msg = f"9:{valor_}|{Checksum("9:"+str(valor_))}" # 9 vol dir angle determinat
     mySerial.write(msg.encode()) # envia el valor de l'angle
     escribir_evento("COMANDO", "Mode Manual del Radar")
+
+def valor_dist_max_slider():
+    valor_dist_max_ = dist_max_slider.get()
+    print('val graf dist' + str(valor_dist_max_))
+    msg = f"10:{valor_dist_max_}|{Checksum("10:" + str(valor_dist_max_))}" # 10 vol dir llindar de distància màxima
+    mySerial.write(msg.encode()) # envia el valor d'humitat màxima que volem detectar
+    escribir_evento("COMANDO", "Canvi Llindar de Distància Maxima")
 
 
 #--------------------------------------------------
@@ -731,6 +779,12 @@ button_mode_radar_frame.rowconfigure(1, weight = 1)
 button_mode_radar_frame.columnconfigure(0, weight = 1)
 button_mode_radar_frame.columnconfigure(1, weight = 1)
 
+#SubFrame de radar --> Frame llindar màxim d'alerta
+button_max_radar_frame = tk.LabelFrame(button_radar_frame, text = "Llindar màxim d'alerta")
+button_max_radar_frame.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
+button_max_radar_frame.rowconfigure(0, weight = 1)
+button_max_radar_frame.columnconfigure(0, weight = 1)
+
 
 #Frame de posició
 button_pos_frame = tk.LabelFrame(window, text = 'Posició')
@@ -804,6 +858,12 @@ radar_slider = Scale(button_mode_radar_frame, from_ = 0, to = 180, orient = HORI
 radar_slider.grid(row = 1, column = 0, padx = 5, pady = 5, sticky = 'ew')
 botton_radar_slider = Button(button_mode_radar_frame, text = 'Valor', command = valor_radar_slider)
 botton_radar_slider.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = 'ew')
+
+#Slidder Distància màxima
+dist_max_slider = Scale(button_max_radar_frame, from_ = 10, to = 50, orient = HORIZONTAL, width = 10) # width=10 --> tamany de la "rodeta"
+dist_max_slider.grid(row = 0, column = 0, padx = 5, pady = 1, sticky = 'ew')
+botton_graf_slider = Button(button_max_radar_frame, text = 'Valor de Dist', command = valor_dist_max_slider)
+botton_graf_slider.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = 'ew')
 
 
 ##BOTONS POSICIÓ
@@ -927,12 +987,15 @@ scroll.config(command=salida.yview)
 
 
 ##ESPAI DE CRÈDITS DEL SATÈL·LIT
-'''#Imatge del nostre Satèl·lit
-img = Image.open("MIL-090925.jpg")
+# Obtenir el directori on està aquest script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+img_path_sat = os.path.join(script_dir, "Assets", "MIL-090925.jpg")  # 'Assets' amb majúscula
+#Imatge del nostre Satèl·lit
+img = Image.open(img_path_sat)
 img = img.resize((400, 250))
 img_tk = ImageTk.PhotoImage(img)
 
 label = tk.Label(button_cred_frame, image=img_tk, anchor = "w")
-label.grid(row = 0, column = 0, sticky = "nsew")'''
+label.grid(row = 0, column = 0, sticky = "nsew")
 
 window.mainloop()
