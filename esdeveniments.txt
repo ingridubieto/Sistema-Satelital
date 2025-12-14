@@ -273,3 +273,7 @@
 2025-12-14 15:53:24 | ALARMA | No es capta Distancia ni Angle correctament
 2025-12-14 16:10:35 | ALARMA | No es capta Distancia ni Angle correctament
 2025-12-14 16:10:37 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-14 16:56:14 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-14 16:56:43 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-14 16:57:05 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-14 16:57:18 | COMANDO | Canvi Mitjanes des de la interficie

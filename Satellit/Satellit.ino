@@ -10,6 +10,7 @@
 
 String Comando_TyH = "1:";
 String Comando_mTymH = "2:";
+//CREAR COMANDO PARA CANCELAR EL CALCULO DE mTymH
 String Comando_DyA = "3:";
 String Comando_txyz = "4:";
 String Comando_ErrorCom = "5:";
@@ -183,7 +184,12 @@ void ProcessarCom(String comando) {
       PeriodeRADAR = comando.substring(inicio, pos).toInt(); // extrae el valor del periodo de datos
     }
     else if (codigo == ComandoT_MitjanesSat) {
-      Mitjanes = true; 
+      if (Mitjanes == false){
+        Mitjanes = true;
+      }
+      else if (Mitjanes == true){
+        Mitjanes = false;
+      }
     }
     else if (codigo == ComandoT_MaxTemp) {
       TEMP_LIMIT = comando.substring(inicio, pos).toInt(); // Nou límit de temperatura

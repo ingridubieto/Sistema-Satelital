@@ -320,16 +320,11 @@ def actualitzar_graf_radar():
     global angles, distancies
     global linia_objecte, punt_objecte, linia_historial
 
-    # Substituir o afegir la lectura per a l'angle actual
-    #lectures_angles[angle] = distancia
-
     try:
         if distancia is not None and angle is not None:
 
             # Afegim les dades
             lectures_angles[angle] = distancia
-            #angles.append(angle)
-            #distancies.append(distancia)
             angles_ordenats = sorted(lectures_angles.keys())
             distancies_ordenades = [lectures_angles[a] for a in angles_ordenats]
 
@@ -355,8 +350,7 @@ def actualitzar_graf_radar():
 
             # Actualitzar títol
             ax_radar.set_title(f"Lectura {i}: {np.rad2deg(angle):.1f}º {distancia:.1f} cm")
-            #ax_radar.plot(angles_ordenats, distancies_ordenades, color = 'y', linewidth = 2)
-
+            
             canvas_radar.draw()
 
     except Exception as e:
