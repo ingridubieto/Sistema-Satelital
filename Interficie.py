@@ -18,7 +18,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import serial
 
 
-device = 'COM8'
+device = 'COM11'
 baudrate = 9600
 mySerial = serial.Serial(device, baudrate, timeout=1)
 temperatura = None
@@ -155,16 +155,9 @@ def show_graf_temp ():
 
 
 def actualitzar_graf_temp():
-<<<<<<< HEAD
     global i, x_max, graf_actual, cua_mitjanes_temperatura, mitjana_temperatura, mitjana_temp_python_activa
     
     if graf_actual == "hum":
-=======
-    global i, x_max, graf_actual, cua_mitjanes_temperatura, mitjana_temperatura
-
-    if graf_actual != "temp":
-        print("Canvi de graf")
->>>>>>> 011294e5472b723f956c1e285013893abb9262ee
         return
 
     if Comunicacio == True:
@@ -286,12 +279,13 @@ def calcular_mitjana(valor_actual, cua_python, mitjana_python_activa, mitjana_ar
 
 def show_graf_radar():
     global ax_radar, fig_radar, angles, distancies, canvas_radar, canvas_graf_radar, graf_actual
-    global linia_objecte, punt_objecte
+    global linia_objecte, punt_objecte, linia_historial
 
     graf_actual = "radar"
 
     linia_objecte = None
     punt_objecte = None
+    linia_historial = None
 
     # --- Configuració bàsica ---
     fig_radar = plt.figure()
@@ -324,7 +318,7 @@ def show_graf_radar():
 def actualitzar_graf_radar():
     global i, angle, distancia, graf_actual, canvas_radar
     global angles, distancies
-    global linia_objecte, punt_objecte
+    global linia_objecte, punt_objecte, linia_historial
 
     # Substituir o afegir la lectura per a l'angle actual
     #lectures_angles[angle] = distancia
@@ -334,16 +328,23 @@ def actualitzar_graf_radar():
 
             # Afegim les dades
             lectures_angles[angle] = distancia
-            angles.append(angle)
-            distancies.append(distancia)
+            #angles.append(angle)
+            #distancies.append(distancia)
             angles_ordenats = sorted(lectures_angles.keys())
             distancies_ordenades = [lectures_angles[a] for a in angles_ordenats]
 
             # --- ESBORREM LA LÍNIA / PUNT ANTERIORS ---
             if linia_objecte is not None:
                 linia_objecte.remove()
+                linia_objecte = None
+
             if punt_objecte is not None:
                 punt_objecte.remove()
+                punt_objecte = None
+
+            if linia_historial is not None:
+                linia_historial.remove()
+                punt_objecte = None
 
             # --- DIBUIXEM NOVA LÍNIA I PUNT ---
             linia_objecte = ax_radar.plot([0, angle], [0, distancia], color='g', linewidth=2)[0]
@@ -354,7 +355,7 @@ def actualitzar_graf_radar():
 
             # Actualitzar títol
             ax_radar.set_title(f"Lectura {i}: {np.rad2deg(angle):.1f}º {distancia:.1f} cm")
-            ax_radar.plot(angles_ordenats, distancies_ordenades, color = 'y', linewidth = 2)
+            #ax_radar.plot(angles_ordenats, distancies_ordenades, color = 'y', linewidth = 2)
 
             canvas_radar.draw()
 

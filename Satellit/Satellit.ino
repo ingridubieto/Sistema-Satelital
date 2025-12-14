@@ -10,7 +10,6 @@
 
 String Comando_TyH = "1:";
 String Comando_mTymH = "2:";
-//CREAR COMANDO PARA CANCELAR EL CALCULO DE mTymH
 String Comando_DyA = "3:";
 String Comando_txyz = "4:";
 String Comando_ErrorCom = "5:";
@@ -87,8 +86,6 @@ NewPing sonar(UltrasonicPin, UltrasonicPin, MaxDistance);
 
 // Variables pel càlcul de mitjanes
 #define WINDOW 10
-int Mitjanes;
-
 // Mitjana Temperatura
 double bufferT[WINDOW] = {0};
 double sumaT = 0.0;
@@ -186,7 +183,7 @@ void ProcessarCom(String comando) {
       PeriodeRADAR = comando.substring(inicio, pos).toInt(); // extrae el valor del periodo de datos
     }
     else if (codigo == ComandoT_MitjanesSat) {
-      Mitjanes_T = true; 
+      Mitjanes = true; 
     }
     else if (codigo == ComandoT_MaxTemp) {
       TEMP_LIMIT = comando.substring(inicio, pos).toInt(); // Nou límit de temperatura
@@ -337,7 +334,7 @@ void loop() {
   if ((Dades_TyH == true) && (millis() >= NextMillisDHT)){
     NextMillisDHT = millis() + PeriodeDHT;
     Enviar_TyH();
-    if (Mitjanes_T == true){
+    if (Mitjanes == true){
       Enviar_mTymH();
     }
     //Serial.println("DHT");

@@ -255,3 +255,21 @@
 2025-12-12 13:48:14 | ALARMA | No es capta Distancia ni Angle correctament
 2025-12-12 13:48:17 | ALARMA | No es capta Distancia ni Angle correctament
 2025-12-12 13:48:18 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-14 15:36:59 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-14 15:37:01 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-14 15:37:07 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-14 15:37:44 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-14 15:37:53 | COMANDO | Mode Automatic del Radar
+2025-12-14 15:38:06 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-14 15:38:13 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-14 15:38:26 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-14 15:39:27 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-14 15:40:34 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-14 15:40:47 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-14 15:40:55 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-14 15:41:18 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-14 15:53:23 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-14 15:53:24 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-14 15:53:24 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-14 16:10:35 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-14 16:10:37 | ALARMA | No es capta Distancia ni Angle correctament
