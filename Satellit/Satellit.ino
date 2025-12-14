@@ -220,7 +220,10 @@ void ProcessarCom(String comando) {
       AUTO = true;
     }
     else if (codigo == ComandoT_ServoJoy) { // Activar Mode Joystick del servo
-
+      AUTO = false;
+      A = comando.substring(inicio, pos).toInt(); //Nou valor del joystick
+      A = constrain(A, 0, 180); //Per seguretat nomes valors entre 0 i 180
+      myservo.write(A); //Moure instantaneament servo
     }
     else if (codigo == ComandoT_ServoManual) { // Mode manual del servo
       AUTO = false;
