@@ -51,7 +51,6 @@ int A = 0; // posició del servo en tot moment
 int direccioServo = 1; // 1 anant "Endavant" -1 anant "Endarrera"
 const int ServoPin = 9; // Pin del servo
 
-int PeriodeProva = -10;
 // Definició sensors i temporitzadors
 int PeriodeDHT = 1000; // periodicitat inicial d’enviament de dades (1 segons), pot ser canviada
 int PeriodeRADAR = 1000;
@@ -66,7 +65,7 @@ const int MaxDistance = 200; // màxima distància en cm
 
 // Booleans d’estat Declarat a fora les funcions perque siguin globals
 bool AUTO = true; // Modo automàtic del servo, comença connectat
-bool Mitjanes_T = false; // On es fa el càlcul de la mitjana.
+bool Mitjanes = false; // On es fa el càlcul de la mitjana.
 
 bool Dades_TyH = true; // Estat emissió dades de T i H, comença connectat
 bool Dades_DyA = true; // Estat emissió dades de D i A, comença connectat
@@ -86,13 +85,17 @@ NewPing sonar(UltrasonicPin, UltrasonicPin, MaxDistance);
 
 // Variables pel càlcul de mitjanes de T
 #define WINDOW 10
-double buffer[WINDOW] = {0};
-int Longitud_buffer = 0;
+double buffer_T[WINDOW] = {0};
+int Longitud_buffer_T = 0;
 float Temp_Mitjana = 0;
 int Index_Mitjana_Temp = 0;
 float Suma_Temp = 0;
 
-int M;
+double buffer_H[WINDOW] = {0};
+int Longitud_buffer_H = 0;
+float Hum_Mitjana = 0;
+int Index_Mitjana_Hum = 0;
+float Suma_Hum = 0;
 
 float H; // Valor humitat (%)
 float T; // Valor temperatura (ºC)
@@ -177,10 +180,7 @@ void ProcessarCom(String comando) {
       PeriodeRADAR = comando.substring(inicio, pos).toInt(); // extrae el valor del periodo de datos
     }
     else if (codigo == ComandoT_MitjanesSat) {
-      M = comando.substring(inicio, pos).toInt();
-      if (M == 0) { // El càlcul de les mitjanes de T es fa des del satèl·lit
-        Mitjanes_T = true; 
-      }
+      Mitjanes = true;
     }
     else if (codigo == ComandoT_MaxTemp) {
       TEMP_LIMIT = comando.substring(inicio, pos).toInt(); // Nou límit de temperatura
@@ -204,8 +204,8 @@ void ProcessarCom(String comando) {
 }
 
 void Enviar_TyH (){
-  float H = dht.readHumidity(); // Valor humitat (%)
-  float T = dht.readTemperature(); // Valor temperatura (ºC)
+  H = dht.readHumidity(); // Valor humitat (%)
+  T = dht.readTemperature(); // Valor temperatura (ºC)
 
   if (isnan(H) || isnan(T)) {
     // Error en la lectura del sensor DHT11
@@ -222,22 +222,8 @@ void Enviar_TyH (){
     Serial.println(missatge);
     digitalWrite(led, LOW);
 
-    if(Mitjanes_T){
-      Suma_Temp = Suma_Temp - buffer[Index_Mitjana_Temp]; //Restar la temperatura que hi havia en X posicio
-      buffer[Index_Mitjana_Temp] = T; //Insertar la nova temperatura
-      Suma_Temp = Suma_Temp + T; //Sumar la nova temperatura
-      Index_Mitjana_Temp = (Index_Mitjana_Temp + 1) % WINDOW; //Avançar la posicio
-
-      if (Longitud_buffer < WINDOW){
-        Longitud_buffer++;
-      }
-
-      if (Longitud_buffer == WINDOW){ //Clarament s'ha de corregir per tambe enviar humitat iq eu funcioni
-        Temp_Mitjana = Suma_Temp / Longitud_buffer; //Calcul mitjana
-        String missatge = AfegirChecksum(Comando_mTymH + String(Temp_Mitjana));
-        mySerial.println(missatge);
-        Serial.println(missatge);
-      }
+    if(Mitjanes){
+      Enviar_mTymH();
     }
   
     // Control d’alarma en cas d'alta temperatura
@@ -272,6 +258,33 @@ void Enviar_TyH (){
 
 void Enviar_mTymH (){
   // Comando 2: Comando_mTymH
+  Suma_Temp = Suma_Temp - buffer_T[Index_Mitjana_Temp]; //Restar la temperatura que hi havia en X posicio
+  Serial.println(Suma_Temp);
+  buffer_T[Index_Mitjana_Temp] = T; //Insertar la nova temperatura
+  Suma_Temp = Suma_Temp + T; //Sumar la nova temperatura
+  Index_Mitjana_Temp = (Index_Mitjana_Temp + 1) % WINDOW; //Avançar la posicio
+
+  Suma_Hum = Suma_Hum - buffer_H[Index_Mitjana_Hum];
+  buffer_H[Index_Mitjana_Hum] = H;
+  Suma_Hum = Suma_Hum + H;
+  Index_Mitjana_Hum = (Index_Mitjana_Hum + 1);
+
+
+  if (Longitud_buffer_T < WINDOW){
+    Longitud_buffer_T++;
+  }
+
+  if (Longitud_buffer_H < WINDOW){
+    Longitud_buffer_H++;
+  }
+  
+  Temp_Mitjana = Suma_Temp / Longitud_buffer_T; //Calcul mitjana temperatura
+  Hum_Mitjana = Suma_Hum / Longitud_buffer_H; //Calcul mitjana humitat
+
+
+  String missatge = AfegirChecksum(Comando_mTymH + String(Temp_Mitjana) + ":" + String(Hum_Mitjana));
+  mySerial.println(missatge);
+  Serial.println(missatge);
 }
 
 void Enviar_DyA (){ //Comando 3:D:A //Error radar 9:

@@ -187,3 +187,71 @@
 2025-12-09 20:13:10 | COMANDO | Canvi Periodicitat d'Emissio de dades
 2025-12-09 20:30:25 | COMANDO | Canvi Periodicitat d'Emissio de dades
 2025-12-09 20:30:56 | COMANDO | Canvi Llindar de Temperatura Maxima
+2025-12-10 22:37:46 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-10 22:37:48 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-10 22:37:49 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-10 22:37:49 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-10 22:37:50 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-10 22:37:51 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-10 22:37:51 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-10 22:37:52 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-10 22:37:52 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-10 22:37:53 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-10 22:38:36 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-10 22:39:33 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-10 23:23:06 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-10 23:24:01 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-10 23:26:23 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-12 12:29:07 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-12 12:29:08 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-12 12:29:08 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-12 12:29:09 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-12 12:29:09 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-12 12:29:10 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-12 12:29:10 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-12 12:29:11 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-12 12:29:11 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-12 12:29:12 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-12 12:33:19 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-12 12:35:03 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-12 12:35:39 | COMANDO | Canvi Periodicitat d'Emissio de dades
+2025-12-12 12:36:03 | COMANDO | Canvi Llindar de Temperatura Maxima
+2025-12-12 12:36:12 | ALARMA | Temperatura Alta
+2025-12-12 12:36:14 | ALARMA | Temperatura Alta
+2025-12-12 12:36:17 | ALARMA | Temperatura Alta
+2025-12-12 12:36:19 | ALARMA | Temperatura Alta
+2025-12-12 12:36:23 | ALARMA | Temperatura Alta
+2025-12-12 12:36:31 | ALARMA | Temperatura Alta
+2025-12-12 12:36:33 | ALARMA | Temperatura Alta
+2025-12-12 12:36:40 | ALARMA | Temperatura Alta
+2025-12-12 12:36:44 | ALARMA | Temperatura Alta
+2025-12-12 12:37:41 | ALARMA | Temperatura Alta
+2025-12-12 12:37:42 | ALARMA | Temperatura Alta
+2025-12-12 12:37:48 | ALARMA | Temperatura Alta
+2025-12-12 12:37:49 | ALARMA | Temperatura Alta
+2025-12-12 12:38:05 | COMANDO | Canvi Llindar d'Humitat Maxima
+2025-12-12 12:38:25 | COMANDO | Canvi Llindar d'Humitat Maxima
+2025-12-12 12:38:33 | ALARMA | Humitat Alta
+2025-12-12 12:38:34 | ALARMA | Humitat Alta
+2025-12-12 12:38:36 | ALARMA | Humitat Alta
+2025-12-12 12:38:41 | ALARMA | Humitat Alta
+2025-12-12 12:38:46 | ALARMA | Humitat Alta
+2025-12-12 12:38:48 | ALARMA | Humitat Alta
+2025-12-12 12:38:50 | ALARMA | Humitat Alta
+2025-12-12 12:38:56 | ALARMA | Humitat Alta
+2025-12-12 12:39:01 | ALARMA | Humitat Alta
+2025-12-12 12:39:37 | ALARMA | Humitat Alta
+2025-12-12 12:39:38 | ALARMA | Humitat Alta
+2025-12-12 12:39:38 | ALARMA | Humitat Alta
+2025-12-12 12:39:39 | ALARMA | Humitat Alta
+2025-12-12 12:39:40 | ALARMA | Humitat Alta
+2025-12-12 12:39:52 | COMANDO | Parar Emissio de dades
+2025-12-12 12:40:02 | COMANDO | Reanudar Emissio de dades
+2025-12-12 13:48:02 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-12 13:48:06 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-12 13:48:07 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-12 13:48:07 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-12 13:48:08 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-12 13:48:14 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-12 13:48:17 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-12 13:48:18 | ALARMA | No es capta Distancia ni Angle correctament

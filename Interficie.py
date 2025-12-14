@@ -128,16 +128,15 @@ thread1.start()
 #--------------------------------------------------
 
 def show_graf_temp ():
-    global ax, fig, line_temperatura, line_mitjana_temperatura, temps, temperatures, i, x_max, canvas, canvas_graf, graf_actual, mitjana_temperatures, lectures_angles
+    global ax_temp, fig_temp, line_temperatura, line_mitjana_temperatura, temps, temperatures, i, x_max, canvas_temp, canvas_graf_temp, graf_actual, mitjana_temperatures
     graf_actual = "temp"
-    lectures_angles = {}
 
-    fig, ax = plt.subplots()
-    ax.set_xlim(0, 20)     # Mostra inicialment 20 mesures
-    ax.set_ylim(0, 100)    # Rang de temperatura
+    fig_temp, ax_temp = plt.subplots()
+    ax_temp.set_xlim(0, 20)     # Mostra inicialment 20 mesures
+    ax_temp.set_ylim(0, 100)    # Rang de temperatura
 
-    (line_temperatura,) = ax.plot([], [], color='red')
-    (line_mitjana_temperatura,) = ax.plot([], [], color='blue', alpha = 0.5)
+    (line_temperatura,) = ax_temp.plot([], [], color='red')
+    (line_mitjana_temperatura,) = ax_temp.plot([], [], color='blue', alpha = 0.5)
 
     # --- Llistes de dades ---
     temps = []
@@ -146,21 +145,21 @@ def show_graf_temp ():
 
     i = 0
     x_max = 20  # Mida inicial de l’eix X
-    canvas = FigureCanvasTkAgg(fig, master = graf_DHT_frame)
-    canvas.draw()
-    canvas_graf = canvas.get_tk_widget()
-    canvas_graf.config(width = 600, height = 400)
-    canvas_graf.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
+    canvas_temp = FigureCanvasTkAgg(fig_temp, master = graf_DHT_frame)
+    canvas_temp.draw()
+    canvas_graf_temp = canvas_temp.get_tk_widget()
+    canvas_graf_temp.config(width = 600, height = 400)
+    canvas_graf_temp.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
     actualitzar_graf_temp()
 
 
 def actualitzar_graf_temp():
     global i, x_max, graf_actual, cua_mitjanes_temperatura, mitjana_temperatura, mitjana_temp_python_activa
-
-    if graf_actual != "temp":
-        print("Canvi de graf")
+    
+    if graf_actual == "hum":
         return
+
     if Comunicacio == True:
         try:
             if temperatura is not None:
@@ -179,7 +178,7 @@ def actualitzar_graf_temp():
                 # Amplia l'eix
                 if i > x_max:
                     x_max += 1  # incrementa el límit X de 1 en 1
-                    ax.set_xlim(0, x_max)
+                    ax_temp.set_xlim(0, x_max)
 
                 # Actualitza dades
                 line_temperatura.set_data(temps, temperatures)
@@ -187,11 +186,11 @@ def actualitzar_graf_temp():
                     line_mitjana_temperatura.set_data(temps, mitjana_temperatures)
 
                 # Escala automàtica de Y segons les dades
-                ax.set_ylim(min(temperatures) - 2, max(temperatures) + 2)
+                ax_temp.set_ylim(min(temperatures) - 2, max(temperatures) + 2)
 
                 # Actualitza el títol
-                ax.set_title(f"Lectura {i}: {temperatura:.2f} °C")
-                canvas.draw()
+                ax_temp.set_title(f"Lectura {i}: {temperatura:.2f} °C")
+                canvas_temp.draw()
 
         except Exception as e:
             print("ERROR", e)
@@ -204,15 +203,15 @@ def actualitzar_graf_temp():
 #--------------------------------------------------
 
 def show_graf_hum():
-    global ax, fig, line_humitat, temps, humitats, i, x_max, canvas, canvas_graf, graf_actual, mitjana_humitats, line_mitjana_humitat
+    global ax_hum, fig_hum, line_humitat, temps, humitats, i, x_max, canvas_hum, canvas_graf_hum, graf_actual, mitjana_humitats, line_mitjana_humitat
     graf_actual = "hum"
 
-    fig, ax = plt.subplots()
-    ax.set_xlim(0, 20)     # Mostra inicialment 20 mesures
-    ax.set_ylim(0, 100)    # Rang de temperatura
+    fig_hum, ax_hum = plt.subplots()
+    ax_hum.set_xlim(0, 20)     # Mostra inicialment 20 mesures
+    ax_hum.set_ylim(0, 100)    # Rang de temperatura
 
-    (line_humitat,) = ax.plot([], [], color='blue')
-    (line_mitjana_humitat,) = ax.plot([], [], color='yellow', alpha = 0.5)
+    (line_humitat,) = ax_hum.plot([], [], color='blue')
+    (line_mitjana_humitat,) = ax_hum.plot([], [], color='yellow', alpha = 0.5)
 
     # --- Llistes de dades ---
     temps = []
@@ -221,11 +220,11 @@ def show_graf_hum():
 
     i = 0
     x_max = 20  # Mida inicial de l’eix X
-    canvas = FigureCanvasTkAgg(fig, master = graf_DHT_frame)
-    canvas.draw()
-    canvas_graf = canvas.get_tk_widget()
-    canvas_graf.config(width = 600, height = 400)
-    canvas_graf.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
+    canvas_hum = FigureCanvasTkAgg(fig_hum, master = graf_DHT_frame)
+    canvas_hum.draw()
+    canvas_graf_hum = canvas_hum.get_tk_widget()
+    canvas_graf_hum.config(width = 600, height = 400)
+    canvas_graf_hum.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
     actualitzar_graf_hum()
 
@@ -234,7 +233,7 @@ def actualitzar_graf_hum():
     global i, x_max, graf_actual, cua_mitjanes_humitat
     global mitjana_humitats, mitjana_humitat, mitjana_hum_python_activa
 
-    if graf_actual != "hum":
+    if graf_actual == "temp":
         return
 
     if Comunicacio == True:
@@ -255,19 +254,19 @@ def actualitzar_graf_hum():
                 # Ampliació de l’eix X
                 if i > x_max:
                     x_max += 1
-                    ax.set_xlim(0, x_max)
+                    ax_hum.set_xlim(0, x_max)
 
                 # Actualització de dades
                 line_humitat.set_data(temps, humitats)
                 line_mitjana_humitat.set_data(temps, mitjana_humitats)
 
                 # Escala Y
-                ax.set_ylim(min(humitats) - 2, max(humitats) + 2)
+                ax_hum.set_ylim(min(humitats) - 2, max(humitats) + 2)
 
                 # Títol
-                ax.set_title(f"Lectura {i}: {humitat:.2f} %")
+                ax_hum.set_title(f"Lectura {i}: {humitat:.2f} %")
 
-                canvas.draw()
+                canvas_hum.draw()
 
         except Exception as e:
             print("ERROR", e)
@@ -279,7 +278,7 @@ def actualitzar_graf_hum():
 #--------------------------------------------------
 
 def show_graf_radar():
-    global ax, fig, angles, distancies, canvas, canvas_graf, graf_actual
+    global ax_radar, fig_radar, angles, distancies, canvas_radar, canvas_graf_radar, graf_actual
     global linia_objecte, punt_objecte
 
     graf_actual = "radar"
@@ -288,43 +287,40 @@ def show_graf_radar():
     punt_objecte = None
 
     # --- Configuració bàsica ---
-    fig = plt.figure()
-    ax = plt.subplot(projection='polar')
-    ax.set_title("Radar d'Ultrasons", va='bottom')
+    fig_radar = plt.figure()
+    ax_radar = plt.subplot(projection='polar')
+    ax_radar.set_title("Radar d'Ultrasons", va='bottom')
 
     # Llistes globals per guardar historial
     angles = []
     distancies = []
 
     # --- Configuració del radar ---
-    ax.set_thetamin(0)
-    ax.set_thetamax(180)
-    ax.set_theta_direction(-1)
-    ax.set_theta_offset(np.pi)
-    ax.set_rmax(50)
-    ax.set_ylim(0, 50)      # <- limita el radi entre 0 i 50 FIX
-    ax.set_rticks([10, 20, 30, 40, 50])
+    ax_radar.set_thetamin(0)
+    ax_radar.set_thetamax(180)
+    ax_radar.set_theta_direction(-1)
+    ax_radar.set_theta_offset(np.pi)
+    ax_radar.set_rmax(50)
+    ax_radar.set_ylim(0, 50)      # <- limita el radi entre 0 i 50 FIX
+    ax_radar.set_rticks([10, 20, 30, 40, 50])
 
     # Crear canvas
-    canvas = FigureCanvasTkAgg(fig, master=graf_radar_frame)
-    canvas_graf = canvas.get_tk_widget()
-    canvas_graf.config(width=600, height=400)
-    canvas_graf.grid(row=1, column=0, padx=5, pady=5, sticky="nsew")
-    canvas.draw()
+    canvas_radar = FigureCanvasTkAgg(fig_radar, master=graf_radar_frame)
+    canvas_graf_radar = canvas_radar.get_tk_widget()
+    canvas_graf_radar.config(width=600, height=400)
+    canvas_graf_radar.grid(row=1, column=0, padx=5, pady=5, sticky="nsew")
+    canvas_radar.draw()
 
     actualitzar_graf_radar()
 
 
 def actualitzar_graf_radar():
-    global i, angle, distancia, graf_actual, canvas
+    global i, angle, distancia, graf_actual, canvas_radar
     global angles, distancies
     global linia_objecte, punt_objecte
 
     # Substituir o afegir la lectura per a l'angle actual
-    lectures_angles[angle] = distancia
-
-    if graf_actual != "radar":
-        return
+    #lectures_angles[angle] = distancia
 
     try:
         if distancia is not None and angle is not None:
@@ -343,16 +339,17 @@ def actualitzar_graf_radar():
                 punt_objecte.remove()
 
             # --- DIBUIXEM NOVA LÍNIA I PUNT ---
-            linia_objecte = ax.plot([0, angle], [0, distancia], color='g', linewidth=2)[0]
-            punt_objecte = ax.scatter(angle, distancia, color='g', s=80)
+            linia_objecte = ax_radar.plot([0, angle], [0, distancia], color='g', linewidth=2)[0]
+            punt_objecte = ax_radar.scatter(angle, distancia, color='g', s=80)
 
             # --- Dibuixar trajectòria ---
-            linia_historial = ax.plot(angles_ordenats, distancies_ordenades, color='y', linewidth=2)[0]
+            linia_historial = ax_radar.plot(angles_ordenats, distancies_ordenades, color='y', linewidth=2)[0]
 
             # Actualitzar títol
-            ax.set_title(f"Lectura {i}: {np.rad2deg(angle):.1f}º {distancia:.1f} cm")
+            ax_radar.set_title(f"Lectura {i}: {np.rad2deg(angle):.1f}º {distancia:.1f} cm")
+            ax_radar.plot(angles_ordenats, distancies_ordenades, color = 'y', linewidth = 2)
 
-            canvas.draw()
+            canvas_radar.draw()
 
     except Exception as e:
         print("ERROR RADAR", e)
