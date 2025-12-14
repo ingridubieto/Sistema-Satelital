@@ -6,6 +6,9 @@ SoftwareSerial mySerial(10, 11); // RX, TX (blau, taronja)
 const int led = 12;
 bool stateLed = LOW;
 
+//Definicio Alarma Sonora
+const int buzzer = 9;
+
 // Definició Alarma
 const int alarma = 13;
 bool stateAlarma = LOW;
@@ -24,6 +27,7 @@ const int joyX = A0;
 void setup() {
   pinMode (led, OUTPUT);
   pinMode (alarma, OUTPUT);
+  pinMode(buzzer, OUTPUT);
 
   Serial.begin(9600);
   mySerial.begin(9600);
@@ -48,6 +52,7 @@ void ProcessarCom(String comando) {
   if (codigo == 3) { // Alarma sensor DHT
     stateAlarma = HIGH;
     digitalWrite(alarma, stateAlarma);
+    AlarmaSonora();
   }
 
   else if (codigo == 1) { //1: Parar comunicacio
@@ -71,6 +76,10 @@ void ProcessarCom(String comando) {
     stateAlarma = LOW;
     digitalWrite(alarma, stateAlarma);
   }
+}
+
+void AlarmaSonora() {
+  tone(buzzer, 3000, 2000);
 }
 
 int LlegirJoystick() {
