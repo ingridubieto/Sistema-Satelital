@@ -58,10 +58,12 @@ int PeriodeDHT = 1000; // periodicitat inicial d’enviament de dades (1 segons)
 int PeriodeRADAR = 1000;
 int PeriodeSERVO = 15;
 int PeriodeMITJANES = 1000;
+int PeriodePOS = 1000;
 long NextMillisDHT;
 long NextMillisRADAR;
 long NextMillisSERVO;
 long NextMillisMITJANES;
+long NextMillisPOS;
 const int UltrasonicPin = 5; // pin del sensor ultrasons
 const int MaxDistance = 200; // màxima distància en cm
 
