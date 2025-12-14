@@ -10,6 +10,7 @@
 
 String Comando_TyH = "1:";
 String Comando_mTymH = "2:";
+//CREAR COMANDO PARA CANCELAR EL CALCULO DE mTymH
 String Comando_DyA = "3:";
 String Comando_txyz = "4:";
 String Comando_ErrorCom = "5:";
@@ -24,6 +25,7 @@ String Comando_Fotos = "11:";
 
 int ComandoT_Parar = 1;
 int ComandoT_Reanudar = 2;
+//INCORPORAR COMANDO PARA CANCELAR EL CALCULO DE mTymH
 int ComandoT_Period = 3;
 int ComandoT_MitjanesSat = 4;
 int ComandoT_MaxTemp = 5;
@@ -83,19 +85,23 @@ const int LIMIT_CONSECUTIU = 3; // nombre de cops consecutius que ha de superar 
 // Inicialització del sensor ultrasons
 NewPing sonar(UltrasonicPin, UltrasonicPin, MaxDistance);
 
-// Variables pel càlcul de mitjanes de T
+// Variables pel càlcul de mitjanes
 #define WINDOW 10
-double buffer_T[WINDOW] = {0};
-int Longitud_buffer_T = 0;
-float Temp_Mitjana = 0;
-int Index_Mitjana_Temp = 0;
-float Suma_Temp = 0;
+int Mitjanes;
 
-double buffer_H[WINDOW] = {0};
-int Longitud_buffer_H = 0;
-float Hum_Mitjana = 0;
-int Index_Mitjana_Hum = 0;
-float Suma_Hum = 0;
+// Mitjana Temperatura
+double bufferT[WINDOW] = {0};
+double sumaT = 0.0;
+int indexT = 0;
+int countT = 0;
+float Mitjana_Temperatura;
+
+// Mitjana Humitat
+double bufferH[WINDOW] = {0};
+double sumaH = 0.0;
+int indexH = 0;
+int countH = 0;
+float Mitjana_Humitat;
 
 float H; // Valor humitat (%)
 float T; // Valor temperatura (ºC)
@@ -180,7 +186,7 @@ void ProcessarCom(String comando) {
       PeriodeRADAR = comando.substring(inicio, pos).toInt(); // extrae el valor del periodo de datos
     }
     else if (codigo == ComandoT_MitjanesSat) {
-      Mitjanes = true;
+      Mitjanes_T = true; 
     }
     else if (codigo == ComandoT_MaxTemp) {
       TEMP_LIMIT = comando.substring(inicio, pos).toInt(); // Nou límit de temperatura
@@ -221,10 +227,6 @@ void Enviar_TyH (){
     mySerial.println(missatge);
     Serial.println(missatge);
     digitalWrite(led, LOW);
-
-    if(Mitjanes){
-      Enviar_mTymH();
-    }
   
     // Control d’alarma en cas d'alta temperatura
     if (T >= TEMP_LIMIT) {
@@ -256,33 +258,23 @@ void Enviar_TyH (){
 
 }
 
-void Enviar_mTymH (){
-  // Comando 2: Comando_mTymH
-  Suma_Temp = Suma_Temp - buffer_T[Index_Mitjana_Temp]; //Restar la temperatura que hi havia en X posicio
-  Serial.println(Suma_Temp);
-  buffer_T[Index_Mitjana_Temp] = T; //Insertar la nova temperatura
-  Suma_Temp = Suma_Temp + T; //Sumar la nova temperatura
-  Index_Mitjana_Temp = (Index_Mitjana_Temp + 1) % WINDOW; //Avançar la posicio
+double actualitzar_Mitjana(double nou_valor, double buffer[], double &suma, int &indexPos, int &contador){
+  suma -= buffer[indexPos];
+  buffer[indexPos] = nou_valor;
+  suma += nou_valor;
 
-  Suma_Hum = Suma_Hum - buffer_H[Index_Mitjana_Hum];
-  buffer_H[Index_Mitjana_Hum] = H;
-  Suma_Hum = Suma_Hum + H;
-  Index_Mitjana_Hum = (Index_Mitjana_Hum + 1);
+  indexPos = (indexPos + 1) % WINDOW; //Mira la següent posicio circularment amb 10 elements
 
-
-  if (Longitud_buffer_T < WINDOW){
-    Longitud_buffer_T++;
+  if (contador < WINDOW) {
+    contador++;
   }
+  return suma / contador;
+}
 
-  if (Longitud_buffer_H < WINDOW){
-    Longitud_buffer_H++;
-  }
-  
-  Temp_Mitjana = Suma_Temp / Longitud_buffer_T; //Calcul mitjana temperatura
-  Hum_Mitjana = Suma_Hum / Longitud_buffer_H; //Calcul mitjana humitat
-
-
-  String missatge = AfegirChecksum(Comando_mTymH + String(Temp_Mitjana) + ":" + String(Hum_Mitjana));
+void Enviar_mTymH(){
+  Mitjana_Temperatura = actualitzar_Mitjana(T, bufferT, sumaT, indexT, countT);
+  Mitjana_Humitat = actualitzar_Mitjana(H, bufferH, sumaH, indexH, countH);
+  String missatge = AfegirChecksum(Comando_mTymH + String(Mitjana_Temperatura) + ":" + String(Mitjana_Humitat)); //Format missatge 2:Mitjana_Temperatura:Mitjana_Humitat|Checksum
   mySerial.println(missatge);
   Serial.println(missatge);
 }
@@ -345,6 +337,9 @@ void loop() {
   if ((Dades_TyH == true) && (millis() >= NextMillisDHT)){
     NextMillisDHT = millis() + PeriodeDHT;
     Enviar_TyH();
+    if (Mitjanes_T == true){
+      Enviar_mTymH();
+    }
     //Serial.println("DHT");
   }
 
