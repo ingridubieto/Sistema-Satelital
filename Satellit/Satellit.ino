@@ -10,7 +10,6 @@
 
 String Comando_TyH = "1:";
 String Comando_mTymH = "2:";
-//CREAR COMANDO PARA CANCELAR EL CALCULO DE mTymH
 String Comando_DyA = "3:";
 String Comando_txyz = "4:";
 String Comando_ErrorCom = "5:";
@@ -19,13 +18,11 @@ String Comando_ErrorTempAlta = "7:";
 String Comando_ErrorHumAlta = "8:";
 String Comando_ErrorRadar = "9:";
 String Comando_ErrorXoc = "10:";
-String Comando_Fotos = "11:";
 
 //Dades rebudes (Python i Terra a Sat)
 
 int ComandoT_Parar = 1;
 int ComandoT_Reanudar = 2;
-//INCORPORAR COMANDO PARA CANCELAR EL CALCULO DE mTymH
 int ComandoT_Period = 3;
 int ComandoT_MitjanesSat = 4;
 int ComandoT_MaxTemp = 5;
@@ -93,6 +90,9 @@ int cont_TEMP_LIMIT = 0; // comptador de superacions consecutives del llindar de
 //Alarma Hum alta
 float HUM_LIMIT = 80.0;
 int cont_HUM_LIMIT = 0;
+//Alarma Xoc
+float DIST_LIMIT = 5; // llindar de distància inicial, pot ser canviat
+int cont_DIST_LIMIT = 0;
 //El limit consecutiu el reutilitzem pels dos
 const int LIMIT_CONSECUTIU = 3; // nombre de cops consecutius que ha de superar el llindar per enviar una alarma
 
@@ -215,7 +215,6 @@ void ProcessarCom(String comando) {
     else if (codigo == ComandoT_MaxHum) {
       HUM_LIMIT = comando.substring(inicio, pos).toInt(); // Nou límit d'humitat
     }
-
     else if (codigo == ComandoT_ServoAuto) { // Activar Mode Automàtic del servo
       AUTO = true;
     }
@@ -229,6 +228,9 @@ void ProcessarCom(String comando) {
       AUTO = false;
       A = comando.substring(inicio, pos).toInt(); // Nova posició del servo
       myservo.write(A);
+    }
+    else if (codigo == ComandoT_MaxDist) {
+      DIST_LIMIT = comando.substring(inicio, pos).toInt(); // Nou límit de distància
     }
   }
 }
@@ -319,6 +321,18 @@ void Enviar_DyA (){ //Comando 3:D:A //Error radar 9:
     mySerial.println(missatge);
     Serial.println(missatge);
     digitalWrite(led, LOW);
+
+    if (D <= DIST_LIMIT) {
+      cont_DIST_LIMIT++;
+      if (cont_DIST_LIMIT >= LIMIT_CONSECUTIU) {
+        String missatge = AfegirChecksum(Comando_ErrorXoc); // Alarma 10 -> Perill de Xoc
+        mySerial.println(missatge);
+        Serial.println(missatge);
+      }
+    }
+    else {
+      cont_DIST_LIMIT = 0; // Reiniciem si baixa del límit
+    }
   }
 }
 
