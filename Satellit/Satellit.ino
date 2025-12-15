@@ -192,10 +192,12 @@ void ProcessarCom(String comando) {
     if (codigo == ComandoT_Parar) { // Parar emissió de dades
       Dades_TyH = false;
       Dades_DyA = false;
+      Dades_txyz = false;
     }
     else if (codigo == ComandoT_Reanudar) { // Reanudar emissió de dades
       Dades_TyH = true;
       Dades_DyA = true;
+      Dades_txyz = true;
     }
     else if (codigo == ComandoT_Period) { // Canviar periodicitat de dades 
       PeriodeDHT = comando.substring(inicio, pos).toInt(); // extrae el valor del periodo de datos
