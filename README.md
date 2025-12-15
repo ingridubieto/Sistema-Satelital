@@ -20,7 +20,7 @@ En la segona versió d'aquest projecte es va aconseguir el següent:
 · Botons i gràfiques incrustats dins d'una interfície gràfica (anomenada Sistema Satel·lital)   
 · Gràfica de les dades d'humitat (on es mostren les dades d'humitat que recull el DHT)      
 · Gràfica del radar (on es mostren les dades de distància que recull l'ultrasons)      
-· Implementació mode del radar (moviment que escombra una zona des de 0 a 180 graus)
+· Implementació mode del radar (moviment que escombra una zona des de 0 a 180 graus)   
 · Alarma d'Error de la comunicació d'arduinos (sistema millorat)   
 · Alarma d'Error de lectura de DHT   
 · Alarma d'Error de lectura de l'Ultrasons   
