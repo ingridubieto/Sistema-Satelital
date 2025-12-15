@@ -37,7 +37,7 @@ En la tercera versió d'aquest projecte es va aconseguir el següent:
 · Entrada de text per afegir observacions de l'usuari   
 · Capacitat per filtrar els esdeveniments que es troben dins d'un fitxer, per tipus i data   
 · Espai de text en blanc on apareix el resultat del filtre d'esdeveniments   
-· Implementació del Checksum per la comunicació segura entre arduinos
+· Implementació del Checksum per la comunicació segura entre arduinos   
 · Implementació del Kit LoRa per la comunicació entre arduinos sense fils
 
 ### Vídeo de la [Versió 4]()  
