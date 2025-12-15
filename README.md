@@ -40,8 +40,7 @@ En la tercera versió d'aquest projecte es va aconseguir el següent:
 · Implementació del Checksum per la comunicació segura entre arduinos   
 · Implementació del Kit LoRa per la comunicació entre arduinos sense fils
 
-![ESTAT FÍSIC DE LA INTERFÍCIE GRÀFICA](Assets/INTERFICIE GRÀFICA CC.png)
-![ESTAT FÍSIC DE LA INTERFÍCIE GRÀFICA](Assets/INTERFICIE_GRÀFICE_CC.png)
+![ESTAT FÍSIC DE LA INTERFÍCIE GRÀFICA](Assets/INTERFICIE_GRÀFICA_CC.png)
 
 
 ### Vídeo de la [Versió 4]()  
