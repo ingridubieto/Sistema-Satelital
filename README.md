@@ -11,18 +11,37 @@ En la primera versió d'aquest projete es va aconseguir el següent:
 · Implementació d'un LED que s'encén cada vegada que l'arduino de l'estació de terra rep dades vàlides   
 · Definició de la funció per processar les dades que arriben del satèl·lit   
 · Definició de les ordres de iniciar, parar i reanudar les dades que rebem   
-· Creació d'una interfície amb botons i una gràfica que recull les dades de temperatura rebudes   
+· Creació d'una interfície amb botons   
+· Gràfica de les dades de temperatura (on es mostren les dades de temperatura que recull el DHT)   
+· Implementació del THREAD   
 
 ### Vídeo de la [Versió 2](https://youtu.be/e1XV5jPOSLc)  
-En la segona versió d'aquest projecte es va aconseguir el següent:
-· 
+En la segona versió d'aquest projecte es va aconseguir el següent:   
+· Botons i gràfiques incrustats dins d'una interfície gràfica (anomenada Sistema Satel·lital)   
+· Gràfica de les dades d'humitat (on es mostren les dades d'humitat que recull el DHT)      
+· Gràfica del radar (on es mostren les dades de distància que recull l'ultrasons)      
+· Implementació mode del radar (moviment que escombra una zona des de 0 a 180 graus)
+· Alarma d'Error de la comunicació d'arduinos (sistema millorat)   
+· Alarma d'Error de lectura de DHT   
+· Alarma d'Error de lectura de l'Ultrasons   
+· Alarma d'Error d'alta temperatura (quan la temperatura captada és superior al llindar establert)   
+· Estructrues de tots els codis passats a funcions   
+· Implementació d'un Protocol d'Aplicació (explicat més endavant)   
 
 ### Vídeo de la [Versió 3](https://youtu.be/HDT-QbDbMX0)  
-En la tercera versió d'aquest projecte es va aconseguir el següent:
-· 
+En la tercera versió d'aquest projecte es va aconseguir el següent:   
+· Slidder per canviar i modificar la periodicitat de les dades   
+· Botons perquè l'usuari decideixi on vol calcular les mitjanes de temperatura i humitat   
+· Mitjanes de temperatura (calculades amb python) mostrades en el gràfic de temperatura      
+· Mode manual del radar (on l'usuari decideix manualment la direcció que ha de pendre el servo)   
+· Entrada de text per afegir observacions de l'usuari   
+· Capacitat per filtrar els esdeveniments que es troben dins d'un fitxer, per tipus i data   
+· Espai de text en blanc on apareix el resultat del filtre d'esdeveniments   
+· Implementació del Checksum per la comunicació segura entre arduinos
+· Implementació del Kit LoRa per la comunicació entre arduinos sense fils
 
 ### Vídeo de la [Versió 4]()  
-En la quarta versió d'aquest projecte s'ha aconseguit el següent:
+En la quarta versió d'aquest projecte s'ha aconseguit el següent:   
 · 
 
  _**Estat del projecte:** Versió 3_
