@@ -39,6 +39,15 @@ void setup() {
 // Definició de les funcions
 //--------------------------------------------------
 
+int Checksum(String missatge){
+  const char* paraula = missatge.c_str();
+  int suma = 0;
+  for (int i = 0; paraula[i] != '\0'; i++){
+      suma += paraula[i];
+  }
+  return suma % 256;
+}
+
 String AfegirChecksum(String paraula){
   return paraula + "|" + String(Checksum(paraula));
 }
