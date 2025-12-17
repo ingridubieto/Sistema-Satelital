@@ -58,13 +58,7 @@ void ProcessarCom(String comando) {
   int codigo = comando.substring(0, fin).toInt();
   int inicio = fin + 1;
 
-  if (codigo == 3) { // Alarma sensor DHT
-    stateAlarma = HIGH;
-    digitalWrite(alarma, stateAlarma);
-    AlarmaSonora();
-  }
-
-  else if (codigo == 1) { //1: Parar comunicacio
+  if (codigo == 1) { //1: Parar comunicacio
     Comunicacio = false;
   }
 
@@ -73,7 +67,6 @@ void ProcessarCom(String comando) {
     NextMillisTIMEOUT = millis() + PeriodeTIMEOUT;
 
   }
-
   else if (codigo == 8) { //8: Joystick manual
     MANUAL = true;
   }
@@ -88,7 +81,8 @@ void ProcessarCom(String comando) {
 }
 
 void AlarmaSonora() {
-  tone(buzzer, 3000, 2000);
+  digitalWrite(buzzer, HIGH);
+  //tone(buzzer, 3000, 2000);
 }
 
 int LlegirJoystick() {
@@ -113,17 +107,18 @@ void loop() {
     digitalWrite(led, HIGH);
     NextMillisTIMEOUT = millis() + PeriodeTIMEOUT;
     digitalWrite(alarma, LOW);
+    digitalWrite(buzzer, LOW);
 
     String comando = mySerial.readStringUntil('\n'); //Rebre
     Serial.println(comando); //Enviar
-      
-    ProcessarCom(comando);//
+
     digitalWrite(led, LOW);
   }
   else{
     if (Comunicacio == true && millis()>= NextMillisTIMEOUT){
       Serial.println("4:");
       digitalWrite(alarma, HIGH);
+      digitalWrite(buzzer, HIGH);
     }
   }
 
