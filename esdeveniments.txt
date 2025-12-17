@@ -277,3 +277,216 @@
 2025-12-14 16:56:43 | COMANDO | Canvi Mitjanes des de la interficie
 2025-12-14 16:57:05 | COMANDO | Calcular Mitjanes des del satel.lit
 2025-12-14 16:57:18 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-17 15:58:40 | ALARMA | Perill de Xoc amb Objecte Espacial
+2025-12-17 15:58:44 | ALARMA | Perill de Xoc amb Objecte Espacial
+2025-12-17 15:58:45 | ALARMA | Perill de Xoc amb Objecte Espacial
+2025-12-17 15:58:55 | ALARMA | Perill de Xoc amb Objecte Espacial
+2025-12-17 16:00:52 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:02:24 | OBSERVACION | Vaig a dinar
+2025-12-17 16:03:45 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-17 16:03:51 | ALARMA | Temperatura Alta
+2025-12-17 16:03:53 | ALARMA | Temperatura Alta
+2025-12-17 16:03:54 | ALARMA | Temperatura Alta
+2025-12-17 16:03:55 | ALARMA | Temperatura Alta
+2025-12-17 16:03:57 | ALARMA | Temperatura Alta
+2025-12-17 16:04:05 | ALARMA | Temperatura Alta
+2025-12-17 16:04:06 | ALARMA | Temperatura Alta
+2025-12-17 16:04:08 | ALARMA | Temperatura Alta
+2025-12-17 16:04:09 | ALARMA | Temperatura Alta
+2025-12-17 16:04:10 | ALARMA | Temperatura Alta
+2025-12-17 16:04:11 | ALARMA | Temperatura Alta
+2025-12-17 16:04:12 | ALARMA | Temperatura Alta
+2025-12-17 16:04:13 | ALARMA | Temperatura Alta
+2025-12-17 16:04:32 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-17 16:04:35 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-17 16:04:38 | ALARMA | Temperatura Alta
+2025-12-17 16:05:07 | ALARMA | Temperatura Alta
+2025-12-17 16:06:54 | ALARMA | Temperatura Alta
+2025-12-17 16:08:47 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-17 16:08:53 | ALARMA | Temperatura Alta
+2025-12-17 16:08:55 | ALARMA | Temperatura Alta
+2025-12-17 16:09:01 | ALARMA | Temperatura Alta
+2025-12-17 16:09:03 | ALARMA | Temperatura Alta
+2025-12-17 16:09:04 | ALARMA | Temperatura Alta
+2025-12-17 16:09:05 | ALARMA | Temperatura Alta
+2025-12-17 16:09:08 | ALARMA | Temperatura Alta
+2025-12-17 16:10:31 | ALARMA | Temperatura Alta
+2025-12-17 16:10:32 | ALARMA | Temperatura Alta
+2025-12-17 16:10:33 | ALARMA | Temperatura Alta
+2025-12-17 16:10:34 | ALARMA | Temperatura Alta
+2025-12-17 16:10:35 | ALARMA | Temperatura Alta
+2025-12-17 16:10:36 | ALARMA | Temperatura Alta
+2025-12-17 16:10:37 | ALARMA | Temperatura Alta
+2025-12-17 16:10:39 | ALARMA | Temperatura Alta
+2025-12-17 16:10:45 | ALARMA | Temperatura Alta
+2025-12-17 16:10:47 | ALARMA | Temperatura Alta
+2025-12-17 16:10:50 | ALARMA | Temperatura Alta
+2025-12-17 16:10:53 | ALARMA | Temperatura Alta
+2025-12-17 16:10:56 | ALARMA | Temperatura Alta
+2025-12-17 16:17:15 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-17 16:17:30 | ALARMA | Temperatura Alta
+2025-12-17 16:17:39 | ALARMA | Temperatura Alta
+2025-12-17 16:23:01 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-17 16:23:02 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:23:05 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-17 16:23:06 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-17 16:23:09 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:23:10 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-17 16:23:11 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:23:11 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-17 16:23:12 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:23:12 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-17 16:23:13 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:23:13 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-17 16:23:14 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:23:15 | ALARMA | No es capta Temperatura ni Humitat correctament
+2025-12-17 16:26:01 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-17 16:26:07 | ALARMA | Temperatura Alta
+2025-12-17 16:31:12 | ALARMA | Temperatura Alta
+2025-12-17 16:32:48 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-17 16:32:57 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-17 16:33:10 | COMANDO | Canvi Llindar de Temperatura Maxima
+2025-12-17 16:33:16 | ALARMA | Temperatura Alta
+2025-12-17 16:33:27 | ALARMA | Temperatura Alta
+2025-12-17 16:33:51 | COMANDO | Calcular Mitjanes des del satel.lit
+2025-12-17 16:34:05 | COMANDO | Canvi Mitjanes des de la interficie
+2025-12-17 16:34:42 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:34:45 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:34:51 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:34:57 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:34:59 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:35:00 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:35:02 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:35:03 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:35:07 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:35:08 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:35:10 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:35:19 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:35:20 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:35:23 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:35:25 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:35:30 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:35:35 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:35:37 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:35:38 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:35:40 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:35:44 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:35:52 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:35:55 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:35:56 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:35:58 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:37:22 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:37:24 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:37:33 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:37:44 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:38:01 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:38:07 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:38:12 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:38:35 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:38:37 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:38:46 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:38:52 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:39:17 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:39:20 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:40:09 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:40:17 | COMANDO | Mode Manual del Radar
+2025-12-17 16:40:31 | COMANDO | Mode Manual del Radar
+2025-12-17 16:40:40 | COMANDO | Mode Manual del Radar
+2025-12-17 16:40:45 | COMANDO | Mode Automatic del Radar
+2025-12-17 16:41:01 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:41:05 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:41:58 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:48:38 | COMANDO | Mode Manual del Radar
+2025-12-17 16:49:14 | COMANDO | Mode Manual del Radar
+2025-12-17 16:49:47 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:49:55 | ALARMA | Perill de Xoc amb Objecte Espacial
+2025-12-17 16:50:00 | COMANDO | Mode Manual del Radar
+2025-12-17 16:50:09 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:50:12 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:50:14 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 16:50:15 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:00:29 | COMANDO | Mode Manual del Radar
+2025-12-17 17:00:54 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:00:56 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:00:59 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:01:04 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:11:10 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:11:13 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:12:09 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:15:51 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:15:55 | COMANDO | Mode Manual del Radar
+2025-12-17 17:16:00 | COMANDO | Mode Automatic del Radar
+2025-12-17 17:16:07 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:16:12 | COMANDO | Mode Automatic del Radar
+2025-12-17 17:17:17 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:21:18 | COMANDO | Mode Automatic del Radar
+2025-12-17 17:21:23 | COMANDO | Mode Automatic del Radar
+2025-12-17 17:21:30 | COMANDO | Mode Manual del Radar
+2025-12-17 17:21:38 | COMANDO | Mode Automatic del Radar
+2025-12-17 17:24:00 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:24:03 | COMANDO | Mode Manual del Radar
+2025-12-17 17:24:07 | COMANDO | Mode Joystick del Radar
+2025-12-17 17:24:43 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:26:34 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:26:35 | COMANDO | Mode Automatic del Radar
+2025-12-17 17:30:13 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:30:17 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:30:19 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:30:22 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:30:25 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:30:32 | COMANDO | Mode Joystick del Radar
+2025-12-17 17:31:21 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:31:23 | COMANDO | Mode Automatic del Radar
+2025-12-17 17:31:27 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:32:05 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:32:06 | COMANDO | Mode Manual del Radar
+2025-12-17 17:32:13 | COMANDO | Mode Automatic del Radar
+2025-12-17 17:32:17 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:32:26 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:32:29 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:32:31 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:32:35 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:32:37 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:32:38 | COMANDO | Mode Joystick del Radar
+2025-12-17 17:32:53 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:32:55 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:33:00 | COMANDO | Mode Manual del Radar
+2025-12-17 17:37:19 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:37:27 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:37:30 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:37:33 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:37:35 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:38:16 | COMANDO | Mode Manual del Radar
+2025-12-17 17:38:22 | COMANDO | Mode Automatic del Radar
+2025-12-17 17:38:49 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:38:52 | COMANDO | Mode Joystick del Radar
+2025-12-17 17:38:54 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:38:55 | COMANDO | Mode Automatic del Radar
+2025-12-17 17:38:58 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:39:03 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:39:07 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:39:12 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:39:16 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:39:21 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:39:26 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:39:29 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:39:34 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:39:38 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:39:43 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:39:47 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:40:22 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:40:24 | COMANDO | Mode Automatic del Radar
+2025-12-17 17:40:26 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:40:28 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:40:30 | COMANDO | Mode Manual del Radar
+2025-12-17 17:40:34 | COMANDO | Mode Automatic del Radar
+2025-12-17 17:40:37 | COMANDO | Mode Automatic del Radar
+2025-12-17 17:40:42 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:40:43 | COMANDO | Mode Manual del Radar
+2025-12-17 17:40:44 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:40:47 | COMANDO | Mode Automatic del Radar
+2025-12-17 17:40:55 | COMANDO | Mode Joystick del Radar
+2025-12-17 17:40:57 | ALARMA | No es capta Distancia ni Angle correctament
+2025-12-17 17:41:12 | COMANDO | Mode Automatic del Radar
+2025-12-17 17:41:19 | COMANDO | Mode Joystick del Radar
+2025-12-17 17:41:26 | COMANDO | Mode Manual del Radar

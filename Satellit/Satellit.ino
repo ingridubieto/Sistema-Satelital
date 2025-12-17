@@ -23,14 +23,15 @@ String Comando_ErrorXoc = "10:";
 
 int ComandoT_Parar = 1;
 int ComandoT_Reanudar = 2;
-int ComandoT_Period = 3;
-int ComandoT_MitjanesSat = 4;
-int ComandoT_MaxTemp = 5;
-int ComandoT_MaxHum = 6;
-int ComandoT_ServoAuto = 7;
-int ComandoT_ServoJoy = 8;
-int ComandoT_ServoManual = 9;
-int ComandoT_MaxDist = 10;
+int ComandoT_Periode_TyHyD = 3;
+int ComandoT_Periode_Pos = 4;
+int ComandoT_MitjanesSat = 5;
+int ComandoT_MaxTemp = 6;
+int ComandoT_MaxHum = 7;
+int ComandoT_ServoAuto = 8;
+int ComandoT_ServoJoy = 9;
+int ComandoT_ServoManual = 10;
+int ComandoT_MaxDist = 11;
 
 // Definició LED enviament
 const int led = 12;  // LED en el pin 12 (Verda)
@@ -47,8 +48,10 @@ SoftwareSerial mySerial(10, 11); // RX, TX
 // Definició servo motor
 Servo myservo;
 int A = 0; // posició del servo en tot moment
+int angleActual = -1;
 int direccioServo = 1; // 1 anant "Endavant" -1 anant "Endarrera"
 const int ServoPin = 9; // Pin del servo
+bool servoActiu = false;
 
 // Definició sensors i temporitzadors
 int PeriodeDHT = 1000; // periodicitat inicial d’enviament de dades (1 segons), pot ser canviada
@@ -91,7 +94,7 @@ int cont_TEMP_LIMIT = 0; // comptador de superacions consecutives del llindar de
 float HUM_LIMIT = 80.0;
 int cont_HUM_LIMIT = 0;
 //Alarma Xoc
-float DIST_LIMIT = 5; // llindar de distància inicial, pot ser canviat
+float DIST_LIMIT = 2; // llindar de distància inicial, pot ser canviat
 int cont_DIST_LIMIT = 0;
 //El limit consecutiu el reutilitzem pels dos
 const int LIMIT_CONSECUTIU = 3; // nombre de cops consecutius que ha de superar el llindar per enviar una alarma
@@ -199,9 +202,12 @@ void ProcessarCom(String comando) {
       Dades_DyA = true;
       Dades_txyz = true;
     }
-    else if (codigo == ComandoT_Period) { // Canviar periodicitat de dades 
+    else if (codigo == ComandoT_Periode_TyHyD) { // Canviar periodicitat de dades 
       PeriodeDHT = comando.substring(inicio, pos).toInt(); // extrae el valor del periodo de datos
       PeriodeRADAR = comando.substring(inicio, pos).toInt(); // extrae el valor del periodo de datos
+    }
+    else if (codigo == ComandoT_Periode_Pos) { // Canviar periodicitat de dades 
+      PeriodePOS = comando.substring(inicio, pos).toInt(); // extrae el valor del periodo de datos
     }
     else if (codigo == ComandoT_MitjanesSat) {
       if (Mitjanes == false){
@@ -355,6 +361,10 @@ void Enviar_txyz () { // Comando 4:t:x:y:z dades de posició del satèl·lit
 
 void MoureServo (){
   if (AUTO == true){
+    if (!servoActiu){
+      myservo.attach(ServoPin);
+      servoActiu = true;
+    }
     A = A + direccioServo;
 
     if (A >= 180){
@@ -369,9 +379,24 @@ void MoureServo (){
   }
 
   else { // Mode manual, definir A
+    if (A != angleActual) {
+      if (!servoActiu){
+        myservo.attach(ServoPin);
+        servoActiu = true;
+      }
+      myservo.write(A);
+      angleActual = A;
+    }
     myservo.write(A);
   }
 }
+void DesactivarServo() {
+  if (servoActiu) {
+    myservo.detach();
+    servoActiu = false;
+  }
+}
+
 
 //--------------------------------------------------
 // Programa prinicipal
@@ -379,12 +404,14 @@ void MoureServo (){
 
 void loop() {
   if (mySerial.available()){
+    DesactivarServo();
     String comando = mySerial.readStringUntil('\n');
     ProcessarCom(comando);
     //Serial.println("Available");
   }
 
   if ((Dades_TyH == true) && (millis() >= NextMillisDHT)){
+    DesactivarServo();
     NextMillisDHT = millis() + PeriodeDHT;
     Enviar_TyH();
     if (Mitjanes == true){
@@ -394,12 +421,14 @@ void loop() {
   }
 
   if ((Dades_DyA == true) && (millis() >= NextMillisRADAR)){
+    DesactivarServo();
     NextMillisRADAR = millis() + PeriodeRADAR;
     Enviar_DyA();
     //Serial.println("Radar");
   }
 
   if ((Dades_txyz == true) && (millis() >= NextMillisPOS)){
+    DesactivarServo();
     NextMillisPOS = millis() + PeriodePOS;
     Enviar_txyz();
     //Serial.println("Posició");
@@ -408,6 +437,7 @@ void loop() {
   if (millis() >= NextMillisSERVO) {
     NextMillisSERVO = millis() + PeriodeSERVO;
     MoureServo();
+    Serial.println(A);
     //Serial.println("Servo");
   }
 }

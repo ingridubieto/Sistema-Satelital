@@ -1,5 +1,17 @@
 #include <SoftwareSerial.h>
 
+int ComandoT_Parar = 1;
+int ComandoT_Reanudar = 2;
+int ComandoT_Periode_TyHyD = 3;
+int ComandoT_Periode_Pos = 4;
+int ComandoT_MitjanesSat = 5;
+int ComandoT_MaxTemp = 6;
+int ComandoT_MaxHum = 7;
+int ComandoT_ServoAuto = 8;
+int ComandoT_ServoJoy = 9;
+int ComandoT_ServoManual = 10;
+int ComandoT_MaxDist = 11;
+
 SoftwareSerial mySerial(10, 11); // RX, TX (blau, taronja)
 
 // Definició LED recepció
@@ -58,25 +70,23 @@ void ProcessarCom(String comando) {
   int codigo = comando.substring(0, fin).toInt();
   int inicio = fin + 1;
 
-  if (codigo == 1) { //1: Parar comunicacio
+  if (codigo == ComandoT_Parar) { //1: Parar comunicacio
     Comunicacio = false;
   }
 
-  else if (codigo == 2) { //2: Reanudar comunicacio
+  else if (codigo == ComandoT_Reanudar) { //2: Reanudar comunicacio
     Comunicacio = true;
     NextMillisTIMEOUT = millis() + PeriodeTIMEOUT;
 
   }
-  else if (codigo == 8) { //8: Joystick manual
+  else if (codigo == ComandoT_ServoJoy) { //9: Joystick manual
     MANUAL = true;
   }
-  else if (codigo == 7) { //7: Moviment AUTO del servo
+  else if (codigo == ComandoT_ServoAuto) { //8: Moviment AUTO del servo
     MANUAL = false;
   }
-    
-  else{
-    stateAlarma = LOW;
-    digitalWrite(alarma, stateAlarma);
+  else if (codigo == ComandoT_ServoManual){ // 10 Moviment concret
+    MANUAL = false;
   }
 }
 
@@ -93,7 +103,7 @@ int LlegirJoystick() {
 
 void EnviarJoystick() {
   int angle = LlegirJoystick();
-  String missatge = AfegirChecksum("8:" + String(angle)); // ComandoT_ServoJoy = 8
+  String missatge = AfegirChecksum("9:" + String(angle)); // ComandoT_ServoJoy = 8
   mySerial.println(missatge);
   Serial.print("Envio Joystick: "); 
   Serial.println(missatge);

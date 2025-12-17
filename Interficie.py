@@ -20,7 +20,7 @@ import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import serial
 
-device = 'COM3'
+device = 'COM11'
 baudrate = 9600
 mySerial = serial.Serial(device, baudrate, timeout=1)
 temperatura = None
@@ -83,8 +83,8 @@ ComandoT_MaxTemp = "6:"
 ComandoT_MaxHum = "7:"
 ComandoT_ServoAuto = "8:"
 ComandoT_ServoJoy = "9:"
-ComandoT_ServoManual = "9:"
-ComandoT_MaxDist = "10:"
+ComandoT_ServoManual = "10:"
+ComandoT_MaxDist = "11:"
 
 #--------------------------------------------------
 #Checksum
@@ -487,7 +487,7 @@ def update_plot_map():
 
     # Convertir ECEF → lat/lon
     lat, lon = ecef_to_latlon(x, y, z)
-    print("Actualitza grafic")
+    #print("Actualitza grafic")
     # Afegir a l'historial
     lat_list.append(lat)
     lon_list.append(lon)
@@ -736,7 +736,7 @@ def alarma4():
 
 def alarma5():
     window.bell()
-    messagebox.showwarning(title='Sistema Satelital', message='Alarma de Radar') # Fallo en captar les dades de Distancia
+    #messagebox.showwarning(title='Sistema Satelital', message='Alarma de Radar') # Fallo en captar les dades de Distancia
     print('ERROR RADAR')
     escribir_evento("ALARMA", "No es capta Distancia ni Angle correctament")
 
