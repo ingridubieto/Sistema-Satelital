@@ -20,7 +20,7 @@ import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import serial
 
-device = 'COM11'
+device = 'COM3'
 baudrate = 9600
 mySerial = serial.Serial(device, baudrate, timeout=1)
 temperatura = None
@@ -51,6 +51,8 @@ sat_trail = None
 lat_list = []
 lon_list = []
 ax_3d = None
+orbit_line = None
+sat_point_3d = None
 
 FITXER = "esdeveniments.txt"
 
@@ -83,8 +85,8 @@ ComandoT_MaxTemp = "6:"
 ComandoT_MaxHum = "7:"
 ComandoT_ServoAuto = "8:"
 ComandoT_ServoJoy = "9:"
-ComandoT_ServoManual = "10:"
-ComandoT_MaxDist = "11:"
+ComandoT_ServoManual = "9:"
+ComandoT_MaxDist = "10:"
 
 #--------------------------------------------------
 #Checksum
@@ -148,21 +150,28 @@ def lectura_datos():
                             x = float(trozos[2])
                             y = float(trozos[3])
                             z = float(trozos[4])
-                        elif comando == Comando_ErrorCom:
-                            alarma1()
+
+                            x_data.append(x)
+                            y_data.append(y)
+                            z_data.append(z)
+                            
+                            if len(x_data) > 1000:
+                                x_data.pop(0)
+                                y_data.pop(0)
+                                z_data.pop(0)
                         elif comando == Comando_ErrorDHT:
                             alarma2()
                         elif comando == Comando_ErrorTempAlta:
                             alarma3()
                         elif comando == Comando_ErrorHumAlta:
                             alarma4()
-                        elif comando == Comando_ErrorRadar:
-                            alarma5()
+                        #elif comando == Comando_ErrorRadar:
+                            #alarma5()
                         elif comando == Comando_ErrorXoc:
                             alarma6()
                             
             except:
-                print("Error de lectura")
+                alarma1() # En el cas de no rebre res s'activa l'alarma de fallo en la comunicació
             time.sleep(0.1)
 
 thread1 = threading.Thread(target=lectura_datos, daemon=True)
@@ -187,8 +196,10 @@ def show_graf_temp ():
     ax_temp.set_xlim(0, 20)     # Mostra inicialment 20 mesures
     ax_temp.set_ylim(0, 100)    # Rang de temperatura
 
-    (line_temperatura,) = ax_temp.plot([], [], color='red')
-    (line_mitjana_temperatura,) = ax_temp.plot([], [], color='blue', alpha = 0.5)
+    (line_temperatura,) = ax_temp.plot([], [], color='red', label = 'Temperatura')
+    (line_mitjana_temperatura,) = ax_temp.plot([], [], color='blue', alpha = 0.5, label = 'Mitjanes')
+
+    ax_temp.legend(loc="upper left")
 
     # --- Llistes de dades ---
     temps = []
@@ -216,7 +227,6 @@ def actualitzar_graf_temp():
     if Comunicacio == True:
         try:
             if temperatura is not None:
-                #print("Append temperatura", type (temps), type (temperatures))
                 temps.append(i)
                 temperatures.append(temperatura)
                 i += 1
@@ -266,8 +276,10 @@ def show_graf_hum():
     ax_hum.set_xlim(0, 20)     # Mostra inicialment 20 mesures
     ax_hum.set_ylim(0, 100)    # Rang de temperatura
 
-    (line_humitat,) = ax_hum.plot([], [], color='blue')
-    (line_mitjana_humitat,) = ax_hum.plot([], [], color='yellow', alpha = 0.5)
+    (line_humitat,) = ax_hum.plot([], [], color='blue', label = 'Humitat')
+    (line_mitjana_humitat,) = ax_hum.plot([], [], color='yellow', alpha = 0.5, label = 'Mitjanes')
+
+    ax_hum.legend(loc="upper left")
 
     # --- Llistes de dades ---
     temps = []
@@ -404,11 +416,13 @@ def actualitzar_graf_radar():
                 punt_objecte = None
 
             # --- DIBUIXEM NOVA LÍNIA I PUNT ---
-            linia_objecte = ax_radar.plot([0, angle], [0, distancia], color='g', linewidth=2)[0]
+            linia_objecte = ax_radar.plot([0, angle], [0, distancia], color='g', linewidth=2, label = 'Posició')[0]
             punt_objecte = ax_radar.scatter(angle, distancia, color='g', s=80)
 
             # --- Dibuixar trajectòria ---
-            linia_historial = ax_radar.plot(angles_ordenats, distancies_ordenades, color='y', linewidth=2)[0]
+            linia_historial = ax_radar.plot(angles_ordenats, distancies_ordenades, color='y', linewidth=2, label = 'Distància')[0]
+
+            ax_radar.legend(loc="upper right")
 
             # Actualitzar títol
             ax_radar.set_title(f"Lectura {i}: {np.rad2deg(angle):.1f}º {distancia:.1f} cm")
@@ -467,8 +481,10 @@ def show_graf_pos1():
     ax_map.set_xlim(-180, 180)
     ax_map.set_ylim(-90, 90)
 
-    sat_trail, = ax_map.plot([], [], color="yellow", linewidth=2)
-    sat_point = ax_map.scatter([], [], color="red", s=40)
+    sat_trail, = ax_map.plot([], [], color="yellow", linewidth=2, label = 'Groundtrack')
+    sat_point = ax_map.scatter([], [], color="red", s=40, label = 'Last point')
+
+    ax_map.legend(loc="upper right")
 
     # Integració amb Tkinter
     canvas_map = FigureCanvasTkAgg(fig_map, master=graf_pos_frame)
@@ -487,7 +503,7 @@ def update_plot_map():
 
     # Convertir ECEF → lat/lon
     lat, lon = ecef_to_latlon(x, y, z)
-    #print("Actualitza grafic")
+    print("Actualitza grafic")
     # Afegir a l'historial
     lat_list.append(lat)
     lon_list.append(lon)
@@ -525,10 +541,6 @@ earth_y = R_EARTH * np.outer(np.sin(u), np.sin(v))
 earth_z = R_EARTH * np.outer(np.ones_like(u), np.cos(v))
 
 
-# Globals addicionals
-orbit_line = None
-sat_point_3d = None
-
 def show_graf_pos2():
     """Mostra la gràfica 3D de la posició."""
     global fig_3d, ax_3d, canvas3d, orbit_line, sat_point_3d, graf_pos_actual
@@ -538,7 +550,6 @@ def show_graf_pos2():
     if 'canvas_map' in globals() and canvas_map:
         canvas_map.get_tk_widget().pack_forget()
 
-    # Si el canvas ja existeix, només el fem visible
     if 'canvas3d' in globals() and canvas3d is not None:
         canvas3d.get_tk_widget().pack(fill=tk.BOTH, expand=True)
         return
@@ -556,7 +567,12 @@ def show_graf_pos2():
     earth_x = R_EARTH * np.outer(np.cos(u), np.sin(v))
     earth_y = R_EARTH * np.outer(np.sin(u), np.sin(v))
     earth_z = R_EARTH * np.outer(np.ones_like(u), np.cos(v))
-    ax_3d.plot_wireframe(earth_x, earth_y, earth_z, color='gold', linewidth=0.5, alpha=1)
+    ax_3d.plot_wireframe(earth_x, earth_y, earth_z, color='gold', linewidth=0.5, alpha=1, label = 'Earth Surface')
+
+    LIM = 8e6
+    ax_3d.set_xlim(-LIM, LIM)
+    ax_3d.set_ylim(-LIM, LIM)
+    ax_3d.set_zlim(-LIM, LIM)
 
     ax_3d.set_xlabel("X (m)")
     ax_3d.set_ylabel("Y (m)")
@@ -564,8 +580,10 @@ def show_graf_pos2():
     ax_3d.set_title("Òrbita del satèl·lit (3D)")
     ax_3d.set_box_aspect([1,1,1])
 
-    orbit_line, = ax_3d.plot([], [], [], color='blue')
-    sat_point_3d = ax_3d.scatter([], [], [], color='red', s=40)
+    orbit_line, = ax_3d.plot([], [], [], color='blue', label = 'Satellite Orbit')
+    sat_point_3d = ax_3d.scatter([], [], [], color='red', s=40, label = 'Last Point')
+
+    ax_3d.legend(loc="upper right")
 
     canvas3d.draw()
 
@@ -573,25 +591,22 @@ def show_graf_pos2():
     update_plot()
 
 def update_plot():
-    global ax_3d, orbit_line, sat_point_3d, graf_pos_actual, canvas3d
+    global orbit_line, sat_point_3d
 
     if graf_pos_actual != "3d":
         window.after(500, update_plot)
         return
 
-    if ax_3d is None or len(x_data) < 2:
-        return
+    if ax_3d is not None and len(x_data) >= 2:
+        orbit_line.set_data(x_data, y_data)
+        orbit_line.set_3d_properties(z_data)
 
-    # Actualitzar la línia de trajectòria
-    orbit_line.set_data(x_data, y_data)
-    orbit_line.set_3d_properties(z_data)
+        sat_point_3d._offsets3d = ([x_data[-1]],[y_data[-1]],[z_data[-1]])
 
-    # Actualitzar el punt vermell només a l'última posició
-    sat_point_3d._offsets3d = ([x_data[-1]], [y_data[-1]], [z_data[-1]])
-
-    canvas3d.draw_idle()
+        canvas3d.draw_idle()
 
     window.after(500, update_plot)
+
 
 
 def parar_com():
@@ -615,7 +630,7 @@ def reanudar_com():
 def valor_period_TyH_D_slider():
     valor_period_ = int(period_TyH_D_slider.get())*1000
     print('val com' + str(valor_period_))
-    msg = f"{ComandoT_Periode_TyHyD}{valor_period_}|{Checksum(ComandoT_Periode_TyHyD + str(valor_period_))}" # 3 vol dir periodicitat determinada # f serveix per indicar que es una f-string (“formatted string literal”)
+    msg = f"{ComandoT_Periode_TyHyD}{valor_period_}|{Checksum(ComandoT_Periode_TyHyD + str(valor_period_))}" # 3 vol dir periodicitat de temperatura, humitat i distància
     mySerial.write(msg.encode()) # envia el valor de periodicitat --> .encode() transforma cadena de text en bytes
     escribir_evento("COMANDO", "Canvi Periodicitat d'Emissio de dades de Temperatura, Humitat i Distancia")
 
@@ -623,7 +638,7 @@ def valor_period_TyH_D_slider():
 def valor_period_pos_slider():
     valor_period_ = int(period_pos_slider.get())*1000
     print('val com' + str(valor_period_))
-    msg = f"{ComandoT_Periode_Pos}{valor_period_}|{Checksum(ComandoT_Periode_Pos + str(valor_period_))}" # 3 vol dir periodicitat determinada # f serveix per indicar que es una f-string (“formatted string literal”)
+    msg = f"{ComandoT_Periode_Pos}{valor_period_}|{Checksum(ComandoT_Periode_Pos + str(valor_period_))}" # 4 vol dir periodicitat determinada de posició
     mySerial.write(msg.encode()) # envia el valor de periodicitat --> .encode() transforma cadena de text en bytes
     escribir_evento("COMANDO", "Canvi Periodicitat d'Emissio de dades de Posicio")
 
@@ -648,7 +663,7 @@ def calcul_mitjanes_arduino():
     elif mitjana_arduino_activa == False:
         mitjana_arduino_activa = True
         mitjana_python_activa = False
-        msg = f"{ComandoT_MitjanesSat}|{Checksum(ComandoT_MitjanesSat)}" # 4 vol dir calcular les mitjanes de temperatura i humitat des del satèl·lit
+        msg = f"{ComandoT_MitjanesSat}|{Checksum(ComandoT_MitjanesSat)}" # 5 vol dir calcular les mitjanes de temperatura i humitat des del satèl·lit
         mySerial.write(msg.encode())
         escribir_evento("COMANDO", "Calcular Mitjanes des del satel.lit")
 
@@ -664,7 +679,7 @@ def parar_mitjanes(): #Parar tots els calculs de mitjanes
 def valor_temp_max_slider():
     valor_temp_max_ = temp_max_slider.get()
     print('val graf temp' + str(valor_temp_max_))
-    msg = f"{ComandoT_MaxTemp}{valor_temp_max_}|{Checksum(ComandoT_MaxTemp + str(valor_temp_max_))}" # 5 vol dir llindar de temperatura màxima
+    msg = f"{ComandoT_MaxTemp}{valor_temp_max_}|{Checksum(ComandoT_MaxTemp + str(valor_temp_max_))}" # 6 vol dir llindar de temperatura màxima
     mySerial.write(msg.encode()) # envia el valor de temperatura màxima que volem detectar
     escribir_evento("COMANDO", "Canvi Llindar de Temperatura Maxima")
 
@@ -672,19 +687,19 @@ def valor_temp_max_slider():
 def valor_hum_max_slider():
     valor_hum_max_ = hum_max_slider.get()
     print('val graf hum' + str(valor_hum_max_))
-    msg = f"{ComandoT_MaxHum}{valor_hum_max_}|{Checksum(ComandoT_MaxHum + str(valor_hum_max_))}" # 6 vol dir llindar d'humitat màxima
+    msg = f"{ComandoT_MaxHum}{valor_hum_max_}|{Checksum(ComandoT_MaxHum + str(valor_hum_max_))}" # 7 vol dir llindar d'humitat màxima
     mySerial.write(msg.encode()) # envia el valor d'humitat màxima que volem detectar
     escribir_evento("COMANDO", "Canvi Llindar d'Humitat Maxima")
 
 
 def auto_radar(): # Mode automatic del servo tot sol recorre de 0 a 180, com un radar normal
-    msg = f"{ComandoT_ServoAuto}|{Checksum(ComandoT_ServoAuto)}" # 7 vol dir mode automatic/constant
+    msg = f"{ComandoT_ServoAuto}|{Checksum(ComandoT_ServoAuto)}" # 8 vol dir mode automatic/constant
     mySerial.write(msg.encode())
     print('Mode Automatic')
     escribir_evento("COMANDO", "Mode Automatic del Radar")
 
 def joystick_radar():
-    msg = f"{ComandoT_ServoJoy}|{Checksum(ComandoT_ServoJoy)}" # 8 vol dir mode joystick
+    msg = f"{ComandoT_ServoJoy}|{Checksum(ComandoT_ServoJoy)}" # 9 vol dir mode joystick
     mySerial.write(msg.encode())
     print('Mode Joystick')
     escribir_evento("COMANDO", "Mode Joystick del Radar")
@@ -693,7 +708,7 @@ def joystick_radar():
 def valor_radar_slider(): # Mode manual del servo, es dirigeix al valor d'angle que indiques
     valor_ = radar_slider.get()
     print('val radar' + str(valor_))
-    msg = f"{ComandoT_ServoManual}{valor_}|{Checksum(ComandoT_ServoManual + str(valor_))}" # 9 vol dir angle determinat
+    msg = f"{ComandoT_ServoManual}{valor_}|{Checksum(ComandoT_ServoManual + str(valor_))}" # 10 vol dir angle determinat
     mySerial.write(msg.encode()) # envia el valor de l'angle
     escribir_evento("COMANDO", "Mode Manual del Radar")
 
@@ -701,7 +716,7 @@ def valor_radar_slider(): # Mode manual del servo, es dirigeix al valor d'angle 
 def valor_dist_max_slider():
     valor_dist_max_ = dist_max_slider.get()
     print('val graf dist' + str(valor_dist_max_))
-    msg = f"{ComandoT_MaxDist}{valor_dist_max_}|{Checksum(ComandoT_MaxDist + str(valor_dist_max_))}" # 6 vol dir llindar d'humitat màxima
+    msg = f"{ComandoT_MaxDist}{valor_dist_max_}|{Checksum(ComandoT_MaxDist + str(valor_dist_max_))}" # 11 vol dir llindar d'humitat màxima
     mySerial.write(msg.encode()) # envia el valor d'humitat màxima que volem detectar
     escribir_evento("COMANDO", "Canvi Llindar de Distancia Maxima")
 
@@ -736,7 +751,7 @@ def alarma4():
 
 def alarma5():
     window.bell()
-    #messagebox.showwarning(title='Sistema Satelital', message='Alarma de Radar') # Fallo en captar les dades de Distancia
+    messagebox.showwarning(title='Sistema Satelital', message='Alarma de Radar') # Fallo en captar les dades de Distancia
     print('ERROR RADAR')
     escribir_evento("ALARMA", "No es capta Distancia ni Angle correctament")
 
