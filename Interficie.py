@@ -20,7 +20,7 @@ import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import serial
 
-device = 'COM11'
+device = 'COM3'
 baudrate = 9600
 mySerial = serial.Serial(device, baudrate, timeout=1)
 temperatura = None
@@ -35,7 +35,9 @@ cua_mitjanes_humitat = deque(maxlen = 10)
 humitat = None
 distancia = None
 angle = None
-graf_actual = None
+graf_DHT_actual = None
+graf_radar_actual = None
+graf_pos_actual = None
 i = 0
 Comunicacio = True
 lectures_angles = {}
@@ -48,9 +50,41 @@ sat_point = None
 sat_trail = None
 lat_list = []
 lon_list = []
-ax = None
+ax_3d = None
 
 FITXER = "esdeveniments.txt"
+
+#--------------------------------------------------
+#Dades rebudes (de Satèl·lit a Python)
+#--------------------------------------------------
+
+Comando_TyH = 1
+Comando_mTymH = 2
+Comando_DyA = 3
+Comando_txyz = 4
+Comando_ErrorCom = 5
+Comando_ErrorDHT = 6
+Comando_ErrorTempAlta = 7
+Comando_ErrorHumAlta = 8
+Comando_ErrorRadar = 9
+Comando_ErrorXoc = 10
+
+
+#--------------------------------------------------
+#Dades enviades (de Python a Satèl·lit)
+#--------------------------------------------------
+
+ComandoT_Parar = "1:"
+ComandoT_Reanudar = "2:"
+ComandoT_Periode_TyHyD = "3:"
+ComandoT_Periode_Pos = "4:"
+ComandoT_MitjanesSat = "5:"
+ComandoT_MaxTemp = "6:"
+ComandoT_MaxHum = "7:"
+ComandoT_ServoAuto = "8:"
+ComandoT_ServoJoy = "9:"
+ComandoT_ServoManual = "9:"
+ComandoT_MaxDist = "10:"
 
 #--------------------------------------------------
 #Checksum
@@ -93,46 +127,38 @@ def lectura_datos():
                         print(linea)
                         global comando
                         comando = int(trozos[0]) # Determina el tipo de mensaje que recibe la estacion de tierra
-                        if comando == 1: #1:T:H --> DADES DE TEMPERATURA I HUMITAT
+                        if comando == Comando_TyH: #1:T:H --> DADES DE TEMPERATURA I HUMITAT
                             global temperatura, humitat
                             temperatura = float(trozos[1]) # 1:T:H --> T es temperatur+a
                             humitat = float(trozos[2]) # 1:T:H --> H es humedad
 
-                        elif comando == 2: #2:mT:mH --> MITJANA DE TEMPERATURES I HUMITATS
+                        elif comando == Comando_mTymH: #2:mT:mH --> MITJANA DE TEMPERATURES I HUMITATS
                             global mitjana_temperatura_satel·lit, mitjana_humitat_satel·lit
                             mitjana_temperatura_satel·lit = float(trozos[1]) # 2:mT:mH --> mT es la mitjana de les temperatures
                             mitjana_humitat_satel·lit = float(trozos[2]) # 2:mT:mH --> mH es la mitjana de les humitats
 
-                        elif comando == 3: # 3:D:A --> DADES DE DISTÀNCIA I ANGLE
+                        elif comando == Comando_DyA: # 3:D:A --> DADES DE DISTÀNCIA I ANGLE
                             global distancia, angle
                             distancia = float(trozos[1]) # 3:D:A --> D es distancia i A es angle
                             angle = np.deg2rad(float(trozos[2])) # --> Passa l'angle en graus a radiants
 
-                        elif comando == 4: # 4:t:x:y:z --> DADES DE POSICIÓ DEL SATÈL·LIT
-                            global temps, x, y, z
-                            temps = float(trozos[1]) # 4:t:x:y:z --> t es temps
+                        elif comando == Comando_txyz: # 4:t:x:y:z --> DADES DE POSICIÓ DEL SATÈL·LIT
+                            global t, x, y, z
+                            t = float(trozos[1]) # 4:t:x:y:z --> t es temps
                             x = float(trozos[2])
                             y = float(trozos[3])
                             z = float(trozos[4])
-                            # Actualitzem dades per la gràfica 3D
-                            x_data.append(x)
-                            y_data.append(y)
-                            z_data.append(z)
-                            # Ordenem Tkinter que actualitzi la gràfica (SEGUR i THREAD-SAFE)
-                            window.after(10, update_plot)
-                            window.after(10, update_plot_map)
-
-                        elif comando == 5: # 5: --> ERROR COMUNICACIÓ
+                        elif comando == Comando_ErrorCom:
                             alarma1()
-                        elif comando == 6: # 6: --> ERROR DADES DHT
+                        elif comando == Comando_ErrorDHT:
                             alarma2()
-                        elif comando == 7: # 7: --> ERROR TEMPERATURA ALTA
+                        elif comando == Comando_ErrorTempAlta:
                             alarma3()
-                        elif comando == 8: # 8: --> ERROR HUMITAT ALTA
+                        elif comando == Comando_ErrorHumAlta:
                             alarma4()
-                        elif comando == 9: #9: --> ERROR DADES RADAR
+                        elif comando == Comando_ErrorRadar:
                             alarma5()
-                        elif comando == 10: #10: --> ERROR PERILL DE XOC
+                        elif comando == Comando_ErrorXoc:
                             alarma6()
                             
             except:
@@ -147,8 +173,15 @@ thread1.start()
 #--------------------------------------------------
 
 def show_graf_temp ():
-    global ax_temp, fig_temp, line_temperatura, line_mitjana_temperatura, temps, temperatures, i, x_max, canvas_temp, canvas_graf_temp, graf_actual, mitjana_temperatures
-    graf_actual = "temp"
+    global ax_temp, fig_temp, line_temperatura, line_mitjana_temperatura, temps, temperatures, i, x_max, canvas_temp, canvas_graf_temp, graf_DHT_actual, mitjana_temperatures
+    graf_DHT_actual = "temp"
+
+    if 'canvas_graf_hum' in globals() and canvas_graf_hum:
+        canvas_graf_hum.grid_forget()
+
+    if 'canvas_graf_temp' in globals() and canvas_graf_temp:
+        canvas_graf_temp.grid(row=0, column=0, sticky="nsew")
+        return
 
     fig_temp, ax_temp = plt.subplots()
     ax_temp.set_xlim(0, 20)     # Mostra inicialment 20 mesures
@@ -174,14 +207,16 @@ def show_graf_temp ():
 
 
 def actualitzar_graf_temp():
-    global i, x_max, graf_actual, cua_mitjanes_temperatura, mitjana_temperatura, mitjana_temp_python_activa
+    global i, x_max, graf_DHT_actual, cua_mitjanes_temperatura, mitjana_temperatura
     
-    if graf_actual == "hum":
+    if graf_DHT_actual != "temp":
+        window.after(500, actualitzar_graf_temp)
         return
 
     if Comunicacio == True:
         try:
             if temperatura is not None:
+                #print("Append temperatura", type (temps), type (temperatures))
                 temps.append(i)
                 temperatures.append(temperatura)
                 i += 1
@@ -217,8 +252,15 @@ def actualitzar_graf_temp():
 #--------------------------------------------------
 
 def show_graf_hum():
-    global ax_hum, fig_hum, line_humitat, temps, humitats, i, x_max, canvas_hum, canvas_graf_hum, graf_actual, mitjana_humitats, line_mitjana_humitat
-    graf_actual = "hum"
+    global ax_hum, fig_hum, line_humitat, temps, humitats, i, x_max, canvas_hum, canvas_graf_hum, graf_DHT_actual, mitjana_humitats, line_mitjana_humitat
+    graf_DHT_actual = "hum"
+
+    if 'canvas_graf_temp' in globals() and canvas_graf_temp:
+        canvas_graf_temp.grid_forget()
+
+    if 'canvas_graf_hum' in globals() and canvas_graf_hum:
+        canvas_graf_hum.grid(row=0, column=0, sticky="nsew")
+        return
 
     fig_hum, ax_hum = plt.subplots()
     ax_hum.set_xlim(0, 20)     # Mostra inicialment 20 mesures
@@ -244,10 +286,11 @@ def show_graf_hum():
 
 
 def actualitzar_graf_hum():
-    global i, x_max, graf_actual, cua_mitjanes_humitat
+    global i, x_max, graf_DHT_actual, cua_mitjanes_humitat
     global mitjana_humitats, mitjana_humitat
 
-    if graf_actual == "temp":
+    if graf_DHT_actual != "hum":
+        window.after(500, actualitzar_graf_hum)
         return
 
     if Comunicacio == True:
@@ -297,10 +340,10 @@ def calcular_mitjana(valor_actual, cua_python, mitjana_python_activa, mitjana_ar
 #--------------------------------------------------
 
 def show_graf_radar():
-    global ax_radar, fig_radar, angles, distancies, canvas_radar, canvas_graf_radar, graf_actual
+    global ax_radar, fig_radar, angles, distancies, canvas_radar, canvas_graf_radar, graf_radar_actual
     global linia_objecte, punt_objecte, linia_historial
 
-    graf_actual = "radar"
+    graf_radar_actual = "radar"
 
     linia_objecte = None
     punt_objecte = None
@@ -335,7 +378,7 @@ def show_graf_radar():
 
 
 def actualitzar_graf_radar():
-    global i, angle, distancia, graf_actual, canvas_radar
+    global i, angle, distancia, graf_radar_actual, canvas_radar
     global angles, distancies
     global linia_objecte, punt_objecte, linia_historial
 
@@ -388,38 +431,42 @@ def ecef_to_latlon(x, y, z):
     return lat, lon
 
 def show_graf_pos1():
+    """Mostra la gràfica 2D de la posició sobre el mapa."""
     global fig_map, ax_map, canvas_map, sat_point, sat_trail
-    global lat_list, lon_list, graf_actual
+    global lat_list, lon_list, graf_pos_actual
 
-    graf_actual = "map"
+    graf_pos_actual = "map"
 
-    # Si hi ha una altra gràfica activa, destruir-la
-    for widget in graf_pos_frame.winfo_children():
-        widget.destroy()
+    if 'canvas3d' in globals() and canvas3d:
+        canvas3d.get_tk_widget().pack_forget()
 
-    # Inicialitzar dades
-    lat_list = []
-    lon_list = []
+    # Inicialitzar dades si és la primera vegada
+    if 'lat_list' not in globals() or lat_list is None:
+        lat_list = []
+    if 'lon_list' not in globals() or lon_list is None:
+        lon_list = []
+
+    # Si el canvas ja existeix, només el fem visible
+    if 'canvas_map' in globals() and canvas_map is not None:
+        canvas_map.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+        return
 
     # Crear figura
     fig_map = Figure(figsize=(7, 5), dpi=100)
     ax_map = fig_map.add_subplot(111)
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    img_path_map = os.path.join(script_dir, "Assets", "world_map.jpg")  # 'Assets' amb majúscula
+    img_path_map = os.path.join(script_dir, "Assets", "world_map.jpg")
 
-    # Importar imatge del mapa
     img = mpimg.imread(img_path_map)
     ax_map.imshow(img, extent=[-180, 180, -90, 90])
 
-    # Estètica
     ax_map.set_title("Òrbita del satèl·lit")
     ax_map.set_xlabel("Longitud (°)")
     ax_map.set_ylabel("Latitud (°)")
     ax_map.set_xlim(-180, 180)
     ax_map.set_ylim(-90, 90)
 
-    # Línia i punt
     sat_trail, = ax_map.plot([], [], color="yellow", linewidth=2)
     sat_point = ax_map.scatter([], [], color="red", s=40)
 
@@ -427,30 +474,46 @@ def show_graf_pos1():
     canvas_map = FigureCanvasTkAgg(fig_map, master=graf_pos_frame)
     canvas_map.get_tk_widget().pack(fill=tk.BOTH, expand=True)
     canvas_map.draw()
+    
+    #Actualitzem el gràfic
+    update_plot_map()
 
 def update_plot_map():
     global sat_point, sat_trail, lat_list, lon_list
-    if graf_actual != "map":
+
+    if graf_pos_actual != "map":
+        window.after(500, update_plot_map)
         return
-    
+
     # Convertir ECEF → lat/lon
     lat, lon = ecef_to_latlon(x, y, z)
-    
+    print("Actualitza grafic")
     # Afegir a l'historial
     lat_list.append(lat)
     lon_list.append(lon)
     
-    # Quan travesses el final del mapa → reiniciar traç i torna a l'inici (simulant una volta a la Terra)
-    if len(lon_list) > 2:
-        if abs(lon_list[-1] - lon_list[-2]) > 100: # salt brusc = canvi de meridià
-            lat_list.clear()
-            lon_list.clear() 
-            lat_list.append(lat) 
-            lon_list.append(lon) 
-            
+    # Detecta salt brusc
+    if len(lon_list) > 1 and abs(lon_list[-1] - lon_list[-2]) > 100:
+        lat_list.clear()
+        lon_list.clear()
+        lat_list.append(lat)
+        lon_list.append(lon)
+
+    # Actualitza sempre la gràfica
+    sat_trail.set_data(lon_list, lat_list)
+    sat_point.set_offsets([[lon, lat]])
+    canvas_map.draw()
+
+
+    # Actualitzar línia i punt
+    if sat_trail is not None:
         sat_trail.set_data(lon_list, lat_list) 
+    if sat_point is not None:
         sat_point.set_offsets([[lon, lat]]) 
-        canvas_map.draw()
+    
+    canvas_map.draw()
+
+    window.after(500, update_plot_map)
     
 R_EARTH = 6371000
 
@@ -467,39 +530,56 @@ orbit_line = None
 sat_point_3d = None
 
 def show_graf_pos2():
-    global fig, ax, canvas, orbit_line, sat_point_3d
+    """Mostra la gràfica 3D de la posició."""
+    global fig_3d, ax_3d, canvas3d, orbit_line, sat_point_3d, graf_pos_actual
 
-    graf_actual = "3d"
+    graf_pos_actual = "3d"
 
-    # Si hi ha una altra gràfica activa, destruir-la
-    for widget in graf_pos_frame.winfo_children():
-        widget.destroy()
+    if 'canvas_map' in globals() and canvas_map:
+        canvas_map.get_tk_widget().pack_forget()
 
-    fig = Figure(figsize=(7,6), dpi=100)
-    ax = fig.add_subplot(111, projection='3d')
+    # Si el canvas ja existeix, només el fem visible
+    if 'canvas3d' in globals() and canvas3d is not None:
+        canvas3d.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+        return
 
-    canvas = FigureCanvasTkAgg(fig, master=graf_pos_frame)
-    canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+    fig_3d = Figure(figsize=(7,6), dpi=100)
+    ax_3d = fig_3d.add_subplot(111, projection='3d')
 
-    # Terra (UNA SOLA VEGADA)
-    ax.plot_wireframe(earth_x, earth_y, earth_z, color='gold', linewidth=0.5, alpha=1)
+    canvas3d = FigureCanvasTkAgg(fig_3d, master=graf_pos_frame)
+    canvas3d.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
-    ax.set_xlabel("X (m)")
-    ax.set_ylabel("Y (m)")
-    ax.set_zlabel("Z (m)")
-    ax.set_title("Òrbita del satèl·lit (3D)")
-    ax.set_box_aspect([1,1,1])
+    # Terra
+    R_EARTH = 6371000
+    u = np.linspace(0, 2*np.pi, 40)
+    v = np.linspace(0, np.pi, 20)
+    earth_x = R_EARTH * np.outer(np.cos(u), np.sin(v))
+    earth_y = R_EARTH * np.outer(np.sin(u), np.sin(v))
+    earth_z = R_EARTH * np.outer(np.ones_like(u), np.cos(v))
+    ax_3d.plot_wireframe(earth_x, earth_y, earth_z, color='gold', linewidth=0.5, alpha=1)
 
-    # Línia i punt inicials buits
-    orbit_line, = ax.plot([], [], [], color='blue')
-    sat_point_3d = ax.scatter([], [], [], color='red', s=40)
+    ax_3d.set_xlabel("X (m)")
+    ax_3d.set_ylabel("Y (m)")
+    ax_3d.set_zlabel("Z (m)")
+    ax_3d.set_title("Òrbita del satèl·lit (3D)")
+    ax_3d.set_box_aspect([1,1,1])
 
-    canvas.draw()
+    orbit_line, = ax_3d.plot([], [], [], color='blue')
+    sat_point_3d = ax_3d.scatter([], [], [], color='red', s=40)
+
+    canvas3d.draw()
+
+    #Actualitzem el gràfic
+    update_plot()
 
 def update_plot():
-    global ax, orbit_line, sat_point_3d
+    global ax_3d, orbit_line, sat_point_3d, graf_pos_actual, canvas3d
 
-    if ax is None or len(x_data) < 2:
+    if graf_pos_actual != "3d":
+        window.after(500, update_plot)
+        return
+
+    if ax_3d is None or len(x_data) < 2:
         return
 
     # Actualitzar la línia de trajectòria
@@ -509,33 +589,43 @@ def update_plot():
     # Actualitzar el punt vermell només a l'última posició
     sat_point_3d._offsets3d = ([x_data[-1]], [y_data[-1]], [z_data[-1]])
 
-    canvas.draw_idle()
+    canvas3d.draw_idle()
+
+    window.after(500, update_plot)
 
 
 def parar_com():
     global Comunicacio
-    msg = f"1:|{Checksum("1:")}" # 1 vol dir parar l'emissió de dades
+    msg = f"{ComandoT_Parar}|{Checksum(ComandoT_Parar)}"
     mySerial.write(msg.encode())
     Comunicacio = False
-    print("Parar 1:")
+    print("Parar")
     escribir_evento("COMANDO", "Parar Emissio de dades")
 
 
 def reanudar_com():
     global Comunicacio
-    msg = f"2:|{Checksum("2:")}" # 2 vol dir reanudar l'emissió de dades
+    msg = f"{ComandoT_Reanudar}|{Checksum(ComandoT_Reanudar)}" # 2 vol dir reanudar l'emissió de dades
     mySerial.write(msg.encode())
     Comunicacio = True
-    print("Reanudar 2:")
+    print("Reanudar")
     escribir_evento("COMANDO", "Reanudar Emissio de dades")
 
 
-def valor_period_com_slider():
-    valor_period_ = int(period_com_slider.get())*1000
+def valor_period_TyH_D_slider():
+    valor_period_ = int(period_TyH_D_slider.get())*1000
     print('val com' + str(valor_period_))
-    msg = f"3:{valor_period_}|{Checksum("3:" + str(valor_period_))}" # 3 vol dir periodicitat determinada # f serveix per indicar que es una f-string (“formatted string literal”)
+    msg = f"{ComandoT_Periode_TyHyD}{valor_period_}|{Checksum(ComandoT_Periode_TyHyD + str(valor_period_))}" # 3 vol dir periodicitat determinada # f serveix per indicar que es una f-string (“formatted string literal”)
     mySerial.write(msg.encode()) # envia el valor de periodicitat --> .encode() transforma cadena de text en bytes
-    escribir_evento("COMANDO", "Canvi Periodicitat d'Emissio de dades")
+    escribir_evento("COMANDO", "Canvi Periodicitat d'Emissio de dades de Temperatura, Humitat i Distancia")
+
+
+def valor_period_pos_slider():
+    valor_period_ = int(period_pos_slider.get())*1000
+    print('val com' + str(valor_period_))
+    msg = f"{ComandoT_Periode_Pos}{valor_period_}|{Checksum(ComandoT_Periode_Pos + str(valor_period_))}" # 3 vol dir periodicitat determinada # f serveix per indicar que es una f-string (“formatted string literal”)
+    mySerial.write(msg.encode()) # envia el valor de periodicitat --> .encode() transforma cadena de text en bytes
+    escribir_evento("COMANDO", "Canvi Periodicitat d'Emissio de dades de Posicio")
 
 
 def calcul_mitjanes_python():
@@ -558,7 +648,7 @@ def calcul_mitjanes_arduino():
     elif mitjana_arduino_activa == False:
         mitjana_arduino_activa = True
         mitjana_python_activa = False
-        msg = f"4:|{Checksum("4:")}" # 4 vol dir calcular les mitjanes de temperatura i humitat des del satèl·lit
+        msg = f"{ComandoT_MitjanesSat}|{Checksum(ComandoT_MitjanesSat)}" # 4 vol dir calcular les mitjanes de temperatura i humitat des del satèl·lit
         mySerial.write(msg.encode())
         escribir_evento("COMANDO", "Calcular Mitjanes des del satel.lit")
 
@@ -574,7 +664,7 @@ def parar_mitjanes(): #Parar tots els calculs de mitjanes
 def valor_temp_max_slider():
     valor_temp_max_ = temp_max_slider.get()
     print('val graf temp' + str(valor_temp_max_))
-    msg = f"5:{valor_temp_max_}|{Checksum('5:' + str(valor_temp_max_))}" # 5 vol dir llindar de temperatura màxima
+    msg = f"{ComandoT_MaxTemp}{valor_temp_max_}|{Checksum(ComandoT_MaxTemp + str(valor_temp_max_))}" # 5 vol dir llindar de temperatura màxima
     mySerial.write(msg.encode()) # envia el valor de temperatura màxima que volem detectar
     escribir_evento("COMANDO", "Canvi Llindar de Temperatura Maxima")
 
@@ -582,19 +672,19 @@ def valor_temp_max_slider():
 def valor_hum_max_slider():
     valor_hum_max_ = hum_max_slider.get()
     print('val graf hum' + str(valor_hum_max_))
-    msg = f"6:{valor_hum_max_}|{Checksum("6:" + str(valor_hum_max_))}" # 6 vol dir llindar d'humitat màxima
+    msg = f"{ComandoT_MaxHum}{valor_hum_max_}|{Checksum(ComandoT_MaxHum + str(valor_hum_max_))}" # 6 vol dir llindar d'humitat màxima
     mySerial.write(msg.encode()) # envia el valor d'humitat màxima que volem detectar
     escribir_evento("COMANDO", "Canvi Llindar d'Humitat Maxima")
 
 
 def auto_radar(): # Mode automatic del servo tot sol recorre de 0 a 180, com un radar normal
-    msg = f"7:|{Checksum("7:")}" # 7 vol dir mode automatic/constant
+    msg = f"{ComandoT_ServoAuto}|{Checksum(ComandoT_ServoAuto)}" # 7 vol dir mode automatic/constant
     mySerial.write(msg.encode())
     print('Mode Automatic')
     escribir_evento("COMANDO", "Mode Automatic del Radar")
 
 def joystick_radar():
-    msg = f"8:|{Checksum("8:")}" # 8 vol dir mode joystick
+    msg = f"{ComandoT_ServoJoy}|{Checksum(ComandoT_ServoJoy)}" # 8 vol dir mode joystick
     mySerial.write(msg.encode())
     print('Mode Joystick')
     escribir_evento("COMANDO", "Mode Joystick del Radar")
@@ -603,16 +693,17 @@ def joystick_radar():
 def valor_radar_slider(): # Mode manual del servo, es dirigeix al valor d'angle que indiques
     valor_ = radar_slider.get()
     print('val radar' + str(valor_))
-    msg = f"9:{valor_}|{Checksum("9:"+str(valor_))}" # 9 vol dir angle determinat
+    msg = f"{ComandoT_ServoManual}{valor_}|{Checksum(ComandoT_ServoManual + str(valor_))}" # 9 vol dir angle determinat
     mySerial.write(msg.encode()) # envia el valor de l'angle
     escribir_evento("COMANDO", "Mode Manual del Radar")
+
 
 def valor_dist_max_slider():
     valor_dist_max_ = dist_max_slider.get()
     print('val graf dist' + str(valor_dist_max_))
-    msg = f"10:{valor_dist_max_}|{Checksum("10:" + str(valor_dist_max_))}" # 10 vol dir llindar de distància màxima
+    msg = f"{ComandoT_MaxDist}{valor_dist_max_}|{Checksum(ComandoT_MaxDist + str(valor_dist_max_))}" # 6 vol dir llindar d'humitat màxima
     mySerial.write(msg.encode()) # envia el valor d'humitat màxima que volem detectar
-    escribir_evento("COMANDO", "Canvi Llindar de Distància Maxima")
+    escribir_evento("COMANDO", "Canvi Llindar de Distancia Maxima")
 
 
 #--------------------------------------------------
@@ -737,7 +828,9 @@ button_com_frame.columnconfigure(0, weight = 1)
 button_period_com_frame = tk.LabelFrame(button_com_frame, text = 'Periodicitat')
 button_period_com_frame.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
 button_period_com_frame.rowconfigure(0, weight = 1)
+button_period_com_frame.rowconfigure(1, weight = 1)
 button_period_com_frame.columnconfigure(0, weight = 1)
+button_period_com_frame.columnconfigure(1, weight = 1)
 
 
 #Frame de DHT
@@ -784,6 +877,7 @@ button_max_radar_frame = tk.LabelFrame(button_radar_frame, text = "Llindar màxi
 button_max_radar_frame.grid(row = 2, column = 0, padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S) #Sticky coordenades cartesianes en extensió tot el que pugui
 button_max_radar_frame.rowconfigure(0, weight = 1)
 button_max_radar_frame.columnconfigure(0, weight = 1)
+button_max_radar_frame.columnconfigure(1, weight = 1)
 
 
 #Frame de posició
@@ -803,11 +897,17 @@ button_parar.grid(row = 0, column = 0, columnspan = 2, padx = 5, pady = 5, stick
 button_reanudar = tk.Button(button_com_frame, text = "Reanudar", command = reanudar_com)
 button_reanudar.grid(row = 1, column = 0, columnspan = 2 , padx = 5, pady = 5, sticky = tk.N + tk.E + tk.W + tk.S)
 
-#Slider frequencia enviament
-period_com_slider = Scale(button_period_com_frame, from_ = 0, to = 10, orient = HORIZONTAL, width = 10)
-period_com_slider.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = 'ew')
-botton_period_com_slider = Button(button_period_com_frame, text = 'Valor', command = valor_period_com_slider)
-botton_period_com_slider.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = 'ew')
+#Slider frequencia enviament temperatures, humitats i distàncies
+period_TyH_D_slider = Scale(button_period_com_frame, from_ = 1, to = 10, orient = HORIZONTAL, width = 10)
+period_TyH_D_slider.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = 'ew')
+botton_period_TyH_D_slider = Button(button_period_com_frame, text = 'Valor', command = valor_period_TyH_D_slider)
+botton_period_TyH_D_slider.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = 'ew')
+
+#Slider frequencia enviament posició del satèl·lit
+period_pos_slider = Scale(button_period_com_frame, from_ = 1, to = 10, orient = HORIZONTAL, width = 10)
+period_pos_slider.grid(row = 1, column = 0, padx = 5, pady = 5, sticky = 'ew')
+botton_period_pos_slider = Button(button_period_com_frame, text = 'Valor', command = valor_period_pos_slider)
+botton_period_pos_slider.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = 'ew')
 
 
 #BOTONS GRAFIQUES TEMPERATURA I HUMITAT
