@@ -28,6 +28,8 @@ En la segona versió d'aquest projecte es va aconseguir el següent:
 · Estructrues de tots els codis passats a funcions   
 · Implementació d'un Protocol d'Aplicació (explicat més endavant)   
 
+![ESTAT FÍSIC DE LA INTERFÍCIE GRÀFICA](Assets/ESTAT_DE_INTERFICIE_VERSIO2.png)
+
 ### Vídeo de la [Versió 3](https://youtu.be/HDT-QbDbMX0)  
 En la tercera versió d'aquest projecte es va aconseguir el següent:   
 · Slidder per canviar i modificar la periodicitat de les dades   
@@ -40,12 +42,14 @@ En la tercera versió d'aquest projecte es va aconseguir el següent:
 · Implementació del Checksum per la comunicació segura entre arduinos   
 · Implementació del Kit LoRa per la comunicació entre arduinos sense fils
 
-![ESTAT FÍSIC DE LA INTERFÍCIE GRÀFICA](Assets/INTERFICIE_GRÀFICA_CC.png)
+![ESTAT FÍSIC DE LA INTERFÍCIE GRÀFICA](Assets/ESTAT_DE_INTERFICIE_VERSIO3.png)
 
 
 ### Vídeo de la [Versió 4]()  
 En la quarta versió d'aquest projecte s'ha aconseguit el següent:   
 · 
+
+![ESTAT FÍSIC DE LA INTERFÍCIE GRÀFICA](Assets/ESTAT_DE_INTERFICIE_VERSIO_FINAL.png)
 
  _**Estat del projecte:** Versió 3_
 
