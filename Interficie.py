@@ -154,7 +154,7 @@ def lectura_datos():
                             x_data.append(x)
                             y_data.append(y)
                             z_data.append(z)
-                            
+                            # opcional: limitar longitud
                             if len(x_data) > 1000:
                                 x_data.pop(0)
                                 y_data.pop(0)
@@ -167,13 +167,13 @@ def lectura_datos():
                             alarma3()
                         elif comando == Comando_ErrorHumAlta:
                             alarma4()
-                        #elif comando == Comando_ErrorRadar:
-                            #alarma5()
+                        elif comando == Comando_ErrorRadar:
+                            alarma5()
                         elif comando == Comando_ErrorXoc:
                             alarma6()
                             
             except:
-                print("Error de Lectura")
+                print("Error de lectura")
             time.sleep(0.1)
 
 thread1 = threading.Thread(target=lectura_datos, daemon=True)
@@ -917,13 +917,13 @@ button_reanudar.grid(row = 1, column = 0, columnspan = 2 , padx = 5, pady = 5, s
 #Slider frequencia enviament temperatures, humitats i distàncies
 period_TyH_D_slider = Scale(button_period_com_frame, from_ = 1, to = 10, orient = HORIZONTAL, width = 10)
 period_TyH_D_slider.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = 'ew')
-botton_period_TyH_D_slider = Button(button_period_com_frame, text = 'Valor', command = valor_period_TyH_D_slider)
+botton_period_TyH_D_slider = Button(button_period_com_frame, text = 'DHT', command = valor_period_TyH_D_slider)
 botton_period_TyH_D_slider.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = 'ew')
 
 #Slider frequencia enviament posició del satèl·lit
 period_pos_slider = Scale(button_period_com_frame, from_ = 1, to = 10, orient = HORIZONTAL, width = 10)
 period_pos_slider.grid(row = 1, column = 0, padx = 5, pady = 5, sticky = 'ew')
-botton_period_pos_slider = Button(button_period_com_frame, text = 'Valor', command = valor_period_pos_slider)
+botton_period_pos_slider = Button(button_period_com_frame, text = 'Posició', command = valor_period_pos_slider)
 botton_period_pos_slider.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = 'ew')
 
 
@@ -947,13 +947,13 @@ button_cal_py.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = tk.N + tk.E
 #Slider Temperatura màxima
 temp_max_slider = Scale(button_max_DHT_frame, from_ = 15, to = 50, orient = HORIZONTAL, width = 10) # width=10 --> tamany de la "rodeta"
 temp_max_slider.grid(row = 0, column = 0, padx = 5, pady = 1, sticky = 'ew')
-botton_graf_slider = Button(button_max_DHT_frame, text = 'Valor de Temp', command = valor_temp_max_slider)#Important command
+botton_graf_slider = Button(button_max_DHT_frame, text = 'Temperatura', command = valor_temp_max_slider)#Important command
 botton_graf_slider.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = 'ew')
 
 #Slider Humitat màxima
 hum_max_slider = Scale(button_max_DHT_frame, from_ = 40, to = 80, orient = HORIZONTAL, width = 10) # width=10 --> tamany de la "rodeta"
 hum_max_slider.grid(row = 1, column = 0, padx = 5, pady = 1, sticky = 'ew')
-botton_graf_slider = Button(button_max_DHT_frame, text = 'Valor de Hum', command = valor_hum_max_slider)#Important command
+botton_graf_slider = Button(button_max_DHT_frame, text = 'Humitat', command = valor_hum_max_slider)#Important command
 botton_graf_slider.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = 'ew')
 
 
@@ -973,13 +973,13 @@ button_joystick_radar.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = tk.
 #Slidder moviment radar (Mode manual)
 radar_slider = Scale(button_mode_radar_frame, from_ = 0, to = 180, orient = HORIZONTAL, width = 10)
 radar_slider.grid(row = 1, column = 0, padx = 5, pady = 5, sticky = 'ew')
-botton_radar_slider = Button(button_mode_radar_frame, text = 'Valor', command = valor_radar_slider)
+botton_radar_slider = Button(button_mode_radar_frame, text = 'Posició', command = valor_radar_slider)
 botton_radar_slider.grid(row = 1, column = 1, padx = 5, pady = 5, sticky = 'ew')
 
 #Slidder Distància màxima
 dist_max_slider = Scale(button_max_radar_frame, from_ = 10, to = 50, orient = HORIZONTAL, width = 10) # width=10 --> tamany de la "rodeta"
 dist_max_slider.grid(row = 0, column = 0, padx = 5, pady = 1, sticky = 'ew')
-botton_graf_slider = Button(button_max_radar_frame, text = 'Valor de Dist', command = valor_dist_max_slider)
+botton_graf_slider = Button(button_max_radar_frame, text = 'Distància', command = valor_dist_max_slider)
 botton_graf_slider.grid(row = 0, column = 1, padx = 5, pady = 5, sticky = 'ew')
 
 
