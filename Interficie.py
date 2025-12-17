@@ -159,6 +159,8 @@ def lectura_datos():
                                 x_data.pop(0)
                                 y_data.pop(0)
                                 z_data.pop(0)
+                        elif comando == Comando_ErrorCom:
+                            alarma1()
                         elif comando == Comando_ErrorDHT:
                             alarma2()
                         elif comando == Comando_ErrorTempAlta:
@@ -171,7 +173,7 @@ def lectura_datos():
                             alarma6()
                             
             except:
-                alarma1() # En el cas de no rebre res s'activa l'alarma de fallo en la comunicació
+                print("Error de Lectura")
             time.sleep(0.1)
 
 thread1 = threading.Thread(target=lectura_datos, daemon=True)
