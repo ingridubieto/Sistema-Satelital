@@ -51,7 +51,7 @@ En la quarta versió d'aquest projecte s'ha aconseguit el següent:
 
 ![ESTAT FÍSIC DE LA INTERFÍCIE GRÀFICA](Assets/ESTAT_DE_INTERFICIE_VERSIO_FINAL.png)
 
- _**Estat del projecte:** Versió 3_
+ _**Estat del projecte:** Versió 4_
 
 ## Explicació del **Protocol d'Aplicació** del sistema satel·lital:
 
@@ -61,32 +61,35 @@ _**Parar la Transmissió**_ de dades --> 1:
     
 _**Reanudar la Transmissió**_ de dades --> 2:
     
-_**Periodicitat**_ de les dades enviades --> 3:P  
+_**Periodicitat**_ de les dades enviades de la temperatura, l'humitat i la distància --> 3:P1  
+· On P és el període d'enviament de les dades
+
+_**Periodicitat**_ de les dades enviades de la posició del satèl·lit --> 4:P2  
 · On P és el període d'enviament de les dades
 
 Placa on es fa el _**Càlcul de les mitjanes;**_  
 L'usuari pot triar on fer el càlcul de les mitjanes  
-· Si es fa el càlcul des del mateix **satèl·lit** --> 4:0  
+· Si es fa el càlcul des del mateix **satèl·lit** --> 5  
 · Si es fa el càlcul des de **Python** --> Simplement s'activa una funció definida al python   
 Per Parar el càlcul de mitjanes s'envia --> 4:1 (i al mateix temps es deshabilita el càlcul a python)
 
-Definició d'un _**Valor màxim de temperatura**_ --> 5:T'  
+Definició d'un _**Valor màxim de temperatura**_ --> 6:T'  
 · On T' és el valor llindar que fa que salti l'alarma d'alta temperatura
 
-Definició d'un _**Valor màxim d'humitat**_ --> 6:H'  
+Definició d'un _**Valor màxim d'humitat**_ --> 7:H'  
 · On H' és el valor llindar que fa que salti l'alarma d'alta humitat
 
-_**Mode constant**_ de gir del sensor de distància --> 7:  
+_**Mode constant**_ de gir del sensor de distància --> 8:  
 El servor motor recòrre des de l'àngle 0 al 180, simulant el moviment d'un radar
 
-_**Mode joystick**_ de gir del sensor de distància --> 8:  
+_**Mode joystick**_ de gir del sensor de distància --> 9:  
 El servor motor es mourà a raó del moviment del joystick que faci l'usuari
 
-_**Mode manual**_ de gir del sensor de distància --> 9:A   
+_**Mode manual**_ de gir del sensor de distància --> 10:A   
 El servo motor es dirigeix a la posició desitjada per observar la distància en aquest àngle  
 · On A és l'àngle introduit per l'usuari
 
-Definició d'un _**Valor màxim de distància**_ --> 10:D'  
+Definició d'un _**Valor màxim de distància**_ --> 11:D'  
 · On D' és el valor llindar que fa que salti l'alarma de perill de xoc del satèl·lit amb un objecte
 
 ### Missatges destinats a l'interfície de l'estació de terra;
@@ -128,5 +131,8 @@ _**ERROR de perill de xoc**_ --> 10:
 En el cas que el sensor d'ultrasons rebi un valor menor al llindar de distància establert per l'usuari, salta una alarma. També voldrà dir que el satèl·lit esta en perill de col·lisió  
 
 
-(INSERTAR FOTO DE GRUP 11)
-![IMATGE DE GRUP 11](assets/nomdelaimatge)
+
+## Mostra de les connexions del sistema satel·lital:
+
+### Muntatge del sistema [ENLLAÇ A TINKERCAD](https://www.tinkercad.com/things/fjGl9FDbWCf/editel?sharecode=CLbBnQFXQlaBmR7OncQzVrpRIIhlI8n5UIXftdhH8aE) 
+![MOSTRA CONNEXIONS](Assets/MOSTRA_TINKERCAD_MUNTATGE_SISTEMA_SATEL.LITAL.png)
