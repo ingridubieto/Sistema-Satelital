@@ -4,7 +4,8 @@ Projecte de l'assignatura de Ciències de la Computació. Implementació del pro
 
 ## CARTA DE PRESENTACIÓ DEL PROJECTE:
 L'agència de Ciències de la Computació de la universitat de la UPC, amb motiu de la creació d'un nou satèl·lit, va contactar amb un grup de tres enginyers perfectament qualificats per aquesta missió. Ens van fer una llista amb els requisits que ells mateixos volien, els quals nosaltres vam separar en 3 versions diferents. El principal objectiu de la seva missió era captar la humitat i la temperatura de regions diferents de l'espai. Així doncs, el dia 09/09/2025 tots tres: l'Íngrid Ubieto, en Miguel Ferrero i la Lucía Rodríguez ens vam posar en marxa. És cert que ens van donar molt menys temps del que ens hagués agradat, però tot i així, creiem haver superat el repte que ens van proposar els dos generals de l'operació: en Miguel Valero i en Juan Lopez. En finalitzar la versió tres, ens van proposar una tasca molt més perillosa i complicada; que el nostre sistema satel·litari contingui un element que els sorprengui. Després de mesos treballant en el projecte, finalment, avui dia 17/12/2025, els membres del grup 11 estem orgullosos de l'estat en què hem deixat la versió final.   
-En aquest README podreu comprovar la nostra evolució a través de vídeos, el funcionament del nostre protocol d'aplicació per la transmissió de dades i les connexions del nostre sistema satel·litari.
+En aquest README podreu comprovar la nostra evolució a través de vídeos, el funcionament del nostre protocol d'aplicació per la transmissió de dades i les connexions del nostre sistema satel·litari.   
+Per afegir-li personalitat al nostre projecte l'hem bategat com a "MIL-090925". La formació del nom ve d'unir les nostres inicials (Miguel-Íngrid-Lucía) i la data en què vam començar el nostre projecte.
 
 ### Vídeo de la [Versió 1](https://youtu.be/uBuVtdbzSjU)  
 En la primera versió d'aquest projete es va aconseguir el següent:   
