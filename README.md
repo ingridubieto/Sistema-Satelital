@@ -2,6 +2,10 @@
 
 Projecte de l'assignatura de Ciències de la Computació. Implementació del prototip d'un sistema satel·lital compost pel satèl·lit i l'estació de terra.
 
+## CARTA DE PRESENTACIÓ DEL PROJECTE:
+L'agència de Ciències de la Computació de la universitat de la UPC, amb motiu de la creació d'un nou satèl·lit, va contactar amb un grup de tres enginyers perfectament qualificats per aquesta missió. Ens van fer una llista amb els requisits que ells mateixos volien, els quals nosaltres vam separar en 3 versions diferents. El principal objectiu de la seva missió era captar la humitat i la temperatura de regions diferents de l'espai. Així doncs, el dia 09/09/2025 tots tres: l'Íngrid Ubieto, en Miguel Ferrero i la Lucía Rodríguez ens vam posar en marxa. És cert que ens van donar molt menys temps del que ens hagués agradat, però tot i així, creiem haver superat el repte que ens van proposar els dos generals de l'operació: en Miguel Valero i en Juan Lopez. En finalitzar la versió tres, ens van proposar una tasca molt més perillosa i complicada; que el nostre sistema satel·litari contingui un element que els sorprengui. Després de mesos treballant en el projecte, finalment, avui dia 17/12/2025, els membres del grup 11 estem orgullosos de l'estat en què hem deixat la versió final.   
+En aquest README podreu comprovar la nostra evolució a través de vídeos, el funcionament del nostre protocol d'aplicació per la transmissió de dades i les connexions del nostre sistema satel·litari.
+
 ### Vídeo de la [Versió 1](https://youtu.be/uBuVtdbzSjU)  
 En la primera versió d'aquest projete es va aconseguir el següent:   
 · L'emissió de dades entre els dos arduinos   
@@ -45,9 +49,13 @@ En la tercera versió d'aquest projecte es va aconseguir el següent:
 ![ESTAT FÍSIC DE LA INTERFÍCIE GRÀFICA](Assets/ESTAT_DE_INTERFICIE_VERSIO3.png)
 
 
-### Vídeo de la [Versió 4]()  
+### Vídeo de la [Versió 4](https://youtu.be/BECq19P91YU)  
 En la quarta versió d'aquest projecte s'ha aconseguit el següent:   
-· 
+· Gràfiques que mostren una simulació de la posició del satèl·lit   
+· Botó per canviar el periode de transmissió de les dades de la posició del satèl·lit   
+· Slidder per detectar a quina distància volem rebre una alarma de xoc del nostre satèl·lit amb un objecte espacial   
+· Control del servo motor amb l'ajudar d'un joystick (connectat a l'estació de terra)   
+· Implementació d'una alarma sonora que avisa del fallo en la comunciació entre els dos arduinos
 
 ![ESTAT FÍSIC DE LA INTERFÍCIE GRÀFICA](Assets/ESTAT_DE_INTERFICIE_VERSIO_FINAL.png)
 
@@ -129,7 +137,6 @@ En el cas que el sensor d'ultrasons rebi un valor de distància NaN, salta una a
 
 _**ERROR de perill de xoc**_ --> 10:  
 En el cas que el sensor d'ultrasons rebi un valor menor al llindar de distància establert per l'usuari, salta una alarma. També voldrà dir que el satèl·lit esta en perill de col·lisió  
-
 
 
 ## Mostra de les connexions del sistema satel·lital:
